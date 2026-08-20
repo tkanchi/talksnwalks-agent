@@ -6,8 +6,8 @@ from pathlib import Path
 
 import requests
 
-GRAPH_HOST = os.getenv("META_GRAPH_HOST", "https://graph.facebook.com").rstrip("/")
-API_VERSION = os.getenv("META_API_VERSION", "v23.0")
+GRAPH_HOST = os.getenv("META_GRAPH_HOST", "https://graph.instagram.com").rstrip("/")
+API_VERSION = os.getenv("META_API_VERSION", "v26.0")
 IG_USER_ID = os.getenv("IG_USER_ID", "").strip()
 ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN", "").strip()
 VIDEO_URL = os.getenv("VIDEO_URL", "").strip()
@@ -31,7 +31,7 @@ def request_json(method, url, **kwargs):
         safe = dict(payload)
         if "access_token" in safe:
             safe["access_token"] = "***"
-        raise RuntimeError(f"Meta API error {response.status_code}: {safe}")
+        raise RuntimeError(f"Instagram API error {response.status_code}: {safe}")
     return payload
 
 
@@ -47,7 +47,7 @@ def create_container(caption):
     payload = request_json("POST", url, data=data)
     container_id = payload.get("id")
     if not container_id:
-        raise RuntimeError(f"Meta did not return a container id: {payload}")
+        raise RuntimeError(f"Instagram did not return a container id: {payload}")
     return container_id
 
 
@@ -91,7 +91,7 @@ def publish(container_id):
     )
     media_id = payload.get("id")
     if not media_id:
-        raise RuntimeError(f"Meta did not return a published media id: {payload}")
+        raise RuntimeError(f"Instagram did not return a published media id: {payload}")
     return media_id
 
 
