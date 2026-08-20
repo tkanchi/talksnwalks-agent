@@ -13,7 +13,8 @@ on:
         default: false
         type: boolean
   schedule:
-    # GitHub cron uses UTC. Build at 07:55 IST; scheduled publishing stays disabled until explicitly approved.
+    # GitHub cron uses UTC. 02:25 UTC = 07:55 IST.
+    # The Reel is built first, then published automatically through Instagram API.
     - cron: "25 2 * * *"
 
 permissions:
@@ -24,7 +25,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      START_DATE: "2026-08-21"
+      # Day 1 and Day 2 were published during testing on Aug 21.
+      # Using Aug 20 keeps the automatic sequence aligned so Aug 22 becomes Day 3.
+      START_DATE: "2026-08-20"
       DAY_NUMBER: ${{ inputs.day }}
       META_API_VERSION: "v26.0"
       META_GRAPH_HOST: "https://graph.instagram.com"
@@ -38,9 +41,14 @@ jobs:
       - name: Decide whether this run publishes
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.publish }}" = "true" ]; then
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "Scheduled run: automatic Instagram publishing enabled."
+            echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.publish }}" = "true" ]; then
+            echo "Manual run: publishing enabled."
             echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
           else
+            echo "Manual test/build-only run: publishing disabled."
             echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
           fi
 
