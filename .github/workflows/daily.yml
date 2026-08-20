@@ -1,0 +1,47 @@
+name: Daily Quote Post
+
+on:
+  workflow_dispatch:
+    inputs:
+      day:
+        description: "Optional day number (1-365) for testing"
+        required: false
+        type: string
+  schedule:
+    # GitHub cron uses UTC. 02:30 UTC = 08:00 Asia/Kolkata.
+    - cron: "30 2 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      START_DATE: "2026-08-21"
+      DAY_NUMBER: ${{ inputs.day }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate today's branded post
+        run: python main.py
+
+      - name: Upload generated post for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: talksnwalks-post
+          path: outputs/
+          retention-days: 14
