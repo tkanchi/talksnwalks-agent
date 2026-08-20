@@ -3,8 +3,8 @@ import sys
 
 import requests
 
-GRAPH_HOST = os.getenv("META_GRAPH_HOST", "https://graph.facebook.com").rstrip("/")
-API_VERSION = os.getenv("META_API_VERSION", "v23.0")
+GRAPH_HOST = os.getenv("META_GRAPH_HOST", "https://graph.instagram.com").rstrip("/")
+API_VERSION = os.getenv("META_API_VERSION", "v26.0")
 IG_USER_ID = os.getenv("IG_USER_ID", "").strip()
 ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN", "").strip()
 
@@ -16,7 +16,7 @@ def get_json(url, params):
     except ValueError:
         payload = {"raw": response.text}
     if not response.ok:
-        raise RuntimeError(f"Meta API error {response.status_code}: {payload}")
+        raise RuntimeError(f"Instagram API error {response.status_code}: {payload}")
     return payload
 
 
@@ -29,27 +29,24 @@ def main():
     profile = get_json(
         f"{GRAPH_HOST}/{API_VERSION}/{IG_USER_ID}",
         {
-            "fields": "id,username,account_type",
+            "fields": "id,username,account_type,media_count",
             "access_token": ACCESS_TOKEN,
         },
     )
 
-    print("Meta connection OK")
-    print(f"Instagram user id: {profile.get('id')}")
+    print("Instagram Login connection OK")
     print(f"Username: @{profile.get('username')}")
     print(f"Account type: {profile.get('account_type')}")
+    print(f"Media count: {profile.get('media_count')}")
 
-    try:
-        limit = get_json(
-            f"{GRAPH_HOST}/{API_VERSION}/{IG_USER_ID}/content_publishing_limit",
-            {
-                "fields": "quota_usage,config",
-                "access_token": ACCESS_TOKEN,
-            },
-        )
-        print(f"Publishing limit response: {limit}")
-    except Exception as exc:
-        print(f"Publishing-limit check warning: {exc}")
+    limit = get_json(
+        f"{GRAPH_HOST}/{API_VERSION}/{IG_USER_ID}/content_publishing_limit",
+        {
+            "fields": "quota_usage,config",
+            "access_token": ACCESS_TOKEN,
+        },
+    )
+    print(f"Publishing limit response: {limit}")
 
 
 if __name__ == "__main__":
