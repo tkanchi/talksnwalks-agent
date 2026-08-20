@@ -13,7 +13,7 @@ on:
         default: false
         type: boolean
   schedule:
-    # GitHub cron uses UTC. Start at 07:55 IST so build/upload can finish near 08:00 IST.
+    # GitHub cron uses UTC. Build at 07:55 IST; scheduled publishing stays disabled until explicitly approved.
     - cron: "25 2 * * *"
 
 permissions:
@@ -38,7 +38,7 @@ jobs:
       - name: Decide whether this run publishes
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.publish }}" = "true" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.publish }}" = "true" ]; then
             echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
           else
             echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
@@ -122,6 +122,6 @@ jobs:
           name: talksnwalks-day-${{ env.DAY_PADDED }}
           path: |
             outputs/
-            public/day_${{ env.DAY_PADDED }}.mp4
+            public/day_${DAY_PADDED}.mp4
           retention-days: 14
           if-no-files-found: warn
