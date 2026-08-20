@@ -26,7 +26,8 @@ jobs:
     env:
       START_DATE: "2026-08-21"
       DAY_NUMBER: ${{ inputs.day }}
-      META_API_VERSION: "v23.0"
+      META_API_VERSION: "v26.0"
+      META_GRAPH_HOST: "https://graph.instagram.com"
 
     steps:
       - name: Checkout
@@ -85,7 +86,7 @@ jobs:
         run: |
           VIDEO_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/public/day_${DAY_PADDED}.mp4"
           echo "VIDEO_URL=$VIDEO_URL" >> "$GITHUB_ENV"
-          echo "Meta media URL prepared."
+          echo "Instagram media URL prepared."
 
       - name: Verify Reel is publicly reachable
         if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true'
@@ -95,7 +96,7 @@ jobs:
             --retry 8 --retry-delay 5 --retry-all-errors \
             --output /dev/null "$VIDEO_URL"
 
-      - name: Publish through Meta Instagram API
+      - name: Publish through Instagram API
         if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true'
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
