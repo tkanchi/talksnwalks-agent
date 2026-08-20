@@ -69,19 +69,31 @@ jobs:
         shell: bash
         run: cat outputs/publish.env >> "$GITHUB_ENV"
 
-      - name: Commit Reel so Meta can fetch it publicly
+      - name: Prevent duplicate publishing
         if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true'
+        shell: bash
+        run: |
+          if [ -f "published_logs/day_${DAY_PADDED}.json" ]; then
+            echo "Day ${DAY_NUMBER} already has a publish log. Skipping Instagram publish to prevent a duplicate."
+            echo "ALREADY_PUBLISHED=true" >> "$GITHUB_ENV"
+          else
+            echo "ALREADY_PUBLISHED=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Commit Reel so Instagram can fetch it publicly
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         shell: bash
         run: |
           git config user.name "talksnwalks-agent"
           git config user.email "actions@users.noreply.github.com"
           git add "public/day_${DAY_PADDED}.mp4"
           git commit -m "Add Day ${DAY_NUMBER} Reel media" || echo "Media already committed"
-          git push
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
           echo "MEDIA_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
       - name: Build public Reel URL
-        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true'
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         shell: bash
         run: |
           VIDEO_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/public/day_${DAY_PADDED}.mp4"
@@ -89,7 +101,7 @@ jobs:
           echo "Instagram media URL prepared."
 
       - name: Verify Reel is publicly reachable
-        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true'
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         shell: bash
         run: |
           curl --fail --location --silent --show-error \
@@ -97,7 +109,7 @@ jobs:
             --output /dev/null "$VIDEO_URL"
 
       - name: Publish through Instagram API
-        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true'
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
@@ -106,14 +118,15 @@ jobs:
         run: python publish_instagram.py
 
       - name: Save publishing audit log
-        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && success()
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true' && success()
         shell: bash
         run: |
           mkdir -p published_logs
           cp outputs/publish_result.json "published_logs/day_${DAY_PADDED}.json"
           git add "published_logs/day_${DAY_PADDED}.json"
           git commit -m "Log Day ${DAY_NUMBER} Instagram publish" || true
-          git push
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
 
       - name: Upload build artifact
         if: env.SKIP == 'false'
@@ -122,6 +135,6 @@ jobs:
           name: talksnwalks-day-${{ env.DAY_PADDED }}
           path: |
             outputs/
-            public/day_${DAY_PADDED}.mp4
+            public/*.mp4
           retention-days: 14
           if-no-files-found: warn
