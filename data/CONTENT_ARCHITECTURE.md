@@ -100,6 +100,16 @@ The selection engine should use metadata/tags to choose among them.
 
 Never present an `inspired_by` paraphrase as a verbatim quote from an author. Direct quotations should be short, accurately sourced, and verified before publishing.
 
+### Display attribution
+
+- `original`: no author name is required. Treat it as Talk N Walks original/editorial copy.
+- `inspired_by`: do **not** place the author's name after the sentence as if they said those exact words. When useful, add `Inspired by <book/source>` in the caption or metadata.
+- `direct_quote`: display the verified speaker/author and retain a source reference in the library.
+- `public_domain`: display the verified author/speaker and retain the source/work when known.
+- Unknown or social-media-only attribution is not sufficient for a named-author quote.
+
+The visual itself should stay uncluttered. Attribution may appear in the caption rather than on the artwork unless the author is central to the post.
+
 ## Current safety rule
 
 This architecture is not yet wired into the live workflows. The existing women, men, and children publishing behavior should remain unchanged until the selector is built and tested in build-only mode.
