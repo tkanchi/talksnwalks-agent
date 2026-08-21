@@ -13,8 +13,8 @@ on:
         default: false
         type: boolean
   schedule:
-    # GitHub cron uses UTC. 08:30 UTC = 14:00 IST.
-    - cron: "30 8 * * *"
+    # GitHub cron uses UTC. 12:30 UTC = 18:00 IST.
+    - cron: "30 12 * * *"
 
 permissions:
   contents: write
@@ -24,8 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      # First scheduled men post should be Day 1 on 2026-08-22.
-      START_DATE: "2026-08-22"
+      # First scheduled men post is Day 1 on 2026-08-21.
+      START_DATE: "2026-08-21"
       DAY_NUMBER: ${{ inputs.day }}
       META_API_VERSION: "v26.0"
       META_GRAPH_HOST: "https://graph.instagram.com"
