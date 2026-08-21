@@ -1,0 +1,53 @@
+name: Test Content Architecture
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "data/**"
+      - "scripts/build_content_master.py"
+      - "scripts/select_content.py"
+      - "scripts/validate_content_architecture.py"
+      - ".github/workflows/content-architecture-test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-select:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate taxonomy and map all existing libraries
+        run: python scripts/validate_content_architecture.py
+
+      - name: Test New Year lead-window selection
+        run: python scripts/select_content.py --date 2026-12-28 --market India --audience Women --seed 101 --output outputs/new-year-selection.json
+
+      - name: Test Friendship Day selection
+        run: python scripts/select_content.py --date 2026-08-02 --market India --audience Men --occasion "Friendship Day India" --seed 102 --output outputs/friendship-selection.json
+
+      - name: Test CEO Mindset topic selection
+        run: python scripts/select_content.py --date 2026-09-10 --market India --audience Men --topic "CEO Mindset" --seed 103 --output outputs/ceo-selection.json
+
+      - name: Test World Health Day selection
+        run: python scripts/select_content.py --date 2026-04-07 --market India --audience All --seed 104 --output outputs/health-selection.json
+
+      - name: Upload build-only reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-test
+          path: |
+            data/generated/content_master.csv
+            outputs/*-selection.json
+          retention-days: 14
+          if-no-files-found: error
