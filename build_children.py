@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import build_reel
+from apply_audio import apply_audio_to_build
 
 
 CONTENT_NAME = "children"
@@ -18,3 +19,8 @@ build_reel.ILLUSTRATIONS = sorted(
 
 if __name__ == "__main__":
     build_reel.main()
+    apply_audio_to_build(
+        build_reel.QUOTES_FILE,
+        build_reel.OUTPUT_DIR,
+        duration=build_reel.REEL_SECONDS,
+    )
