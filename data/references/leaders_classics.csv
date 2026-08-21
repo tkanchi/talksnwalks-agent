@@ -1,0 +1,51 @@
+ID,Quote,Author,Source,Type,Theme,Audience,VerificationStatus,SourceURL
+1,The only thing we have to fear is fear itself.,Franklin D. Roosevelt,First Inaugural Address (1933),verified_short_quote,Courage,All,verified_official,https://www.fdrlibrary.org/a-few-words-from-franklin-roosevelt
+2,Ask not what your country can do for you—ask what you can do for your country.,John F. Kennedy,Inaugural Address (1961),verified_short_quote,Service & Leadership,All,verified_official_public_domain,https://www.jfklibrary.org/learn/about-jfk/historic-speeches/inaugural-address
+3,A house divided against itself cannot stand.,Abraham Lincoln,House Divided Speech (1858),public_domain_quote,Unity & Justice,All,verified_official,https://home.nps.gov/liho/learn/historyculture/housedivided.htm
+4,Well done is better than well said.,Benjamin Franklin,Poor Richard's Almanack (1737),public_domain_quote,Action,All,verified_archive,https://founders.archives.gov/documents/Franklin/01-02-02-0028
+5,"If there is no struggle, there is no progress.",Frederick Douglass,West India Emancipation speech (1857),public_domain_quote,Justice & Resilience,All,verified_official,https://home.nps.gov/frdo/learn/historyculture/thoughts-for-all-time.htm
+6,Education is the most powerful weapon which you can use to change the world.,Nelson Mandela,Education speech / frequently cited by Nelson Mandela Foundation,verified_short_quote,Education & Change,All,verified_foundation,https://www.nelsonmandela.org/nm100-education
+7,"One child, one teacher, one book and one pen can change the world.",Malala Yousafzai,United Nations speech (2013),verified_short_quote,Education & Courage,Kids / Teens,verified_un,https://www.un.org/sg/en/content/sg/statements/2019-01-24/secretary-generals-message-the-international-day-of-education-scroll-down-for-french-version
+8,Nothing great was ever achieved without enthusiasm.,Ralph Waldo Emerson,"Essays, First Series",public_domain_quote,Passion & Action,All,verified_public_domain_text,https://www.gutenberg.org/files/2944/2944-h/2944-h.htm
+9,Work is love made visible.,Kahlil Gibran,The Prophet (1923),public_domain_quote,Work & Meaning,All,verified_public_domain_text,https://en.wikisource.org/wiki/The_Prophet_(Gibran)
+10,To thine own self be true.,William Shakespeare,"Hamlet, Act 1 Scene 3",public_domain_quote,Authenticity,All,classic_public_domain,
+11,Control your response before trying to control the world around you.,Marcus Aurelius,Meditations,inspired_by,Self-Mastery,All,paraphrase_not_direct_quote,
+12,Let your character do the talking when circumstances get loud.,Marcus Aurelius,Meditations,inspired_by,Character,All,paraphrase_not_direct_quote,
+13,Do what is right because it is right, not because it will be praised.,Marcus Aurelius,Meditations,inspired_by,Integrity,All,paraphrase_not_direct_quote,
+14,"A peaceful mind is built through practice, not luck.",Marcus Aurelius,Meditations,inspired_by,Peace,All,paraphrase_not_direct_quote,
+15,Use difficulty as training for the person you want to become.,Marcus Aurelius,Meditations,inspired_by,Resilience,All,paraphrase_not_direct_quote,
+16,The shortest route to peace is wanting fewer things you cannot control.,Epictetus,Discourses / Enchiridion,inspired_by,Peace,All,paraphrase_not_direct_quote,
+17,Your freedom grows when your reactions stop being owned by other people.,Epictetus,Discourses / Enchiridion,inspired_by,Self-Control,All,paraphrase_not_direct_quote,
+18,"Do not demand an easy life; build a mind that can meet a hard one.",Epictetus,Discourses / Enchiridion,inspired_by,Resilience,All,paraphrase_not_direct_quote,
+19,A calm answer can be stronger than a loud victory.,Seneca,Letters / Essays,inspired_by,Self-Control,All,paraphrase_not_direct_quote,
+20,Time is expensive because nobody can earn back the hours already spent.,Seneca,On the Shortness of Life,inspired_by,Time,All,paraphrase_not_direct_quote,
+21,Own fewer unnecessary worries and you will feel richer in attention.,Seneca,Letters / Essays,inspired_by,Perspective,All,paraphrase_not_direct_quote,
+22,Wisdom begins when you become more interested in learning than looking clever.,Socrates,Socratic tradition,inspired_by,Wisdom,All,paraphrase_not_direct_quote,
+23,Ask better questions before becoming certain of your answer.,Socrates,Socratic tradition,inspired_by,Clear Thinking,All,paraphrase_not_direct_quote,
+24,"Excellence is built by repeated choices, not one dramatic moment.",Aristotle,Nicomachean Ethics,inspired_by,Habits,All,paraphrase_not_direct_quote,
+25,Courage sits between fear and recklessness.,Aristotle,Nicomachean Ethics,inspired_by,Courage,All,paraphrase_not_direct_quote,
+26,"A leader earns trust by carrying responsibility, not collecting credit.",George Washington,Leadership legacy,inspired_by,Leadership,All,paraphrase_not_direct_quote,
+27,Do not let disagreement become an excuse to abandon respect.,Abraham Lincoln,Leadership legacy,inspired_by,Unity,All,paraphrase_not_direct_quote,
+28,Leadership is strongest when it can hold firmness and empathy at the same time.,Abraham Lincoln,Leadership legacy,inspired_by,Leadership,All,paraphrase_not_direct_quote,
+29,A free society depends on people willing to question power and protect truth.,Frederick Douglass,Speeches and writings,inspired_by,Freedom,All,paraphrase_not_direct_quote,
+30,Respect yourself enough to resist what degrades others.,Frederick Douglass,Speeches and writings,inspired_by,Justice,All,paraphrase_not_direct_quote,
+31,Service is leadership when it asks what you can contribute before what you can receive.,John F. Kennedy,Inaugural themes,inspired_by,Service,All,paraphrase_not_direct_quote,
+32,Hope becomes public power when people turn it into shared action.,Franklin D. Roosevelt,Leadership themes,inspired_by,Hope,All,paraphrase_not_direct_quote,
+33,"The strongest leaders make people feel capable, not dependent.",Nelson Mandela,Leadership legacy,inspired_by,Leadership,All,paraphrase_not_direct_quote,
+34,Courage is moving toward justice even when fear comes with you.,Nelson Mandela,Leadership legacy,inspired_by,Courage,All,paraphrase_not_direct_quote,
+35,"Education does more than prepare you for work; it expands what you can imagine changing.",Malala Yousafzai,Education advocacy,inspired_by,Education,All,paraphrase_not_direct_quote,
+36,Your voice becomes powerful when it is used for people whose voices are being ignored.,Malala Yousafzai,Education advocacy,inspired_by,Justice,All,paraphrase_not_direct_quote,
+37,"Nonviolence is not passivity; it is disciplined resistance without surrendering your humanity.",Martin Luther King Jr.,Civil rights leadership,inspired_by,Justice,All,paraphrase_not_direct_quote,
+38,A dream matters most when daily choices start making room for it.,Martin Luther King Jr.,Civil rights leadership,inspired_by,Dreams,All,paraphrase_not_direct_quote,
+39,Justice delayed in one place weakens trust everywhere.,Martin Luther King Jr.,Civil rights leadership,inspired_by,Justice,All,paraphrase_not_direct_quote,
+40,Real strength refuses to become cruel simply because cruelty is common.,Mahatma Gandhi,Nonviolence legacy,inspired_by,Character,All,paraphrase_not_direct_quote,
+41,Change becomes believable when your daily life supports the values you speak about.,Mahatma Gandhi,Ethical leadership legacy,inspired_by,Integrity,All,paraphrase_not_direct_quote,
+42,Freedom should make room for every person to stand with dignity.,Eleanor Roosevelt,Human rights legacy,inspired_by,Equality,All,paraphrase_not_direct_quote,
+43,Human rights begin in ordinary places where ordinary people decide how others will be treated.,Eleanor Roosevelt,Human rights legacy,inspired_by,Equality,All,paraphrase_not_direct_quote,
+44,Do not waste your life trying to become a copy of somebody else's success.,Rabindranath Tagore,Literary and humanist legacy,inspired_by,Authenticity,All,paraphrase_not_direct_quote,
+45,The mind grows when curiosity is allowed to cross old boundaries.,Rabindranath Tagore,Literary and humanist legacy,inspired_by,Growth,All,paraphrase_not_direct_quote,
+46,Strategy is knowing which battle deserves your energy before you enter it.,Sun Tzu,The Art of War,inspired_by,Strategy,All,paraphrase_not_direct_quote,
+47,The best victory may be the conflict you prevented through preparation.,Sun Tzu,The Art of War,inspired_by,Strategy,All,paraphrase_not_direct_quote,
+48,Do not mistake noise for strength or speed for direction.,Lao Tzu,Taoist tradition,inspired_by,Perspective,All,paraphrase_not_direct_quote,
+49,Sometimes the strongest move is to stop forcing what needs space.,Lao Tzu,Taoist tradition,inspired_by,Peace,All,paraphrase_not_direct_quote,
+50,A good society begins with people practicing respect before demanding status.,Confucius,Analects tradition,inspired_by,Respect,All,paraphrase_not_direct_quote,
