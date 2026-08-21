@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from build_content_master import build_master  # noqa: E402
+from build_content_master import build_master, resolve_source_theme  # noqa: E402
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -42,13 +42,22 @@ def main() -> None:
     }
 
     missing: list[str] = []
+    recovered_count = 0
     for library, path in sources.items():
         rows = read_csv(path)
-        theme_field = "Theme"
-        themes = {clean(row[theme_field]) for row in rows}
-        for theme in sorted(themes):
-            if (library, theme) not in mappings:
-                missing.append(f"{library}: {theme}")
+        for index, row in enumerate(rows, start=2):
+            declared = clean(row.get("Theme"))
+            try:
+                resolved = resolve_source_theme(library, row, mappings)
+            except KeyError:
+                missing.append(f"{library}: {declared} (CSV line {index})")
+                continue
+            if resolved != declared:
+                recovered_count += 1
+                print(
+                    f"Recovered legacy theme at {path.relative_to(ROOT)} line {index}: "
+                    f"{declared!r} -> {resolved!r}"
+                )
 
     if missing:
         raise SystemExit("Unmapped source themes:\n- " + "\n- ".join(missing))
@@ -80,6 +89,7 @@ def main() -> None:
 
     print(f"Topics: {len(topics)}")
     print(f"Theme mappings: {len(mappings)}")
+    print(f"Recovered legacy rows: {recovered_count}")
     print(f"Source rows mapped: {expected_rows}")
     print(f"Generated master rows: {len(master)}")
     print("Content architecture validation passed.")
