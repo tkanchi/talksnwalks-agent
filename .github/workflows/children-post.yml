@@ -1,0 +1,139 @@
+name: Children Instagram Reel
+
+on:
+  workflow_dispatch:
+    inputs:
+      day:
+        description: "Children quote day (1-100)"
+        required: true
+        default: "1"
+        type: string
+      publish:
+        description: "Actually publish to Instagram"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish-children:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DAY_NUMBER: ${{ inputs.day }}
+      META_API_VERSION: "v26.0"
+      META_GRAPH_HOST: "https://graph.instagram.com"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Decide whether this run publishes
+        shell: bash
+        run: |
+          if [ "${{ inputs.publish }}" = "true" ]; then
+            echo "Manual children run: publishing enabled."
+            echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+          else
+            echo "Manual children test/build-only run: publishing disabled."
+            echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Ensure ffmpeg is available
+        shell: bash
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+          ffmpeg -version | head -n 1
+
+      - name: Build children branded Reel
+        run: python build_children.py
+
+      - name: Load build metadata
+        shell: bash
+        run: cat outputs/children/publish.env >> "$GITHUB_ENV"
+
+      - name: Prevent duplicate publishing
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true'
+        shell: bash
+        run: |
+          if [ -f "published_logs/children/day_${DAY_PADDED}.json" ]; then
+            echo "Children Day ${DAY_NUMBER} already has a publish log. Skipping duplicate publish."
+            echo "ALREADY_PUBLISHED=true" >> "$GITHUB_ENV"
+          else
+            echo "ALREADY_PUBLISHED=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Commit Reel so Instagram can fetch it publicly
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        shell: bash
+        run: |
+          git config user.name "talksnwalks-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add "public/children/day_${DAY_PADDED}.mp4"
+          git commit -m "Add Children Day ${DAY_NUMBER} Reel media" || echo "Media already committed"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "MEDIA_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Build public Reel URL
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        shell: bash
+        run: |
+          VIDEO_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/public/children/day_${DAY_PADDED}.mp4"
+          echo "VIDEO_URL=$VIDEO_URL" >> "$GITHUB_ENV"
+          echo "Children media URL prepared."
+
+      - name: Verify Reel is publicly reachable
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        shell: bash
+        run: |
+          curl --fail --location --silent --show-error \
+            --retry 8 --retry-delay 5 --retry-all-errors \
+            --output /dev/null "$VIDEO_URL"
+
+      - name: Publish through Instagram API
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          VIDEO_URL: ${{ env.VIDEO_URL }}
+          CAPTION_FILE: outputs/children/caption.txt
+        run: python publish_instagram.py
+
+      - name: Save publishing audit log
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true' && success()
+        shell: bash
+        run: |
+          mkdir -p published_logs/children
+          cp outputs/children/publish_result.json "published_logs/children/day_${DAY_PADDED}.json"
+          git add "published_logs/children/day_${DAY_PADDED}.json"
+          git commit -m "Log Children Day ${DAY_NUMBER} Instagram publish" || true
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Upload build artifact
+        if: env.SKIP == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: talksnwalks-children-day-${{ env.DAY_PADDED }}
+          path: |
+            outputs/children/
+            public/children/*.mp4
+          retention-days: 14
+          if-no-files-found: warn
