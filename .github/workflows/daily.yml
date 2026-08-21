@@ -13,9 +13,9 @@ on:
         default: false
         type: boolean
   schedule:
-    # GitHub cron uses UTC. 02:25 UTC = 07:55 IST.
+    # GitHub cron uses UTC. 02:13 UTC = 07:43 IST.
     # The Reel is built first, then published automatically through Instagram API.
-    - cron: "25 2 * * *"
+    - cron: "13 2 * * *"
 
 permissions:
   contents: write
