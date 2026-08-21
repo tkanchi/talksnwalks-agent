@@ -71,7 +71,7 @@ jobs:
           ffmpeg -version | head -n 1
 
       - name: Build today's branded Reel
-        run: python build_reel.py
+        run: python build_women.py
 
       - name: Load build metadata
         shell: bash
