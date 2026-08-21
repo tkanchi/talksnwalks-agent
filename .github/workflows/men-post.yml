@@ -121,6 +121,7 @@ jobs:
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
           VIDEO_URL: ${{ env.VIDEO_URL }}
           CAPTION_FILE: outputs/men/caption.txt
+          RESULT_FILE: outputs/men/publish_result.json
         run: python publish_instagram.py
 
       - name: Save publishing audit log
