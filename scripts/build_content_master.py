@@ -95,6 +95,35 @@ def load_mappings() -> dict[tuple[str, str], dict[str, str]]:
     }
 
 
+def resolve_source_theme(
+    library: str,
+    source_row: dict[str, str],
+    mappings: dict[tuple[str, str], dict[str, str]],
+) -> str:
+    """Resolve a legacy theme robustly.
+
+    A few historical CSV exports can place a type-like value in the Theme column.
+    Prefer the Theme field when it is valid; otherwise recover the one mapped theme
+    present elsewhere in that row. This avoids silently inventing a taxonomy mapping.
+    """
+    declared = clean(source_row.get("Theme"))
+    if (library, declared) in mappings:
+        return declared
+
+    recovered = unique(
+        clean(value)
+        for value in source_row.values()
+        if isinstance(value, str) and (library, clean(value)) in mappings
+    )
+    if len(recovered) == 1:
+        return recovered[0]
+    if len(recovered) > 1:
+        raise KeyError(
+            f"Ambiguous theme for {library!r}: declared={declared!r}, candidates={recovered!r}"
+        )
+    raise KeyError(f"No theme mapping for {library!r} / {declared!r}")
+
+
 def keyword_topics(quote: str) -> list[str]:
     """Add useful secondary topics based on the quote itself.
 
@@ -221,7 +250,7 @@ def import_day_library(
     rows: list[dict[str, str]] = []
     for source_row in read_csv(path):
         day = int(clean(source_row["Day"]))
-        theme = clean(source_row["Theme"])
+        theme = resolve_source_theme(library, source_row, mappings)
         quote = clean(source_row["Quote"])
         rows.append(
             make_row(
@@ -246,7 +275,7 @@ def import_books(
     rows: list[dict[str, str]] = []
     for source_row in read_csv(path):
         item_id = int(clean(source_row["ID"]))
-        theme = clean(source_row["Theme"])
+        theme = resolve_source_theme("books", source_row, mappings)
         display = clean(source_row.get("DisplayAttribution"))
         rows.append(
             make_row(
@@ -273,7 +302,7 @@ def import_leaders(
     rows: list[dict[str, str]] = []
     for source_row in read_csv(path):
         item_id = int(clean(source_row["ID"]))
-        theme = clean(source_row["Theme"])
+        theme = resolve_source_theme("leaders", source_row, mappings)
         verification = clean(source_row.get("VerificationStatus"))
         source_url = clean(source_row.get("SourceURL"))
         notes = f"verification={verification}; legacy theme={theme}"
@@ -304,7 +333,7 @@ def import_kids_morals(
     rows: list[dict[str, str]] = []
     for source_row in read_csv(path):
         item_id = int(clean(source_row["ID"]))
-        theme = clean(source_row["Theme"])
+        theme = resolve_source_theme("kids_morals", source_row, mappings)
         rows.append(
             make_row(
                 content_id=f"MORAL-{item_id:03d}",
