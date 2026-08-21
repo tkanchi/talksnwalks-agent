@@ -29,10 +29,10 @@ jobs:
       DAY_NUMBER: ${{ inputs.day }}
 
     steps:
-      - name: Checkout audience split branch
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
-          ref: audience-split-ready
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -67,6 +67,7 @@ jobs:
           name: men-day-${{ inputs.day }}-build
           path: |
             outputs/men/day_*.jpg
+            outputs/men/day_*_audio.wav
             outputs/men/caption.txt
             outputs/men/publish.env
             public/men/day_*.mp4
@@ -79,6 +80,7 @@ jobs:
           name: children-day-${{ inputs.day }}-build
           path: |
             outputs/children/day_*.jpg
+            outputs/children/day_*_audio.wav
             outputs/children/caption.txt
             outputs/children/publish.env
             public/children/day_*.mp4
