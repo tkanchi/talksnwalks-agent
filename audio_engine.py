@@ -12,6 +12,7 @@ publishing reliability do not depend on external music availability.
 from __future__ import annotations
 
 import csv
+import hashlib
 import math
 import os
 import struct
@@ -26,6 +27,9 @@ CATALOG_FILE = Path(os.getenv("AUDIO_CATALOG_FILE", "data/audio_catalog.csv"))
 SUPPORTED_AUDIO = {".wav", ".mp3", ".m4a", ".aac", ".flac", ".ogg"}
 DEFAULT_MOOD = "reflective"
 AUTO_RIGHTS = {"rights_cleared", "owned", "original", "public_domain"}
+GENERATOR_VERSION = "2"
+STREAM_OFFSETS = {"women": 0, "men": 1, "children": 2, "kids": 2, "teens": 2}
+RECOMMENDATION_SHORTLIST = 5
 
 PROFILES = {
     "energy": {
@@ -102,6 +106,10 @@ def _is_active(value: str | None) -> bool:
     return (value or "").strip().lower() in {"1", "true", "yes", "y"}
 
 
+def _stream_offset(stream: str) -> int:
+    return STREAM_OFFSETS.get(stream.strip().lower(), 0)
+
+
 def load_theme_moods(path: Path = MAPPING_FILE) -> dict[str, str]:
     if not path.exists():
         return {}
@@ -150,9 +158,9 @@ def _audience_matches(audience: str, stream: str) -> bool:
     if audience == "adults":
         return stream in {"women", "men", "all", "adults"}
     if stream == "women":
-        return audience in {"women"}
+        return audience == "women"
     if stream == "men":
-        return audience in {"men"}
+        return audience == "men"
     if stream == "children":
         return audience in {"kids", "teens", "children"}
     return audience == stream
@@ -223,7 +231,7 @@ def _choose_non_repeating_catalog_row(
     lane: str,
     require_file: bool,
 ) -> dict[str, str] | None:
-    """Simulate Days 1..day so a stream exhausts its pool before reuse."""
+    """Simulate Days 1..day and diversify strong candidates by publishing stream."""
     eligible = _eligible_catalog_rows(
         catalog,
         stream=stream,
@@ -235,6 +243,8 @@ def _choose_non_repeating_catalog_row(
 
     used: set[str] = set()
     chosen: dict[str, str] | None = None
+    stream_offset = _stream_offset(stream)
+
     for index in range(day):
         if len(used) >= len(eligible):
             used.clear()
@@ -249,13 +259,22 @@ def _choose_non_repeating_catalog_row(
                 row.get("TrackID", ""),
             )
         )
-        chosen = available[0]
+
+        shortlist = available[: min(RECOMMENDATION_SHORTLIST, len(available))]
+        pick_index = (stream_offset + index) % len(shortlist)
+        chosen = shortlist[pick_index]
         used.add(chosen.get("TrackID", ""))
 
     return chosen
 
 
-def choose_library_track(mood: str, day: int, audio_root: Path = AUDIO_ROOT) -> Path | None:
+def choose_library_track(
+    mood: str,
+    day: int,
+    audio_root: Path = AUDIO_ROOT,
+    *,
+    stream: str = "all",
+) -> Path | None:
     """Legacy folder fallback for already-approved local audio assets."""
     folder = audio_root / mood
     if not folder.exists():
@@ -266,7 +285,8 @@ def choose_library_track(mood: str, day: int, audio_root: Path = AUDIO_ROOT) -> 
     )
     if not candidates:
         return None
-    return candidates[(day - 1) % len(candidates)]
+    index = (day - 1 + _stream_offset(stream)) % len(candidates)
+    return candidates[index]
 
 
 def _noise(sample_index: int) -> float:
@@ -286,17 +306,30 @@ def _pluck(t_since: float, freq: float, level: float, bright: bool = False) -> f
     return level * env * sample / (1.69 if bright else 1.35)
 
 
+def _variant_bytes(mood: str, day: int, variant_key: str) -> bytes:
+    material = f"{GENERATOR_VERSION}|{mood}|{day}|{variant_key}".encode("utf-8")
+    return hashlib.sha256(material).digest()
+
+
 def write_generated_track(
     path: Path,
     mood: str,
     day: int,
     duration: float = 8.0,
     sample_rate: int = 48000,
+    *,
+    variant_key: str = "",
 ) -> None:
-    """Generate a small original instrumental cue for the requested mood."""
+    """Generate a deterministic original cue varied by stream/topic as well as Day."""
     profile = PROFILES.get(mood, PROFILES[DEFAULT_MOOD])
-    variant = (day - 1) % 4
-    bpm = profile["bpm"] + (variant - 1.5) * 2
+    seed = _variant_bytes(mood, day, variant_key)
+    variant = seed[0] % 8
+    root_shift = seed[1] % len(profile["roots"])
+    melody_shift = seed[2] % len(profile["melody"])
+    transpose = (-2, -1, 0, 0, 1, 2)[seed[3] % 6]
+    bpm_delta = (-6, -4, -2, 0, 2, 4, 6, 8)[variant]
+
+    bpm = max(60, profile["bpm"] + bpm_delta)
     beat_seconds = 60.0 / bpm
     half_beat = beat_seconds / 2.0
     bar_seconds = beat_seconds * 4.0
@@ -316,7 +349,7 @@ def write_generated_track(
         for i in range(frame_count):
             t = i / sample_rate
             bar_index = int(t / bar_seconds)
-            root_note = roots[(bar_index + variant) % len(roots)]
+            root_note = roots[(bar_index + root_shift) % len(roots)] + transpose
             root_freq = _midi_to_hz(root_note)
 
             chord_notes = (root_note, root_note + 3 + (bar_index % 2), root_note + 7)
@@ -333,7 +366,7 @@ def write_generated_track(
 
             step = int(t / half_beat)
             step_time = step * half_beat
-            melody_degree = melody[(step + variant * 2) % len(melody)]
+            melody_degree = melody[(step + melody_shift) % len(melody)]
             lead_note = root_note + 12 + melody_degree
             lead_freq = _midi_to_hz(lead_note)
             bright = mood in {"bright", "joyful", "energy"}
@@ -350,12 +383,12 @@ def write_generated_track(
             snare = 0.0
             snare_offset = (t + beat_seconds * 0.5) % (beat_seconds * 2.0)
             if snare_offset < 0.10 and profile["snare"]:
-                snare = profile["snare"] * math.exp(-28.0 * snare_offset) * _noise(i)
+                snare = profile["snare"] * math.exp(-28.0 * snare_offset) * _noise(i + seed[4])
 
             hat = 0.0
             hat_pos = t % half_beat
             if hat_pos < 0.045 and profile["hat"]:
-                hat = profile["hat"] * math.exp(-55.0 * hat_pos) * _noise(i * 7 + 17)
+                hat = profile["hat"] * math.exp(-55.0 * hat_pos) * _noise(i * 7 + seed[5])
 
             sample = pad + bass + lead + kick + snare + hat
             fade = min(1.0, t / fade_seconds, max(0.0, (duration - t) / fade_seconds))
@@ -413,7 +446,7 @@ def prepare_audio(
             "artist": auto_track.get("Artist", ""),
         }
     else:
-        legacy_track = choose_library_track(mood, day)
+        legacy_track = choose_library_track(mood, day, stream=stream)
         if legacy_track:
             info = {
                 "path": legacy_track,
@@ -424,11 +457,18 @@ def prepare_audio(
                 "artist": "",
             }
         else:
-            write_generated_track(output_path, mood=mood, day=day, duration=duration)
+            variant_key = f"{stream}|{topic}|{theme}"
+            write_generated_track(
+                output_path,
+                mood=mood,
+                day=day,
+                duration=duration,
+                variant_key=variant_key,
+            )
             info = {
                 "path": output_path,
                 "mood": mood,
-                "source": "generated",
+                "source": "generated_v2",
                 "track_id": "",
                 "track": "Talk N Walks generated cue",
                 "artist": "Talk N Walks",
