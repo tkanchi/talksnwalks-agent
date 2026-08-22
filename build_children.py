@@ -33,4 +33,5 @@ if __name__ == "__main__":
         build_reel.QUOTES_FILE,
         build_reel.OUTPUT_DIR,
         duration=build_reel.REEL_SECONDS,
+        stream="children",
     )
