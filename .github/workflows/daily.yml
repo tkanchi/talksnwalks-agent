@@ -25,9 +25,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      # Day 1 and Day 2 were published during testing on Aug 21.
-      # Using Aug 20 keeps the automatic sequence aligned so Aug 22 becomes Day 3.
-      START_DATE: "2026-08-20"
+      # Days 1-4 are already published; Day 4 was recovered manually on Aug 22.
+      # Using Aug 19 makes the Aug 23 scheduled run continue with Day 5.
+      START_DATE: "2026-08-19"
       DAY_NUMBER: ${{ inputs.day }}
       META_API_VERSION: "v26.0"
       META_GRAPH_HOST: "https://graph.instagram.com"
