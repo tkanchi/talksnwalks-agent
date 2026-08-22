@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Talk N Walks Quote Image Maker</title>
+<style>
+  :root { color-scheme: light; font-family: Inter, Arial, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#ece9e2; color:#181818; }
+  .app { display:grid; grid-template-columns:minmax(320px,420px) 1fr; min-height:100vh; }
+  .panel { padding:22px; background:#fff; border-right:1px solid #ddd; overflow:auto; }
+  h1 { font-size:22px; margin:0 0 6px; }
+  .sub { color:#666; font-size:13px; margin-bottom:20px; line-height:1.45; }
+  .group { margin:0 0 18px; padding:14px; border:1px solid #e1e1e1; border-radius:12px; }
+  .group h2 { font-size:14px; margin:0 0 12px; }
+  label { display:block; font-size:12px; font-weight:700; margin:10px 0 5px; }
+  input, select, textarea, button { width:100%; font:inherit; }
+  input[type="text"], input[type="number"], select, textarea { padding:9px 10px; border:1px solid #ccc; border-radius:8px; background:#fff; }
+  textarea { min-height:110px; resize:vertical; }
+  input[type="range"] { accent-color:#222; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .colorrow { display:grid; grid-template-columns:52px 1fr; gap:8px; align-items:center; }
+  input[type="color"] { height:38px; padding:0; border:1px solid #ccc; border-radius:8px; background:#fff; }
+  button { padding:10px 12px; border:0; border-radius:9px; cursor:pointer; font-weight:700; }
+  .primary { background:#191919; color:#fff; }
+  .secondary { background:#eee; color:#111; margin-top:8px; }
+  .danger { background:#fff0f0; color:#8d2020; margin-top:8px; }
+  .stagewrap { display:flex; align-items:center; justify-content:center; padding:24px; overflow:auto; }
+  canvas { width:min(45vw,540px); height:auto; background:#F4F1EA; box-shadow:0 10px 35px rgba(0,0,0,.14); }
+  .hint { font-size:11px; color:#777; line-height:1.45; }
+  .small { font-size:11px; color:#666; margin-top:5px; }
+  @media (max-width:850px) { .app { grid-template-columns:1fr; } .panel { border-right:0; border-bottom:1px solid #ddd; } canvas { width:min(90vw,540px); } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="panel">
+    <h1>Talk N Walks Quote Image Maker</h1>
+    <div class="sub">Create a 1080×1920 quote image locally in your browser. Nothing is uploaded anywhere.</div>
+    <section class="group">
+      <h2>Quote</h2>
+      <label for="quote">Quote text</label>
+      <textarea id="quote">Discipline today. Freedom tomorrow.</textarea>
+      <div class="row"><div><label for="font">Font</label><select id="font"><option value="Georgia">Georgia</option><option value="Times New Roman">Times New Roman</option><option value="Arial">Arial</option><option value="Trebuchet MS">Trebuchet MS</option><option value="Courier New">Courier New</option></select></div><div><label for="fontSize">Font size</label><input id="fontSize" type="number" min="28" max="110" value="58"></div></div>
+      <label for="quoteY">Quote vertical position</label><input id="quoteY" type="range" min="180" max="1000" value="420">
+      <div class="row"><div><label for="textColor">Text color</label><div class="colorrow"><input id="textColor" type="color" value="#111111"><input id="textHex" type="text" value="#111111"></div></div><div><label for="lineHeight">Line spacing</label><input id="lineHeight" type="number" min="1" max="2" step=".05" value="1.22"></div></div>
+    </section>
+    <section class="group"><h2>Background</h2><label for="bgColor">Background color</label><div class="colorrow"><input id="bgColor" type="color" value="#F4F1EA"><input id="bgHex" type="text" value="#F4F1EA"></div><div class="small">Talk N Walks current default: #F4F1EA</div></section>
+    <section class="group">
+      <h2>Illustrations</h2><label for="images">Add one or more transparent PNG/JPG illustrations</label><input id="images" type="file" accept="image/png,image/jpeg,image/webp" multiple><label for="selectedImage">Selected illustration</label><select id="selectedImage"><option value="">No illustration loaded</option></select>
+      <div class="row"><div><label for="imgScale">Scale</label><input id="imgScale" type="range" min="10" max="160" value="70"></div><div><label for="imgOpacity">Opacity</label><input id="imgOpacity" type="range" min="10" max="100" value="100"></div></div>
+      <label for="imgX">Horizontal position</label><input id="imgX" type="range" min="0" max="1080" value="540"><label for="imgY">Vertical position</label><input id="imgY" type="range" min="400" max="1650" value="1120"><button id="removeImage" class="danger" type="button">Remove selected illustration</button><div class="hint">Each uploaded illustration keeps its own scale and position. Upload multiple files to build a scene.</div>
+    </section>
+    <section class="group"><h2>Brand</h2><label for="handle">Handle / footer</label><input id="handle" type="text" value="@talksnwalks101"><label for="handleY">Handle vertical position</label><input id="handleY" type="range" min="1200" max="1850" value="1600"><label for="handleSize">Handle size</label><input id="handleSize" type="number" min="18" max="60" value="28"></section>
+    <button id="download" class="primary" type="button">Export PNG</button><button id="reset" class="secondary" type="button">Reset Talk N Walks defaults</button>
+  </aside>
+  <main class="stagewrap"><canvas id="canvas" width="1080" height="1920"></canvas></main>
+</div>
+<script>
+const $ = id => document.getElementById(id); const canvas = $("canvas"); const ctx = canvas.getContext("2d"); const state = { images: [], selected: -1 };
+function syncColor(colorId,textId){const c=$(colorId),t=$(textId);c.addEventListener("input",()=>{t.value=c.value.toUpperCase();render();});t.addEventListener("change",()=>{let v=t.value.trim();if(!v.startsWith("#"))v="#"+v;if(/^#[0-9a-fA-F]{6}$/.test(v)){c.value=v;t.value=v.toUpperCase();render();}});} syncColor("bgColor","bgHex"); syncColor("textColor","textHex");
+function wrapText(text,maxWidth){const paras=text.split(/\n/),out=[];for(const para of paras){const words=para.trim().split(/\s+/).filter(Boolean);if(!words.length){out.push("");continue;}let line=words[0];for(let i=1;i<words.length;i++){const test=line+" "+words[i];if(ctx.measureText(test).width<=maxWidth)line=test;else{out.push(line);line=words[i];}}out.push(line);}return out;}
+function refreshImageSelect(){const sel=$("selectedImage");sel.innerHTML="";if(!state.images.length){sel.innerHTML='<option value="">No illustration loaded</option>';state.selected=-1;return;}state.images.forEach((item,i)=>{const o=document.createElement("option");o.value=i;o.textContent=item.name;sel.appendChild(o);});if(state.selected<0||state.selected>=state.images.length)state.selected=0;sel.value=state.selected;loadSelectedControls();}
+function loadSelectedControls(){const item=state.images[state.selected];if(!item)return;$("imgScale").value=item.scale;$("imgOpacity").value=item.opacity;$("imgX").value=item.x;$("imgY").value=item.y;}
+function saveSelectedControls(){const item=state.images[state.selected];if(!item)return;item.scale=+$("imgScale").value;item.opacity=+$("imgOpacity").value;item.x=+$("imgX").value;item.y=+$("imgY").value;}
+function render(){ctx.clearRect(0,0,1080,1920);ctx.fillStyle=$("bgColor").value;ctx.fillRect(0,0,1080,1920);const fontSize=+$("fontSize").value,family=$("font").value;ctx.fillStyle=$("textColor").value;ctx.textAlign="center";ctx.textBaseline="top";ctx.font=`${fontSize}px "${family}"`;const lines=wrapText($("quote").value,860),linePx=fontSize*+$("lineHeight").value,startY=+$("quoteY").value-(lines.length*linePx)/2;lines.forEach((line,i)=>ctx.fillText(line,540,startY+i*linePx));state.images.forEach(item=>{const scale=item.scale/100,maxW=650*scale,ratio=Math.min(maxW/item.img.width,620*scale/item.img.height),w=item.img.width*ratio,h=item.img.height*ratio;ctx.save();ctx.globalAlpha=item.opacity/100;ctx.drawImage(item.img,item.x-w/2,item.y-h/2,w,h);ctx.restore();});const handle=$("handle").value.trim();if(handle){ctx.fillStyle=$("textColor").value;ctx.textAlign="center";ctx.font=`${+$("handleSize").value}px Arial`;ctx.fillText(handle,540,+$("handleY").value);}}
+["quote","font","fontSize","quoteY","lineHeight","handle","handleY","handleSize"].forEach(id=>$(id).addEventListener("input",render));["imgScale","imgOpacity","imgX","imgY"].forEach(id=>$(id).addEventListener("input",()=>{saveSelectedControls();render();}));$("selectedImage").addEventListener("change",e=>{state.selected=+e.target.value;loadSelectedControls();render();});
+$("images").addEventListener("change",async e=>{const files=[...e.target.files];for(const file of files){const url=URL.createObjectURL(file),img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=url;});state.images.push({name:file.name,img,url,scale:70,opacity:100,x:540,y:1120});}state.selected=state.images.length?state.images.length-1:-1;refreshImageSelect();render();e.target.value="";});
+$("removeImage").addEventListener("click",()=>{if(state.selected<0)return;URL.revokeObjectURL(state.images[state.selected].url);state.images.splice(state.selected,1);state.selected=Math.min(state.selected,state.images.length-1);refreshImageSelect();render();});
+$("download").addEventListener("click",()=>{render();const a=document.createElement("a");a.download="talksnwalks_quote.png";a.href=canvas.toDataURL("image/png");a.click();});
+$("reset").addEventListener("click",()=>{$("quote").value="Discipline today. Freedom tomorrow.";$("font").value="Georgia";$("fontSize").value=58;$("quoteY").value=420;$("lineHeight").value=1.22;$("bgColor").value="#F4F1EA";$("bgHex").value="#F4F1EA";$("textColor").value="#111111";$("textHex").value="#111111";$("handle").value="@talksnwalks101";$("handleY").value=1600;$("handleSize").value=28;state.images.forEach(x=>URL.revokeObjectURL(x.url));state.images=[];state.selected=-1;refreshImageSelect();render();});render();
+</script>
+</body>
+</html>
