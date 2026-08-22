@@ -12,6 +12,8 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
+from quote_text_quality import polish_quote_row
+
 
 def _load_rows(parts: list[Path]) -> list[dict[str, str]]:
     rows: list[dict[str, str]] = []
@@ -23,7 +25,7 @@ def _load_rows(parts: list[Path]) -> list[dict[str, str]]:
             fieldnames = set(reader.fieldnames or [])
             if not {"Quote", "Theme"}.issubset(fieldnames):
                 raise ValueError(f"{part} must contain Quote and Theme columns")
-            rows.extend(reader)
+            rows.extend(polish_quote_row(dict(row)) for row in reader)
     return rows
 
 
@@ -115,6 +117,7 @@ def _write_runtime(rows: list[dict[str, str]], destination: Path) -> Path:
         )
         writer.writeheader()
         for day, row in enumerate(rows, start=1):
+            row = polish_quote_row(row)
             writer.writerow(
                 {
                     "Day": day,
@@ -216,6 +219,7 @@ def build_curated_simple_quote_file(
         enriched["QuoteID"] = row.get("QuoteID", "") or row.get("ID", "") or f"CH{index:03d}"
         enriched["Topic"] = row.get("Topic", "") or row.get("Theme", "")
         enriched["SourceType"] = row.get("SourceType", "") or row.get("Type", "") or "original"
+        enriched = polish_quote_row(enriched)
         enriched["_score"] = str(_impact_score(enriched))
         groups[row.get("Theme", "Other")].append(enriched)
 
@@ -228,14 +232,13 @@ def build_curated_simple_quote_file(
     )
     selected: list[dict[str, str]] = []
     for index, row in enumerate(preserved, start=1):
-        selected.append(
-            {
-                **row,
-                "QuoteID": row.get("QuoteID", "") or row.get("ID", "") or f"CH{index:03d}",
-                "Topic": row.get("Topic", "") or row.get("Theme", ""),
-                "SourceType": row.get("SourceType", "") or row.get("Type", "") or "original",
-            }
-        )
+        enriched = {
+            **row,
+            "QuoteID": row.get("QuoteID", "") or row.get("ID", "") or f"CH{index:03d}",
+            "Topic": row.get("Topic", "") or row.get("Theme", ""),
+            "SourceType": row.get("SourceType", "") or row.get("Type", "") or "original",
+        }
+        selected.append(polish_quote_row(enriched))
 
     cursor = 0
     while any(groups[theme] for theme in theme_order):
