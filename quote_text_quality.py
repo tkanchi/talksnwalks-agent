@@ -10,9 +10,10 @@ from __future__ import annotations
 import re
 
 
-# High-confidence grammar/clarity edits found during the full Women, Men, and
-# shared Self-Growth production-library review. These are copy edits only; they
-# do not change SourceType, InspiredBy, Author, Topic, or attribution metadata.
+# High-confidence grammar/clarity edits found during the full Women, Men,
+# shared Self-Growth, and current Children production-library review. These are
+# copy edits only; they do not change SourceType, InspiredBy, Author, Topic, or
+# attribution metadata.
 QUOTE_CORRECTIONS: dict[str, str] = {
     "WOM038": "Resilience is not about never falling; it is learning how to rise without hating the fall.",
     "WOM164": "Your brave life will require disappointing the version of you that always played it safe.",
@@ -56,6 +57,12 @@ QUOTE_CORRECTIONS: dict[str, str] = {
     "WEMP225": "Your voice gets stronger when you use it before you feel polished.",
     "WEMP290": "Choose relationships that allow your spirit to expand instead of constantly defending itself.",
     "WEMP324": "Examine your earning ceiling whenever fear, rather than market value, is holding it down.",
+    "37": "You are allowed to ask for help, but do not hand off your responsibility.",
+    "42": "If someone is being bullied, do not add your silence to the crowd.",
+    "52": "Invite people in; you never know who needs that invitation.",
+    "90": "The internet remembers, so post with the future in mind.",
+    "92": "Health does not have one body shape.",
+    "95": "Play, study, sleep, and laugh; growing up needs all of them.",
 }
 
 
