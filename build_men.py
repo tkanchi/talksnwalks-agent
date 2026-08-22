@@ -4,12 +4,18 @@ from pathlib import Path
 
 import build_reel
 from apply_audio import apply_audio_to_build
+from quote_library import build_runtime_quote_file
 from visual_theme import apply_visual_theme
 
 
 CONTENT_NAME = "men"
+MEN_QUOTE_PARTS = [
+    Path("data/library/men_master_part_01.csv"),
+    Path("data/library/men_master_part_02.csv"),
+    Path("data/library/men_master_part_03.csv"),
+    Path("data/library/men_master_part_04.csv"),
+]
 
-build_reel.QUOTES_FILE = Path("data/men/quotes.csv")
 build_reel.ILLUSTRATION_DIR = Path("illustrations/men")
 build_reel.OUTPUT_DIR = Path("outputs/men")
 build_reel.PUBLIC_DIR = Path("public/men")
@@ -19,6 +25,10 @@ build_reel.ILLUSTRATIONS = sorted(
 
 
 if __name__ == "__main__":
+    build_reel.QUOTES_FILE = build_runtime_quote_file(
+        MEN_QUOTE_PARTS,
+        Path("outputs/men/quotes_runtime.csv"),
+    )
     apply_visual_theme(build_reel)
     build_reel.main()
     apply_audio_to_build(
