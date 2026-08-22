@@ -1,14 +1,14 @@
 """Women/general content entry point for Talk N Walks.
 
-Keeps the proven builder while using the expanded quote library, safer
-illustration order, shared visual theme, and topic-aware audio.
+Keeps the proven builder while selecting a stronger, more varied production pool
+from the full quote library, plus the shared visual theme and topic-aware audio.
 """
 
 from pathlib import Path
 
 import build_reel
 from apply_audio import apply_audio_to_build
-from quote_library import build_runtime_quote_file
+from quote_library import build_curated_runtime_quote_file
 from visual_theme import apply_visual_theme
 
 
@@ -41,9 +41,12 @@ WOMEN_ILLUSTRATIONS = [
 
 
 if __name__ == "__main__":
-    build_reel.QUOTES_FILE = build_runtime_quote_file(
+    build_reel.QUOTES_FILE = build_curated_runtime_quote_file(
         WOMEN_QUOTE_PARTS,
         Path("outputs/quotes_runtime.csv"),
+        target_days=365,
+        legacy_prefixes=("WLEG",),
+        source_weights={"WOM": 12, "WEMP": 5, "SG": 2},
     )
     build_reel.ILLUSTRATIONS = WOMEN_ILLUSTRATIONS
     apply_visual_theme(build_reel)
