@@ -1,7 +1,8 @@
 """Women/general content entry point for Talk N Walks.
 
 Builds a fresh Day-1 production pool from the new quote libraries, auto-detects
-all unique illustrations, applies the shared visual theme, and adds topic-aware audio.
+eligible illustrations from the shared illustration folder, applies the shared
+visual theme, and adds topic-aware audio.
 """
 
 from pathlib import Path
@@ -38,7 +39,7 @@ if __name__ == "__main__":
         exclude_prefixes=("WLEG",),
         source_weights={"WOM": 12, "WEMP": 5, "SG": 2},
     )
-    apply_illustration_pool(build_reel, Path("illustrations"))
+    apply_illustration_pool(build_reel, Path("illustrations"), stream="women")
     apply_visual_theme(build_reel)
     build_reel.main()
     apply_audio_to_build(
