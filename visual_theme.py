@@ -4,10 +4,14 @@ Keeps the approved cream background and monochrome layout while safely
 wrapping longer quotes from the expanded content libraries.
 """
 
+from collections import deque
+
+
 BACKGROUND_COLOR = "#F4F1EA"
 QUOTE_LINE_SPACING = 8
 MAX_QUOTE_LINES = 4
 MAX_QUOTE_HEIGHT = 300
+WHITE_BACKGROUND_THRESHOLD = 248
 
 
 def _wrap_quote(draw, text, font, max_width):
@@ -59,6 +63,63 @@ def _fit_quote(build_reel, draw, text):
     return fallback
 
 
+def _remove_opaque_white_background(image):
+    """Make an opaque edge-connected white background transparent.
+
+    PNG does not guarantee transparency. Some generated line-art PNGs arrive as
+    fully opaque RGB/RGBA images on white. We only remove near-white pixels that
+    connect to an outer edge, which preserves enclosed white areas inside the
+    illustration. Images that already contain transparency are left unchanged.
+    """
+    rgba = image.convert("RGBA")
+    alpha = rgba.getchannel("A")
+    if alpha.getextrema()[0] < 255:
+        return rgba
+
+    width, height = rgba.size
+    pixels = rgba.load()
+    visited = bytearray(width * height)
+    queue = deque()
+
+    def add_if_background(x, y):
+        index = y * width + x
+        if visited[index]:
+            return
+        visited[index] = 1
+        red, green, blue, _ = pixels[x, y]
+        if (
+            red >= WHITE_BACKGROUND_THRESHOLD
+            and green >= WHITE_BACKGROUND_THRESHOLD
+            and blue >= WHITE_BACKGROUND_THRESHOLD
+        ):
+            queue.append((x, y))
+
+    for x in range(width):
+        add_if_background(x, 0)
+        if height > 1:
+            add_if_background(x, height - 1)
+    for y in range(1, max(1, height - 1)):
+        add_if_background(0, y)
+        if width > 1:
+            add_if_background(width - 1, y)
+
+    while queue:
+        x, y = queue.popleft()
+        red, green, blue, _ = pixels[x, y]
+        pixels[x, y] = (red, green, blue, 0)
+
+        if x > 0:
+            add_if_background(x - 1, y)
+        if x + 1 < width:
+            add_if_background(x + 1, y)
+        if y > 0:
+            add_if_background(x, y - 1)
+        if y + 1 < height:
+            add_if_background(x, y + 1)
+
+    return rgba
+
+
 def apply_visual_theme(build_reel):
     """Apply the approved visual theme without changing the legacy builder."""
 
@@ -72,8 +133,11 @@ def apply_visual_theme(build_reel):
         wrapped_quote, qfont, quote_w, quote_h = _fit_quote(build_reel, draw, quote)
         hfont = build_reel.find_font(build_reel.HANDLE_SIZE, serif=False)
 
+        source_art = _remove_opaque_white_background(
+            build_reel.Image.open(illustration_path)
+        )
         art = build_reel.fit_inside(
-            build_reel.Image.open(illustration_path),
+            source_art,
             build_reel.ILLUSTRATION_MAX_W,
             build_reel.ILLUSTRATION_MAX_H,
         )
