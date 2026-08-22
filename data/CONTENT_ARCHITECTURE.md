@@ -7,15 +7,10 @@ This layer is intentionally data-driven. Adding a new topic or occasion should n
 - `data/topics.csv` — canonical topic taxonomy and default Highlight mapping.
 - `data/events.csv` — occasion/awareness-day calendar with lead windows.
 - `data/content_master_template.csv` — future unified quote schema.
+- `data/library/*.csv` — active source libraries for Women/general, Men, Children/Teens, and shared self-growth content.
+- `data/references/*.csv` — reference/source material used to develop attributed or inspired content.
 
-Existing audience libraries remain valid and unchanged for now:
-
-- `data/quotes.csv` — current women/live library
-- `data/men/quotes.csv`
-- `data/children/quotes.csv`
-- `data/references/*.csv`
-
-Migration into a unified master library should happen gradually after the publishing system is stable.
+The legacy audience CSVs at `data/quotes.csv`, `data/men/quotes.csv`, and `data/children/quotes.csv` have been retired. Production builders now read from `data/library/` and generate runtime CSVs under `outputs/`.
 
 ## Content model
 
@@ -60,7 +55,7 @@ Supported design forms:
 
 Variable religious/lunar observances must never be guessed from a fixed date.
 
-## Future selector priority
+## Selector priority
 
 When smart selection is implemented, the intended order is:
 
@@ -91,7 +86,7 @@ The selection engine should use metadata/tags to choose among them.
 
 ## Source and attribution rules
 
-`SourceType` in the future master content file should distinguish at least:
+`SourceType` should distinguish at least:
 
 - `original`
 - `inspired_by`
@@ -110,6 +105,6 @@ Never present an `inspired_by` paraphrase as a verbatim quote from an author. Di
 
 The visual itself should stay uncluttered. Attribution may appear in the caption rather than on the artwork unless the author is central to the post.
 
-## Current safety rule
+## Production safety
 
-This architecture is not yet wired into the live workflows. The existing women, men, and children publishing behavior should remain unchanged until the selector is built and tested in build-only mode.
+Women/general and Men build curated 365-day runtime pools from the richer source libraries. Children/Teens builds from `data/library/children_master.csv`. Already-published legacy day rows remain protected where needed for duplicate safety, but the retired legacy CSV files are no longer production inputs.
