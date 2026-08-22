@@ -1,8 +1,12 @@
-"""Topic-aware audio selection for Talk N Walks Reels.
+"""Rights-aware, topic-aware audio selection for Talk N Walks Reels.
 
-If licensed audio files are present under audio/<mood>/, one is chosen
-deterministically by day. Otherwise an original generated 8-second cue is
-created so production never depends on external music availability.
+Production has two audio lanes:
+- auto: only files with confirmed reusable rights are embedded in the MP4;
+- instagram_library: famous/trending songs are recommendations only and are never
+  embedded by this pipeline.
+
+If no approved auto track exists, an original generated cue is used so build and
+publishing reliability do not depend on external music availability.
 """
 
 from __future__ import annotations
@@ -18,8 +22,10 @@ from pathlib import Path
 
 AUDIO_ROOT = Path(os.getenv("AUDIO_ROOT", "audio"))
 MAPPING_FILE = Path(os.getenv("AUDIO_MAPPING_FILE", "data/audio_mappings.csv"))
+CATALOG_FILE = Path(os.getenv("AUDIO_CATALOG_FILE", "data/audio_catalog.csv"))
 SUPPORTED_AUDIO = {".wav", ".mp3", ".m4a", ".aac", ".flac", ".ogg"}
 DEFAULT_MOOD = "reflective"
+AUTO_RIGHTS = {"rights_cleared", "owned", "original", "public_domain"}
 
 PROFILES = {
     "energy": {
@@ -85,6 +91,17 @@ def _midi_to_hz(note: float) -> float:
     return 440.0 * (2.0 ** ((note - 69.0) / 12.0))
 
 
+def _as_int(value: str | None) -> int:
+    try:
+        return int((value or "0").strip())
+    except ValueError:
+        return 0
+
+
+def _is_active(value: str | None) -> bool:
+    return (value or "").strip().lower() in {"1", "true", "yes", "y"}
+
+
 def load_theme_moods(path: Path = MAPPING_FILE) -> dict[str, str]:
     if not path.exists():
         return {}
@@ -118,7 +135,128 @@ def resolve_mood(theme: str) -> str:
     return DEFAULT_MOOD
 
 
+def load_audio_catalog(path: Path = CATALOG_FILE) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8") as f:
+        return [dict(row) for row in csv.DictReader(f)]
+
+
+def _audience_matches(audience: str, stream: str) -> bool:
+    audience = audience.strip().lower()
+    stream = stream.strip().lower()
+    if audience in {"all", ""}:
+        return True
+    if audience == "adults":
+        return stream in {"women", "men", "all", "adults"}
+    if stream == "women":
+        return audience in {"women"}
+    if stream == "men":
+        return audience in {"men"}
+    if stream == "children":
+        return audience in {"kids", "teens", "children"}
+    return audience == stream
+
+
+def _track_topics(row: dict[str, str]) -> set[str]:
+    return {
+        item.strip().lower()
+        for item in (row.get("Topics") or "").split(";")
+        if item.strip()
+    }
+
+
+def _catalog_score(row: dict[str, str], mood: str, topic: str) -> int:
+    score = 0
+    if (row.get("Mood") or "").strip().lower() == mood.lower():
+        score += 50
+
+    topic_lower = topic.strip().lower()
+    topics = _track_topics(row)
+    if topic_lower and topic_lower in topics:
+        score += 35
+    elif topic_lower and any(topic_lower in value or value in topic_lower for value in topics):
+        score += 15
+
+    score += _as_int(row.get("TrendScore")) * 3
+    score += _as_int(row.get("PopularityScore"))
+    score += _as_int(row.get("NostalgiaScore"))
+    return score
+
+
+def _eligible_catalog_rows(
+    catalog: list[dict[str, str]],
+    *,
+    stream: str,
+    lane: str,
+    require_file: bool,
+) -> list[dict[str, str]]:
+    eligible: list[dict[str, str]] = []
+    for row in catalog:
+        if not _is_active(row.get("Active")):
+            continue
+        if (row.get("Lane") or "").strip().lower() != lane:
+            continue
+        if not _audience_matches(row.get("Audience", "All"), stream):
+            continue
+
+        if require_file:
+            rights = (row.get("RightsStatus") or "").strip().lower()
+            if rights not in AUTO_RIGHTS:
+                continue
+            file_text = (row.get("FilePath") or "").strip()
+            if not file_text:
+                continue
+            file_path = Path(file_text)
+            if file_path.suffix.lower() not in SUPPORTED_AUDIO or not file_path.exists():
+                continue
+        eligible.append(row)
+    return eligible
+
+
+def _choose_non_repeating_catalog_row(
+    catalog: list[dict[str, str]],
+    *,
+    contexts: list[dict[str, str]],
+    day: int,
+    stream: str,
+    lane: str,
+    require_file: bool,
+) -> dict[str, str] | None:
+    """Simulate Days 1..day so a stream exhausts its pool before reuse."""
+    eligible = _eligible_catalog_rows(
+        catalog,
+        stream=stream,
+        lane=lane,
+        require_file=require_file,
+    )
+    if not eligible:
+        return None
+
+    used: set[str] = set()
+    chosen: dict[str, str] | None = None
+    for index in range(day):
+        if len(used) >= len(eligible):
+            used.clear()
+
+        context = contexts[index] if index < len(contexts) else contexts[-1]
+        mood = resolve_mood(context.get("Theme", ""))
+        topic = context.get("Topic", "")
+        available = [row for row in eligible if row.get("TrackID", "") not in used]
+        available.sort(
+            key=lambda row: (
+                -_catalog_score(row, mood, topic),
+                row.get("TrackID", ""),
+            )
+        )
+        chosen = available[0]
+        used.add(chosen.get("TrackID", ""))
+
+    return chosen
+
+
 def choose_library_track(mood: str, day: int, audio_root: Path = AUDIO_ROOT) -> Path | None:
+    """Legacy folder fallback for already-approved local audio assets."""
     folder = audio_root / mood
     if not folder.exists():
         return None
@@ -233,15 +371,89 @@ def prepare_audio(
     day: int,
     output_path: Path,
     duration: float = 8.0,
+    *,
+    stream: str = "all",
+    topic: str = "",
+    history_contexts: list[dict[str, str]] | None = None,
 ) -> dict[str, str | Path]:
-    """Pick a licensed library track when available, else create original audio."""
+    """Select safe embedded audio and an optional Instagram-library recommendation."""
     mood = resolve_mood(theme)
-    library_track = choose_library_track(mood, day)
-    if library_track:
-        return {"path": library_track, "mood": mood, "source": "library"}
+    contexts = history_contexts or [{"Theme": theme, "Topic": topic}]
+    if len(contexts) < day:
+        contexts = contexts + [{"Theme": theme, "Topic": topic}] * (day - len(contexts))
 
-    write_generated_track(output_path, mood=mood, day=day, duration=duration)
-    return {"path": output_path, "mood": mood, "source": "generated"}
+    catalog = load_audio_catalog()
+    recommendation = _choose_non_repeating_catalog_row(
+        catalog,
+        contexts=contexts,
+        day=day,
+        stream=stream,
+        lane="instagram_library",
+        require_file=False,
+    )
+
+    auto_track = _choose_non_repeating_catalog_row(
+        catalog,
+        contexts=contexts,
+        day=day,
+        stream=stream,
+        lane="auto",
+        require_file=True,
+    )
+
+    info: dict[str, str | Path]
+    if auto_track:
+        audio_path = Path(auto_track["FilePath"])
+        info = {
+            "path": audio_path,
+            "mood": mood,
+            "source": "catalog_auto",
+            "track_id": auto_track.get("TrackID", ""),
+            "track": auto_track.get("Track", ""),
+            "artist": auto_track.get("Artist", ""),
+        }
+    else:
+        legacy_track = choose_library_track(mood, day)
+        if legacy_track:
+            info = {
+                "path": legacy_track,
+                "mood": mood,
+                "source": "legacy_library",
+                "track_id": "",
+                "track": legacy_track.stem,
+                "artist": "",
+            }
+        else:
+            write_generated_track(output_path, mood=mood, day=day, duration=duration)
+            info = {
+                "path": output_path,
+                "mood": mood,
+                "source": "generated",
+                "track_id": "",
+                "track": "Talk N Walks generated cue",
+                "artist": "Talk N Walks",
+            }
+
+    if recommendation:
+        info.update(
+            {
+                "recommendation_id": recommendation.get("TrackID", ""),
+                "recommendation_track": recommendation.get("Track", ""),
+                "recommendation_artist": recommendation.get("Artist", ""),
+                "recommendation_rights": recommendation.get("RightsStatus", ""),
+            }
+        )
+    else:
+        info.update(
+            {
+                "recommendation_id": "",
+                "recommendation_track": "",
+                "recommendation_artist": "",
+                "recommendation_rights": "",
+            }
+        )
+
+    return info
 
 
 def replace_reel_audio(video_path: Path, audio_path: Path, duration: float = 8.0) -> None:
