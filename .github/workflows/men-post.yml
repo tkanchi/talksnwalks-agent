@@ -4,17 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       day:
-        description: "Optional men quote day (1-100) for testing"
-        required: false
+        description: "Men quote day (1-365)"
+        required: true
+        default: "1"
         type: string
       publish:
         description: "Actually publish to Instagram"
         required: true
         default: false
         type: boolean
-  schedule:
-    # GitHub cron uses UTC. 12:47 UTC = 18:17 IST.
-    - cron: "47 12 * * *"
 
 permissions:
   contents: write
@@ -24,8 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      # First scheduled men post is Day 1 on 2026-08-21.
-      START_DATE: "2026-08-21"
       DAY_NUMBER: ${{ inputs.day }}
       META_API_VERSION: "v26.0"
       META_GRAPH_HOST: "https://graph.instagram.com"
@@ -39,10 +35,7 @@ jobs:
       - name: Decide whether this run publishes
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            echo "Scheduled men run: automatic Instagram publishing enabled."
-            echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.publish }}" = "true" ]; then
+          if [ "${{ inputs.publish }}" = "true" ]; then
             echo "Manual men run: publishing enabled."
             echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
           else
