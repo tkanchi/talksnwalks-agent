@@ -4,6 +4,7 @@ from pathlib import Path
 
 import build_reel
 from apply_audio import apply_audio_to_build
+from visual_theme import apply_visual_theme
 
 
 CONTENT_NAME = "children"
@@ -18,6 +19,7 @@ build_reel.ILLUSTRATIONS = sorted(
 
 
 if __name__ == "__main__":
+    apply_visual_theme(build_reel)
     build_reel.main()
     apply_audio_to_build(
         build_reel.QUOTES_FILE,
