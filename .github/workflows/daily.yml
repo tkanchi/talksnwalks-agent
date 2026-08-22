@@ -4,18 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       day:
-        description: "Optional day number (1-365) for testing"
-        required: false
+        description: "Women/general quote day (1-365)"
+        required: true
+        default: "1"
         type: string
       publish:
         description: "Actually publish to Instagram"
         required: true
         default: false
         type: boolean
-  schedule:
-    # GitHub cron uses UTC. 02:13 UTC = 07:43 IST.
-    # The Reel is built first, then published automatically through Instagram API.
-    - cron: "13 2 * * *"
 
 permissions:
   contents: write
@@ -25,9 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      # Days 1-4 are already published; Day 4 was recovered manually on Aug 22.
-      # Using Aug 19 makes the Aug 23 scheduled run continue with Day 5.
-      START_DATE: "2026-08-19"
       DAY_NUMBER: ${{ inputs.day }}
       META_API_VERSION: "v26.0"
       META_GRAPH_HOST: "https://graph.instagram.com"
@@ -41,10 +35,7 @@ jobs:
       - name: Decide whether this run publishes
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            echo "Scheduled run: automatic Instagram publishing enabled."
-            echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.publish }}" = "true" ]; then
+          if [ "${{ inputs.publish }}" = "true" ]; then
             echo "Manual run: publishing enabled."
             echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
           else
@@ -70,7 +61,7 @@ jobs:
           fi
           ffmpeg -version | head -n 1
 
-      - name: Build today's branded Reel
+      - name: Build branded Reel
         run: python build_women.py
 
       - name: Load build metadata
