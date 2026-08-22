@@ -34,7 +34,12 @@ if __name__ == "__main__":
         exclude_prefixes=("MLEG",),
         source_weights={"MEN": 12, "SG": 2},
     )
-    apply_illustration_pool(build_reel, Path("illustrations"), stream="men")
+    apply_illustration_pool(
+        build_reel,
+        Path("illustrations"),
+        stream="men",
+        quote_file=build_reel.QUOTES_FILE,
+    )
     apply_visual_theme(build_reel)
     build_reel.main()
     apply_audio_to_build(
