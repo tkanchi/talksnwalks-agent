@@ -9,6 +9,7 @@ from pathlib import Path
 
 import build_reel
 from apply_audio import apply_audio_to_build
+from audio_quality_gate import require_real_audio
 from illustration_pool import apply_illustration_pool
 from quote_library import build_curated_runtime_quote_file
 from visual_theme import apply_visual_theme
@@ -53,3 +54,4 @@ if __name__ == "__main__":
         duration=build_reel.REEL_SECONDS,
         stream="women",
     )
+    require_real_audio(build_reel.OUTPUT_DIR)
