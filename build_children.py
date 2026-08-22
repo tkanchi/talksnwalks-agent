@@ -21,7 +21,7 @@ if __name__ == "__main__":
         Path("outputs/children/quotes_runtime.csv"),
         preserve_days=0,
     )
-    apply_illustration_pool(build_reel, Path("illustrations/children"))
+    apply_illustration_pool(build_reel, Path("illustrations"), stream="children")
     apply_visual_theme(build_reel)
     build_reel.main()
     apply_audio_to_build(
