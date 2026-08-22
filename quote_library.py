@@ -40,7 +40,6 @@ def _impact_score(row: dict[str, str], source_weights: dict[str, int] | None = N
     char_count = len(quote)
     score = 0
 
-    # Reel text performs best for us when it is concise enough to read instantly.
     if 6 <= word_count <= 14:
         score += 18
     elif 15 <= word_count <= 18:
@@ -83,7 +82,6 @@ def _impact_score(row: dict[str, str], source_weights: dict[str, int] | None = N
     )):
         score += 5
 
-    # Avoid letting technically useful but overly corporate copy dominate the feed.
     for term in (
         "organization", "stakeholder", "performance system", "framework",
         "operating model", "productivity system",
@@ -142,15 +140,18 @@ def build_curated_runtime_quote_file(
     *,
     target_days: int = 365,
     legacy_prefixes: tuple[str, ...] = (),
+    exclude_prefixes: tuple[str, ...] = (),
     source_weights: dict[str, int] | None = None,
 ) -> Path:
-    """Create a varied high-impact pool while preserving already-published legacy rows."""
+    """Create a varied high-impact pool, with optional explicit legacy exclusion."""
     raw_rows = _load_rows(parts)
 
-    # Deduplicate identical wording across overlapping source libraries.
     seen: set[str] = set()
     rows: list[dict[str, str]] = []
     for row in raw_rows:
+        quote_id = row.get("QuoteID", "")
+        if any(quote_id.startswith(prefix) for prefix in exclude_prefixes):
+            continue
         quote = row.get("Quote", "").strip()
         normalised = _normalise_quote(quote)
         if not normalised or normalised in seen:
@@ -176,7 +177,6 @@ def build_curated_runtime_quote_file(
     for group in groups.values():
         group.sort(key=lambda row: (-int(row["_score"]), row.get("QuoteID", "")))
 
-    # Strongest topic leads, then round-robin prevents blocks of near-identical content.
     topic_order = sorted(
         groups,
         key=lambda topic: (
@@ -204,7 +204,7 @@ def build_curated_simple_quote_file(
     *,
     preserve_days: int = 0,
 ) -> Path:
-    """Curate a legacy Day/Quote/Theme file without inventing new child/teen copy."""
+    """Curate a simple quote source into a varied runtime pool."""
     with source.open(newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
 
@@ -213,14 +213,14 @@ def build_curated_simple_quote_file(
     groups: dict[str, list[dict[str, str]]] = defaultdict(list)
     for index, row in enumerate(candidates, start=preserve_days + 1):
         enriched = dict(row)
-        enriched["QuoteID"] = f"CH{index:03d}"
-        enriched["Topic"] = row.get("Theme", "")
-        enriched["SourceType"] = "original"
+        enriched["QuoteID"] = row.get("QuoteID", "") or row.get("ID", "") or f"CH{index:03d}"
+        enriched["Topic"] = row.get("Topic", "") or row.get("Theme", "")
+        enriched["SourceType"] = row.get("SourceType", "") or row.get("Type", "") or "original"
         enriched["_score"] = str(_impact_score(enriched))
         groups[row.get("Theme", "Other")].append(enriched)
 
     for group in groups.values():
-        group.sort(key=lambda row: (-int(row["_score"]), int(row.get("Day", 0) or 0)))
+        group.sort(key=lambda row: (-int(row["_score"]), row.get("QuoteID", "")))
 
     theme_order = sorted(
         groups,
@@ -231,9 +231,9 @@ def build_curated_simple_quote_file(
         selected.append(
             {
                 **row,
-                "QuoteID": f"CH{index:03d}",
-                "Topic": row.get("Theme", ""),
-                "SourceType": "original",
+                "QuoteID": row.get("QuoteID", "") or row.get("ID", "") or f"CH{index:03d}",
+                "Topic": row.get("Topic", "") or row.get("Theme", ""),
+                "SourceType": row.get("SourceType", "") or row.get("Type", "") or "original",
             }
         )
 
