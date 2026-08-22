@@ -4,7 +4,7 @@ from pathlib import Path
 
 import build_reel
 from apply_audio import apply_audio_to_build
-from quote_library import build_runtime_quote_file
+from quote_library import build_curated_runtime_quote_file
 from visual_theme import apply_visual_theme
 
 
@@ -14,6 +14,11 @@ MEN_QUOTE_PARTS = [
     Path("data/library/men_master_part_02.csv"),
     Path("data/library/men_master_part_03.csv"),
     Path("data/library/men_master_part_04.csv"),
+    Path("data/library/self_growth_part_01.csv"),
+    Path("data/library/self_growth_part_02.csv"),
+    Path("data/library/self_growth_part_03.csv"),
+    Path("data/library/self_growth_part_04.csv"),
+    Path("data/library/self_growth_part_05.csv"),
 ]
 
 build_reel.ILLUSTRATION_DIR = Path("illustrations/men")
@@ -25,9 +30,12 @@ build_reel.ILLUSTRATIONS = sorted(
 
 
 if __name__ == "__main__":
-    build_reel.QUOTES_FILE = build_runtime_quote_file(
+    build_reel.QUOTES_FILE = build_curated_runtime_quote_file(
         MEN_QUOTE_PARTS,
         Path("outputs/men/quotes_runtime.csv"),
+        target_days=365,
+        legacy_prefixes=("MLEG",),
+        source_weights={"MEN": 12, "SG": 2},
     )
     apply_visual_theme(build_reel)
     build_reel.main()
