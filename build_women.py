@@ -1,11 +1,12 @@
 """Women/general content entry point for Talk N Walks.
 
 The proven visual/content builder stays unchanged; this wrapper only applies
-a safer illustration order plus topic-aware audio after the Reel is built.
+a safer illustration order plus the shared visual theme and topic-aware audio.
 """
 
 import build_reel
 from apply_audio import apply_audio_to_build
+from visual_theme import apply_visual_theme
 
 
 WOMEN_ILLUSTRATIONS = [
@@ -22,6 +23,7 @@ WOMEN_ILLUSTRATIONS = [
 
 if __name__ == "__main__":
     build_reel.ILLUSTRATIONS = WOMEN_ILLUSTRATIONS
+    apply_visual_theme(build_reel)
     build_reel.main()
     apply_audio_to_build(
         build_reel.QUOTES_FILE,
