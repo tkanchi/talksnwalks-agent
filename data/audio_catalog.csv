@@ -1,0 +1,10 @@
+TrackID,Track,Artist,Mood,Audience,Topics,Era,Lane,RightsStatus,FilePath,TrendScore,PopularityScore,NostalgiaScore,Active,Notes
+NOST001,Stayin' Alive,Bee Gees,energy,Adults,Fitness;Discipline;Confidence;Lifestyle,nostalgia,instagram_library,instagram_licensed_only,,0,95,100,true,Recommendation only; attach from Instagram music library if available.
+NOST002,Billie Jean,Michael Jackson,bold,Adults,Confidence;Lifestyle;Discipline,nostalgia,instagram_library,instagram_licensed_only,,0,100,100,true,Recommendation only; attach from Instagram music library if available.
+NOST003,Beat It,Michael Jackson,energy,Adults,Fitness;Courage;Discipline;Confidence,nostalgia,instagram_library,instagram_licensed_only,,0,98,100,true,Recommendation only; attach from Instagram music library if available.
+NOST004,It Wasn't Me,Shaggy,joyful,Adults,Funny & Relatable;Relationships;Lifestyle,nostalgia,instagram_library,instagram_licensed_only,,0,90,95,true,Recommendation only; use an account-appropriate clean version when available.
+NOST005,It Was a Good Day,Ice Cube,reflective,Adults,Lifestyle;Gratitude;Peace,nostalgia,instagram_library,instagram_licensed_only,,0,90,95,true,Recommendation only; use an account-appropriate clean version when available.
+NOST006,Stronger,Kanye West,energy,Adults,Fitness;Discipline;Resilience;Confidence,nostalgia,instagram_library,instagram_licensed_only,,0,95,95,true,Recommendation only; attach from Instagram music library if available.
+NOST007,Crazy in Love,Beyoncé,joyful,Adults,Love;Fitness;Lifestyle;Confidence,nostalgia,instagram_library,instagram_licensed_only,,0,98,95,true,Recommendation only; attach from Instagram music library if available.
+NOST008,Halo,Beyoncé,warm,Adults,Love;Hope;Relationships;Peace,nostalgia,instagram_library,instagram_licensed_only,,0,98,95,true,Recommendation only; attach from Instagram music library if available.
+AUTO_TEMPLATE_001,Replace with approved track,Artist,reflective,All,Growth;Peace,current,auto,rights_cleared,audio/reflective/replace_me.mp3,0,0,0,false,Template only. Set a real FilePath and Active=true only after usage rights are confirmed.
