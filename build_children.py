@@ -22,7 +22,7 @@ if __name__ == "__main__":
     # Days 1-3 stay fixed because Days 2 and 3 already have publish logs.
     # Future rows are reordered for stronger hooks and better theme variety.
     build_reel.QUOTES_FILE = build_curated_simple_quote_file(
-        Path("data/children/quotes.csv"),
+        Path("data/library/children_master.csv"),
         Path("outputs/children/quotes_runtime.csv"),
         preserve_days=3,
     )
