@@ -1,10 +1,10 @@
 """Locked visual system for Talks N Walks posts.
 
-Every quote gets a newly generated AI background. Quote text, attribution,
-lower-case Instagram handle and the small monochrome brand mark are added in
-code afterward so those elements stay exact and consistent.
+Every quote gets a newly generated AI background. Quote text, attribution and
+the lower-case Instagram handle are added in code afterward so those elements
+stay exact and consistent. No logo is added to posts.
 
-The historical illustration library is not used for post artwork or branding.
+The historical illustration library is not used for AI post artwork.
 """
 
 from __future__ import annotations
@@ -16,7 +16,6 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 from ai_visual import generate_background
-from brand_logo import load_logo
 
 
 QUOTE_COLOUR = "#171820"
@@ -29,7 +28,6 @@ QUOTE_MIN_SIZE = 32
 MAX_QUOTE_WIDTH = 880
 AUTHOR_SIZE = 34
 HANDLE_SIZE = 27
-LOGO_SIZE = 104
 
 
 def _wrap_quote(draw, text, font, max_width):
@@ -109,13 +107,6 @@ def _lighten_text_zone(canvas: Image.Image) -> Image.Image:
     return Image.alpha_composite(canvas.convert("RGBA"), overlay).convert("RGB")
 
 
-def _fixed_logo(size: int = LOGO_SIZE) -> Image.Image:
-    """Return the approved black-and-white profile logo at post size."""
-    logo = load_logo()
-    logo.thumbnail((size, size), Image.Resampling.LANCZOS)
-    return logo
-
-
 def _draw_divider(draw, center_x: int, y: int, font):
     line_w = 140
     gap = 28
@@ -149,7 +140,7 @@ def _prepare_placeholder(build_reel):
 
 
 def apply_visual_theme(build_reel):
-    """Install the locked Talks N Walks AI visual renderer."""
+    """Install the Talks N Walks AI visual renderer without a logo overlay."""
     _prepare_placeholder(build_reel)
 
     def compose_post(quote, illustration_path, output_jpg):
@@ -189,7 +180,6 @@ def apply_visual_theme(build_reel):
         divider_gap = 36
         author_gap = 28 if author_line else 10
         handle_gap = 30
-        logo_gap = 16
         total_h = (
             quote_h
             + divider_gap
@@ -198,8 +188,6 @@ def apply_visual_theme(build_reel):
             + attribution_h
             + handle_gap
             + handle_h
-            + logo_gap
-            + LOGO_SIZE
         )
         block_top = max(220, int(620 - total_h / 2))
 
@@ -235,11 +223,6 @@ def apply_visual_theme(build_reel):
             fill=ACCENT_COLOUR,
             font=handle_font,
         )
-        cursor_y += handle_h + logo_gap
-
-        logo = _fixed_logo()
-        logo_x = (build_reel.CANVAS_W - logo.width) // 2
-        canvas.paste(logo, (logo_x, int(cursor_y)), logo)
 
         output_jpg.parent.mkdir(parents=True, exist_ok=True)
         canvas.save(output_jpg, "JPEG", quality=94, optimize=True, progressive=True)
