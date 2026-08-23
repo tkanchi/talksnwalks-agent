@@ -14,9 +14,9 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter
 
 from brand_logo import load_logo
+from pastel_sprite_data import load_pastel_sprite
 
 
-SPRITE = Path("assets/pastel/pastel_sprite.jpg")
 TILE_W = 105
 TILE_H = 186
 QUOTE_COLOUR = "#202027"
@@ -103,9 +103,7 @@ def _choose_scene(stream: str, row: dict[str, str], quote: str, day: int) -> dic
 
 
 def _load_scene(scene: dict, width: int, height: int) -> Image.Image:
-    if not SPRITE.exists():
-        raise FileNotFoundError(f"Locked pastel visual asset is missing: {SPRITE}")
-    sprite = Image.open(SPRITE).convert("RGB")
+    sprite = load_pastel_sprite()
     tile = int(scene["tile"])
     left = (tile % 4) * TILE_W
     top = (tile // 4) * TILE_H
