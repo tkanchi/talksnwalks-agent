@@ -4,20 +4,19 @@ Every quote gets a newly generated AI background. Quote text, attribution,
 lower-case Instagram handle and the small monochrome brand mark are added in
 code afterward so those elements stay exact and consistent.
 
-The historical illustration library is NOT used to choose post artwork. One
-fixed reading image is retained only as the brand-logo source.
+The historical illustration library is not used for post artwork or branding.
 """
 
 from __future__ import annotations
 
 import csv
-import os
 import re
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageOps
+from PIL import Image, ImageDraw
 
 from ai_visual import generate_background
+from brand_logo import load_logo
 
 
 QUOTE_COLOUR = "#171820"
@@ -31,12 +30,6 @@ MAX_QUOTE_WIDTH = 880
 AUTHOR_SIZE = 34
 HANDLE_SIZE = 27
 LOGO_SIZE = 104
-
-# This is a fixed BRAND asset only. It is never used as post artwork.
-# The logo is converted to monochrome and placed underneath @talksnwalks101.
-LOGO_SOURCE = Path(
-    os.getenv("BRAND_LOGO_SOURCE", "illustrations/women_reading_cozy_floor_01.png")
-)
 
 
 def _wrap_quote(draw, text, font, max_width):
@@ -109,44 +102,41 @@ def _lighten_text_zone(canvas: Image.Image) -> Image.Image:
     """Add only a very soft light veil; never a dark top gradient."""
     overlay = Image.new("RGBA", canvas.size, (255, 250, 246, 0))
     draw = ImageDraw.Draw(overlay)
-    draw.rectangle((0, 0, canvas.width, int(canvas.height * 0.54)), fill=(255, 250, 246, 44))
+    draw.rectangle(
+        (0, 0, canvas.width, int(canvas.height * 0.54)),
+        fill=(255, 250, 246, 44),
+    )
     return Image.alpha_composite(canvas.convert("RGBA"), overlay).convert("RGB")
 
 
-def _monochrome_logo(build_reel, size: int = LOGO_SIZE) -> Image.Image:
-    """Create the fixed small black-and-white logo from one dedicated source."""
-    if not LOGO_SOURCE.exists():
-        raise FileNotFoundError(f"Fixed brand logo source is missing: {LOGO_SOURCE}")
-
-    source = build_reel.Image.open(LOGO_SOURCE).convert("RGBA")
-    source = build_reel.trim_transparent(source)
-    source.thumbnail((size - 18, size - 18), Image.Resampling.LANCZOS)
-
-    # Convert artwork detail to black while making pale/white areas transparent.
-    gray = ImageOps.grayscale(source)
-    original_alpha = source.getchannel("A")
-    detail_alpha = gray.point(lambda value: max(0, min(255, (232 - value) * 3)))
-    detail_alpha = Image.composite(detail_alpha, Image.new("L", source.size, 0), original_alpha)
-    black = Image.new("RGBA", source.size, (0, 0, 0, 0))
-    black.putalpha(detail_alpha)
-
-    badge = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    badge_draw = ImageDraw.Draw(badge)
-    badge_draw.ellipse((2, 2, size - 3, size - 3), fill=(255, 255, 255, 218), outline=(20, 20, 20, 255), width=2)
-    x = (size - black.width) // 2
-    y = (size - black.height) // 2
-    badge.alpha_composite(black, (x, y))
-    return badge
+def _fixed_logo(size: int = LOGO_SIZE) -> Image.Image:
+    """Return the approved black-and-white profile logo at post size."""
+    logo = load_logo()
+    logo.thumbnail((size, size), Image.Resampling.LANCZOS)
+    return logo
 
 
 def _draw_divider(draw, center_x: int, y: int, font):
     line_w = 140
     gap = 28
-    draw.line((center_x - gap - line_w, y, center_x - gap, y), fill=ACCENT_COLOUR, width=2)
-    draw.line((center_x + gap, y, center_x + gap + line_w, y), fill=ACCENT_COLOUR, width=2)
+    draw.line(
+        (center_x - gap - line_w, y, center_x - gap, y),
+        fill=ACCENT_COLOUR,
+        width=2,
+    )
+    draw.line(
+        (center_x + gap, y, center_x + gap + line_w, y),
+        fill=ACCENT_COLOUR,
+        width=2,
+    )
     heart = "♡"
     box = draw.textbbox((0, 0), heart, font=font)
-    draw.text((center_x - (box[2] - box[0]) / 2, y - 18), heart, fill=ACCENT_COLOUR, font=font)
+    draw.text(
+        (center_x - (box[2] - box[0]) / 2, y - 18),
+        heart,
+        fill=ACCENT_COLOUR,
+        font=font,
+    )
 
 
 def _prepare_placeholder(build_reel):
@@ -196,7 +186,6 @@ def apply_visual_theme(build_reel):
         handle_w = hbox[2] - hbox[0]
         handle_h = hbox[3] - hbox[1]
 
-        # Keep all deterministic text/logo inside the quiet upper half.
         divider_gap = 36
         author_gap = 28 if author_line else 10
         handle_gap = 30
@@ -248,7 +237,7 @@ def apply_visual_theme(build_reel):
         )
         cursor_y += handle_h + logo_gap
 
-        logo = _monochrome_logo(build_reel)
+        logo = _fixed_logo()
         logo_x = (build_reel.CANVAS_W - logo.width) // 2
         canvas.paste(logo, (logo_x, int(cursor_y)), logo)
 
