@@ -40,19 +40,19 @@ def _apply_visuals() -> None:
         print("External AI visual renderer enabled for men build.")
         return
 
-    if _enabled("LEGACY_VISUALS_ENABLED"):
-        apply_illustration_pool(
-            build_reel,
-            Path("illustrations"),
-            stream="men",
-            quote_file=build_reel.QUOTES_FILE,
-        )
-        apply_legacy_visual_theme(build_reel)
-        print("Legacy illustration renderer enabled for men build.")
+    if _enabled("PASTEL_VISUALS_ENABLED"):
+        apply_pastel_visual_theme(build_reel, stream="men")
+        print("Experimental pastel visual renderer enabled for men build.")
         return
 
-    apply_pastel_visual_theme(build_reel, stream="men")
-    print("Locked pastel visual renderer enabled for men build.")
+    apply_illustration_pool(
+        build_reel,
+        Path("illustrations"),
+        stream="men",
+        quote_file=build_reel.QUOTES_FILE,
+    )
+    apply_legacy_visual_theme(build_reel)
+    print("Stable production men visuals enabled.")
 
 
 if __name__ == "__main__":
