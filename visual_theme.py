@@ -1,17 +1,43 @@
 """Shared visual styling for Talk N Walks reel builders.
 
-Keeps the approved cream background and monochrome layout while safely
-wrapping longer quotes from the expanded content libraries.
+Keeps the approved monochrome layout while rotating through a controlled pastel
+background palette and safely wrapping longer quotes from the expanded content
+libraries.
 """
 
 from collections import deque
+import re
 
 
-BACKGROUND_COLOR = "#F4F1EA"
+PASTEL_BACKGROUNDS = (
+    "#F6E6E8",  # blush pink
+    "#E8F1F5",  # powder blue
+    "#E9F3E8",  # sage mint
+    "#F4EEDC",  # soft butter
+    "#EEE8F5",  # pale lavender
+    "#F5E8DE",  # peach cream
+    "#E5F2EF",  # soft aqua
+    "#F2E7EC",  # dusty rose
+    "#E9EDF6",  # periwinkle mist
+    "#EFF1E2",  # pale olive
+    "#F3E5DF",  # muted coral
+    "#E6F0EB",  # eucalyptus mist
+)
+BACKGROUND_COLOR = PASTEL_BACKGROUNDS[0]
 QUOTE_LINE_SPACING = 8
 MAX_QUOTE_LINES = 4
 MAX_QUOTE_HEIGHT = 300
 WHITE_BACKGROUND_THRESHOLD = 248
+
+
+def _background_for_output(output_jpg):
+    """Choose a repeatable pastel from the Day number in the output filename."""
+    match = re.search(r"day_(\d+)", output_jpg.stem, re.IGNORECASE)
+    if not match:
+        return BACKGROUND_COLOR
+
+    day = int(match.group(1))
+    return PASTEL_BACKGROUNDS[(day - 1) % len(PASTEL_BACKGROUNDS)]
 
 
 def _wrap_quote(draw, text, font, max_width):
@@ -127,7 +153,7 @@ def apply_visual_theme(build_reel):
         canvas = build_reel.Image.new(
             "RGB",
             (build_reel.CANVAS_W, build_reel.CANVAS_H),
-            BACKGROUND_COLOR,
+            _background_for_output(output_jpg),
         )
         draw = build_reel.ImageDraw.Draw(canvas)
         wrapped_quote, qfont, quote_w, quote_h = _fit_quote(build_reel, draw, quote)
