@@ -86,7 +86,11 @@ jobs:
           ffmpeg -version | head -n 1
 
       - name: Build men's branded Reel
-        run: python build_men.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AI_IMAGE_MODEL: "gpt-image-2"
+          AI_IMAGE_QUALITY: "medium"
+        run: AI_VISUAL_REQUIRED="$SHOULD_PUBLISH" python build_men.py
 
       - name: Load build metadata
         shell: bash
