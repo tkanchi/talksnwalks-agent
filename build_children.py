@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import csv
-import os
 from pathlib import Path
 
 import build_reel
@@ -11,9 +10,7 @@ from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
 from illustration_pool import apply_illustration_pool
 from legacy_visual_theme import apply_visual_theme as apply_legacy_visual_theme
-from pastel_visual_theme import apply_pastel_visual_theme
 from quote_library import build_curated_simple_quote_file
-from visual_theme import apply_visual_theme as apply_ai_visual_theme
 
 
 CONTENT_NAME = "children"
@@ -61,21 +58,7 @@ def apply_canonical_child_topics(path: Path) -> Path:
     return path
 
 
-def _enabled(name: str) -> bool:
-    return os.getenv(name, "false").strip().lower() in {"1", "true", "yes", "on"}
-
-
 def _apply_visuals() -> None:
-    if _enabled("AI_VISUALS_ENABLED"):
-        apply_ai_visual_theme(build_reel)
-        print("External AI visual renderer enabled for children build.")
-        return
-
-    if _enabled("PASTEL_VISUALS_ENABLED"):
-        apply_pastel_visual_theme(build_reel, stream="children")
-        print("Experimental pastel visual renderer enabled for children build.")
-        return
-
     apply_illustration_pool(
         build_reel,
         Path("illustrations"),
@@ -83,7 +66,7 @@ def _apply_visuals() -> None:
         quote_file=build_reel.QUOTES_FILE,
     )
     apply_legacy_visual_theme(build_reel)
-    print("Stable production children visuals enabled.")
+    print("Illustration-based children visuals enabled.")
 
 
 if __name__ == "__main__":
