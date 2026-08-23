@@ -1,12 +1,15 @@
 """Men content entry point for TalksNWalks101."""
 
+import os
 from pathlib import Path
 
 import build_reel
 from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
+from illustration_pool import apply_illustration_pool
+from legacy_visual_theme import apply_visual_theme as apply_legacy_visual_theme
 from quote_library import build_curated_runtime_quote_file
-from visual_theme import apply_visual_theme
+from visual_theme import apply_visual_theme as apply_ai_visual_theme
 
 
 CONTENT_NAME = "men"
@@ -26,6 +29,28 @@ build_reel.OUTPUT_DIR = Path("outputs/men")
 build_reel.PUBLIC_DIR = Path("public/men")
 
 
+def _ai_visuals_enabled() -> bool:
+    return os.getenv("AI_VISUALS_ENABLED", "false").strip().lower() in {
+        "1", "true", "yes", "on"
+    }
+
+
+def _apply_visuals() -> None:
+    if _ai_visuals_enabled():
+        apply_ai_visual_theme(build_reel)
+        print("AI visual renderer enabled for men build.")
+        return
+
+    apply_illustration_pool(
+        build_reel,
+        Path("illustrations"),
+        stream="men",
+        quote_file=build_reel.QUOTES_FILE,
+    )
+    apply_legacy_visual_theme(build_reel)
+    print("AI visual renderer disabled; using stable pre-AI men visuals.")
+
+
 if __name__ == "__main__":
     build_reel.QUOTES_FILE = build_curated_runtime_quote_file(
         MEN_QUOTE_PARTS,
@@ -34,7 +59,7 @@ if __name__ == "__main__":
         exclude_prefixes=("MLEG",),
         source_weights={"MEN": 12, "SG": 2},
     )
-    apply_visual_theme(build_reel)
+    _apply_visuals()
     build_reel.main()
     apply_audio_to_build(
         build_reel.QUOTES_FILE,
