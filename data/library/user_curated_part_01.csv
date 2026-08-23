@@ -1,0 +1,111 @@
+QuoteID,Quote,Audience,Topic,Theme,SourceType,InspiredBy,Author,OriginalTheme
+UC001,"Love is not just something to feel; it is something to live.",All,Love,Happiness & Gratitude,adapted,User submission,,Love
+UC002,"Sometimes walking away is not ego. It is self-respect.",All,Authenticity & Identity,Self-Worth,adapted,User submission,,Self-respect
+UC003,"There is beauty in noticing what everyone else overlooks.",All,Gratitude,Happiness & Gratitude,adapted,User submission,,Observation
+UC004,"Pain may stay for a while, but so can our reasons to smile.",All,Resilience,Resilience,adapted,User submission,,Pain and hope
+UC005,"We can look at the same thing and still see different worlds.",All,Communication & Social Skills,Growth,adapted,User submission,,Perspective
+UC006,"The axe forgets, but the tree remembers.",All,Integrity & Character,Growth,traditional,Traditional proverb,African proverb,Consequences
+UC007,"The love you give yourself becomes part of the foundation for your happiness.",All,Self-Belief,Self-Worth,adapted,User submission,,Self-love
+UC008,"People make time for what they truly prioritize.",All,Relationships,Peace & Letting Go,adapted,User submission,,Priorities
+UC009,"Give your own heart some of the love you keep giving away.",All,Mental Health,Self-Worth,adapted,User submission,,Self-love
+UC010,"Life is not a copied exam; everyone is answering a different set of questions.",All,Authenticity & Identity,Growth,adapted,User submission,,Individual path
+UC011,"Sometimes silence says what words cannot carry.",All,Mental Health,Peace & Letting Go,adapted,User submission,,Silence
+UC012,"Families can pass down pain, but cycles can also be interrupted.",All,Family,Growth,adapted,User submission,,Generational patterns
+UC013,"Some truths only become visible when you are willing to look into uncomfortable places.",All,Growth,Courage,adapted,User submission,,Truth
+UC014,"A real friend is not measured by the crowd around you, but by who stays when the crowd turns away.",All,Friendship,Happiness & Gratitude,adapted,User submission,,Friendship
+UC015,"Sometimes people ignore what hurt you and focus only on how you reacted.",All,Relationships,Peace & Letting Go,adapted,User submission,,Conflict
+UC016,"It hurts when you know you would have shown up for them without hesitation, and they chose not to do the same.",All,Relationships,Peace & Letting Go,adapted,User submission,,Reciprocity
+UC017,"I can be imperfect, complicated, healing, and still worthy of liking who I am.",Women,Body Confidence,Self-Worth,adapted,User submission,,Self-acceptance
+UC018,"Watching someone finally meet the consequences of how they treated others can feel like closure.",All,Breakups,Peace & Letting Go,adapted,User submission,,Karma and closure
+UC019,"Some of your hardest battles happen between what you know and what you still feel.",All,Mental Health,Resilience,adapted,User submission,,Head vs heart
+UC020,"I may not know where life is taking me, but I can still choose trust over panic.",All,Spirituality,Hope,adapted,User submission,,Faith
+UC021,"If things are not okay yet, maybe the story is not finished yet.",All,Hope,Hope,adapted,User submission,,Hope
+UC022,"Talk about your blessings often enough that your burdens are not the only thing shaping your attention.",All,Gratitude,Happiness & Gratitude,adapted,User submission,,Focus
+UC023,"Calm gives creativity more room to work than constant anxiety does.",All,Mental Health,Peace & Letting Go,inspired_by,Jenny Holzer idea,,Calm and creativity
+UC024,"Some feelings are real long before they are easy to explain.",All,Mental Health,Peace & Letting Go,adapted,User submission,,Emotions
+UC025,"Choosing your own company over poor company takes more strength than people realize.",All,Authenticity & Identity,Self-Worth,adapted,User submission,,Solitude
+UC026,"What you repeatedly focus on can shape what possibilities you notice next.",All,Growth,Growth,adapted,User submission,,Attention
+UC027,"Being intentional about who gets access to your time, body, mind, and energy is a form of self-care.",All,Mental Health,Self-Worth,inspired_by,Dr. Jen Wolkin idea,,Boundaries
+UC028,"Yesterday's pain does not deserve to steal all of today's happiness.",All,Happiness,Happiness & Gratitude,adapted,User submission,,Present moment
+UC029,"Every person carries an inner world you can only partly imagine.",All,Communication & Social Skills,Growth,inspired_by,Paper Towns idea,,Perspective
+UC030,"Seeing clearly means learning to separate what is real from what only looks convincing.",All,Growth,Growth,adapted,User submission,,Perception
+UC031,"Trying again after everything can be one of the most beautiful things a person does.",All,Resilience,Resilience,adapted,User submission,,Trying again
+UC032,"A memory can shake you for a moment without deciding where you go next.",All,Resilience,Resilience,adapted,User submission,,Memory
+UC033,"Life brings both joy and grief; our choices still shape what we carry forward.",All,Growth,Growth,adapted,User submission,,Choice
+UC034,"Value your parents while you still have the chance to show them what they mean to you.",All,Family,Happiness & Gratitude,adapted,User submission,,Parents
+UC035,"Sometimes distance is created because losing that distance feels even more frightening.",All,Relationships,Peace & Letting Go,adapted,User submission,,Distance
+UC036,"Trust can be generous without becoming blind.",All,Relationships,Growth,adapted,User submission,,Trust
+UC037,"Pain can teach, and lessons can change the person who carries them.",All,Growth,Resilience,adapted,User submission,,Pain and lessons
+UC038,"A smile does not prove life is perfect; sometimes it simply shows gratitude for what is still good.",All,Gratitude,Happiness & Gratitude,adapted,User submission,,Gratitude
+UC039,"Look for the good in people without pretending their harmful behavior does not exist.",All,Communication & Social Skills,Growth,adapted,User submission,,Imperfection
+UC040,"Remember the people who helped you feel alive again when you had almost forgotten how.",All,Friendship,Happiness & Gratitude,adapted,User submission,,Support
+UC041,"An understanding silence can be worth more than a room full of empty words.",All,Communication & Social Skills,Peace & Letting Go,adapted,User submission,,Silence
+UC042,"If you get a chance to make someone's day lighter, take it. You may never know what they are carrying.",All,Kindness,Happiness & Gratitude,adapted,User submission,,Kindness
+UC043,"When life gets hard, build the strength to meet it instead of waiting for everything to become easy.",All,Resilience,Resilience,adapted,User submission,,Strength
+UC044,"Not every family bond is healthy. Accepting that truth can be part of protecting your peace.",All,Family,Peace & Letting Go,adapted,User submission,,Family boundaries
+UC045,"People can care about your performance and still forget to ask how you are doing. Protect both your wellbeing and your standards.",All,Work-Life Balance,Peace & Letting Go,adapted,User submission,,Mental health and performance
+UC046,"The final strike may break the stone, but every strike before it helped create the result.",All,Discipline,Discipline & Action,adapted,User submission,,Consistency
+UC047,"Some doors close quietly, but quiet endings are still endings.",All,Breakups,Peace & Letting Go,adapted,User submission,,Endings
+UC048,"Do not trade away your originality just to make yourself easier for others to accept.",All,Authenticity & Identity,Self-Worth,adapted,User submission,,Originality
+UC049,"Give without becoming easy to use. Love without abandoning yourself. Trust without losing judgment. Listen without losing your own voice.",All,Authenticity & Identity,Self-Worth,adapted,User submission,,Boundaries
+UC050,"Your life is shaped by choices. Even the messy ones can become part of a story you learn to own.",All,Growth,Growth,adapted,User submission,,Choice
+UC051,"Your early adult years can build momentum for your future, but one season never decides your whole life.",Adults,Goals,Discipline & Action,adapted,User submission,,Young adulthood
+UC052,"Only a few people get close enough to truly hurt you; most opinions deserve far less power.",All,Peace,Self-Worth,adapted,User submission,,Emotional boundaries
+UC053,"We know what we are, but know not what we may be.",All,Growth,Becoming,direct,Hamlet,William Shakespeare,Becoming
+UC054,"Before speaking, ask whether your words are true, necessary, and kind.",All,Communication & Social Skills,Growth,adapted,User submission,,Speech
+UC055,"Repeated hurt can be a signal that a relationship is asking you to choose yourself.",All,Relationships,Peace & Letting Go,adapted,User submission,,Letting go
+UC056,"Peaceful solitude can be better than company that makes you feel alone.",All,Peace,Peace & Letting Go,adapted,User submission,,Loneliness
+UC057,"People we love can leave our lives and still remain part of our hearts.",All,Love,Happiness & Gratitude,adapted,User submission,,Loss
+UC058,"Give freely, but do not assume everyone knows how to return what you give.",All,Relationships,Growth,adapted,User submission,,Expectations
+UC059,"Even broken into pieces, a heart can still remember how deeply it once loved.",All,Love,Resilience,adapted,User submission,,Love
+UC060,"Losing yourself for someone is too high a price for keeping them.",All,Relationships,Self-Worth,adapted,User submission,,Self-loss
+UC061,"Time does not always change people; often it gives you enough distance to see them more clearly.",All,Growth,Growth,adapted,User submission,,Time and character
+UC062,"Some endings make room for beginnings you could not see before.",All,Growth,Hope,adapted,User submission,,Endings
+UC063,"Respect does not require agreement, but it does require boundaries on how we treat each other.",All,Integrity & Character,Self-Worth,adapted,User submission,,Respect
+UC064,"A smile can be courage, gratitude, or simply the decision to keep going.",All,Resilience,Keep Going,adapted,User submission,,Smiling
+UC065,"There is nothing either good or bad, but thinking makes it so.",All,Growth,Growth,direct,Hamlet,William Shakespeare,Perspective
+UC066,"Life is too short to let other people's opinions become your full-time job.",All,Authenticity & Identity,Self-Worth,adapted,User submission,,Opinions
+UC067,"Not everyone has earned access to the deepest parts of you.",All,Peace,Self-Worth,adapted,User submission,,Privacy
+UC068,"Build enough of your own footing that one person's change cannot collapse your whole world.",All,Self-Belief,Self-Worth,adapted,User submission,,Independence
+UC069,"Hatred keeps you emotionally tied to the person you want to escape.",All,Peace,Peace & Letting Go,adapted,User submission,,Hatred
+UC070,"Some of the best places to live are in someone's thoughts, prayers, and heart.",All,Love,Happiness & Gratitude,adapted,User submission,,Love
+UC071,"An overthinking mind and a sensitive heart can make ordinary days feel unusually heavy.",All,Mental Health,Peace & Letting Go,adapted,User submission,,Overthinking
+UC072,"Let go of what you keep forcing and notice what chooses to stay.",All,Peace,Peace & Letting Go,adapted,User submission,,Letting go
+UC073,"Rest can feel rare when both the mind and the heart refuse to switch off.",All,Rest & Recovery,Peace & Letting Go,adapted,User submission,,Sleep
+UC074,"Finding someone new is easy compared with finding someone genuine.",All,Relationships,Growth,adapted,User submission,,Authenticity
+UC075,"Do not perform strength for people who would celebrate your pain. Heal for yourself instead.",All,Mental Health,Self-Worth,adapted,User submission,,Healing
+UC076,"Kindness is not permission for someone to cross your boundaries repeatedly.",All,Authenticity & Identity,Self-Worth,adapted,User submission,,Boundaries
+UC077,"Greatness is measured less by what you collect than by what you contribute.",All,Purpose & Meaning,Happiness & Gratitude,adapted,User submission,,Contribution
+UC078,"Positive thinking cannot solve everything, but the way you think still shapes the way you meet difficulty.",All,Growth,Growth,adapted,User submission,,Positive thinking
+UC079,"Never hand someone else complete control over your happiness.",All,Self-Belief,Self-Worth,adapted,User submission,,Happiness
+UC080,"Someone can carry something gracefully and still be carrying something heavy.",All,Mental Health,Happiness & Gratitude,adapted,User submission,,Hidden struggles
+UC081,"A birthday is also a quiet reminder of the mother who once heard your first cry.",All,Mother,Happiness & Gratitude,adapted,User submission,,Birthday and mother
+UC082,"Sincerity should be met with respect, not tested like a weakness.",All,Integrity & Character,Growth,adapted,User submission,,Sincerity
+UC083,"The same pressure can soften one person and strengthen another; character shapes what circumstances become.",All,Resilience,Resilience,adapted,User submission,,Circumstances
+UC084,"No one has your back quite like a loving mother. Appreciate her while you can.",All,Mother,Happiness & Gratitude,adapted,User submission,,Mother
+UC085,"Stop performing a version of yourself that was built for other people's approval.",All,Authenticity & Identity,Self-Worth,adapted,User submission,,Be yourself
+UC086,"It hurts to keep believing in someone who keeps choosing distance.",All,Relationships,Peace & Letting Go,adapted,User submission,,Repeated disappointment
+UC087,"Books can change us through a single paragraph, sometimes even a single sentence.",All,Reading & Books,Growth,inspired_by,John Piper idea,,Books
+UC088,"Life always has a 'but.' Keep finding your 'whatever comes next.'",All,Resilience,Keep Going,adapted,User submission,,Resilience
+UC089,"People are a little like art: understanding them takes more than a quick glance.",All,Communication & Social Skills,Growth,adapted,User submission,,Understanding people
+UC090,"Do not let anyone shame you for having trusted, loved, or made a sincere choice.",All,Authenticity & Identity,Self-Worth,adapted,User submission,,No shame
+UC091,"Hope grows faster when you get up and do something useful with it.",All,Hope,Discipline & Action,inspired_by,Barack Obama idea,,Action and hope
+UC092,"Social media can make people disappear from your messages while still keeping up with your life.",All,Funny & Relatable,Growth,adapted,User submission,,Instagram
+UC093,"Love should be felt while people are here, not only remembered after they are gone.",All,Love,Happiness & Gratitude,adapted,User submission,,Love
+UC094,"Happiness is less about getting everything you want and more about appreciating what is already yours.",All,Happiness,Happiness & Gratitude,adapted,User submission,,Happiness
+UC095,"Some days feel like your life was written by someone still deciding whether the plot likes you.",All,Funny & Relatable,Growth,adapted,User submission,,Relatable
+UC096,"Understanding more can sometimes make the world feel heavier. Wisdom also means learning how to carry what you know.",All,Mental Health,Growth,adapted,User submission,,Sadness and intelligence
+UC097,"Somewhere in a library is a sentence that may answer a question you have carried for years.",All,Reading & Books,Growth,inspired_by,Lemony Snicket idea,,Libraries
+UC098,"Sometimes we break our own rules because someone feels worth the risk.",All,Love,Growth,adapted,User submission,,Love and risk
+UC099,"Some people are rare because of the goodness they carry, not the way they look.",All,Kindness,Happiness & Gratitude,adapted,User submission,,Good-hearted people
+UC100,"You do not always owe a long explanation for leaving a pattern that already explained itself.",All,Peace,Peace & Letting Go,adapted,User submission,,Cutting ties
+UC101,"It is okay if everyone does not like you. Universal approval was never the goal.",All,Authenticity & Identity,Self-Worth,adapted,User submission,,Self-confidence
+UC102,"Thoughts can argue forever; emotions often reveal what still needs attention.",All,Mental Health,Growth,adapted,User submission,,Thoughts and emotions
+UC103,"Let go of people who repeatedly make you dislike your own life.",All,Relationships,Peace & Letting Go,adapted,User submission,,Letting go
+UC104,"The right people make it safer to take off the mask and return to who you really are.",All,Authenticity & Identity,Self-Worth,adapted,User submission,,Authenticity
+UC105,"Hey fighter, stay with it. This season will not last forever.",All,Resilience,Keep Going,adapted,User submission,,Stay strong
+UC106,"People can copy your process without being able to copy what makes it yours.",All,Authenticity & Identity,Self-Belief,adapted,User submission,,Originality
+UC107,"No matter how badly someone treats you, protect your standards and walk away without becoming like them.",All,Integrity & Character,Self-Worth,adapted,User submission,,Standards
+UC108,"Be grateful for every distance you traveled to find your way back to yourself.",All,Growth,Becoming,adapted,User submission,,Finding yourself
+UC109,"Education and self-respect are two things you never need to apologize for carrying proudly.",All,Study & Learning,Self-Belief,adapted,User submission,,Education
+UC110,"Even if I were one voice among millions who loved you, I would still choose to make that love count while I am here.",All,Love,Happiness & Gratitude,adapted,User submission,,Devotion
