@@ -1,11 +1,9 @@
 """Women/general content entry point for Talk N Walks.
 
 Builds a fresh Day-1 production pool from the quote libraries and adds
-stream-aware visuals plus topic-aware audio. Stable production visuals remain
-the default; experimental pastel and external-AI renderers are opt-in only.
+stream-aware illustrations plus topic-aware audio.
 """
 
-import os
 from pathlib import Path
 
 import build_reel
@@ -13,9 +11,7 @@ from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
 from illustration_pool import apply_illustration_pool
 from legacy_visual_theme import apply_visual_theme as apply_legacy_visual_theme
-from pastel_visual_theme import apply_pastel_visual_theme
 from quote_library import build_curated_runtime_quote_file
-from visual_theme import apply_visual_theme as apply_ai_visual_theme
 
 
 WOMEN_QUOTE_PARTS = [
@@ -36,21 +32,7 @@ WOMEN_QUOTE_PARTS = [
 ]
 
 
-def _enabled(name: str) -> bool:
-    return os.getenv(name, "false").strip().lower() in {"1", "true", "yes", "on"}
-
-
 def _apply_visuals() -> None:
-    if _enabled("AI_VISUALS_ENABLED"):
-        apply_ai_visual_theme(build_reel)
-        print("External AI visual renderer enabled for women/general build.")
-        return
-
-    if _enabled("PASTEL_VISUALS_ENABLED"):
-        apply_pastel_visual_theme(build_reel, stream="women")
-        print("Experimental pastel visual renderer enabled for women/general build.")
-        return
-
     apply_illustration_pool(
         build_reel,
         Path("illustrations"),
@@ -58,7 +40,7 @@ def _apply_visuals() -> None:
         quote_file=build_reel.QUOTES_FILE,
     )
     apply_legacy_visual_theme(build_reel)
-    print("Stable production women/general visuals enabled.")
+    print("Illustration-based women/general visuals enabled.")
 
 
 if __name__ == "__main__":
