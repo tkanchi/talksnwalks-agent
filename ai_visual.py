@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 
 import requests
-from PIL import Image, ImageDraw
+from PIL import Image
 
 
 API_URL = "https://api.openai.com/v1/images/generations"
@@ -29,16 +29,17 @@ def _scene_prompt(quote: str, audience: str = "All", topic: str = "Mindset") -> 
 
     if neutral:
         audience_rule = (
-            "This quote is universal. Prefer a gender-neutral, age-neutral scene: "
-            "scenery, travel, a road, window, desk, journal, coffee, books, shoes, "
-            "bicycle, car, accessories, ocean, mountains, plants or another elegant "
-            "visual metaphor. Do not default to a woman or man."
+            "This quote is universal. Make the visual genuinely unisex. Prefer a "
+            "beautiful environment or elegant visual metaphor such as a balcony, "
+            "road, workspace, travel scene, car, bicycle, journal, coffee, books, "
+            "ocean, mountains, architecture, accessories or nature. Use a person "
+            "only when the quote clearly benefits from one; do not default to a woman."
         )
     else:
         audience_rule = (
-            f"The intended audience is {audience}. A person may appear only when it "
+            f"The intended audience is {audience}. A person may appear when it "
             "meaningfully improves the quote. Keep people natural, inclusive and "
-            "age-appropriate, and avoid repeating the same pose every day."
+            "age-appropriate, and vary setting, pose, clothing and composition."
         )
 
     return f"""Create ONLY the background artwork for a premium vertical Instagram motivational post.
@@ -47,65 +48,26 @@ Quote to interpret visually: {quote}
 Audience: {audience}
 Topic: {topic}
 
-LOCKED TALKS N WALKS VISUAL DIRECTION:
-- Vertical 2:3 artwork that will be cropped to 9:16.
-- Colourful but peaceful and calming, not monochrome.
-- Soft lavender, blush, peach, cream, sage, powder blue, muted teal and warm sunrise/sunset tones.
-- Premium illustrated lifestyle/editorial finish with gentle realistic depth, soft natural light and a cozy aspirational mood.
-- Rich visual detail belongs mainly in the LOWER 45 percent.
-- Keep the UPPER 55 percent quiet, bright and uncluttered for separately overlaid quote typography: soft sky, wall, window light, mist or a subtle pastel gradient are ideal.
-- No black or dark gradient at the top.
-- Create a scene specifically for the meaning of this quote. Do not recycle the same balcony, woman, flowers, books or coffee composition every day.
+LOCKED TALKS N WALKS VISUAL DIRECTION — MATCH THIS FEEL CONSISTENTLY:
+- Vertical 2:3 artwork that will be center-cropped to 9:16.
+- A rich, polished digital lifestyle illustration with cinematic depth — the feeling of an elegant editorial illustration or beautifully rendered storybook scene, NOT a flat graphic.
+- Peaceful, aspirational and emotionally warm. Colourful but sophisticated rather than loud.
+- Palette may use lavender, blush, peach, cream, sage, powder blue, muted teal, warm gold and sunset/sunrise light.
+- Full-frame visual storytelling: the scene should feel complete and luxurious, with meaningful foreground/midground/background detail.
+- Allow attractive framing details along the sides and lower half: plants, furniture, architecture, landscape, books, a desk, travel objects, fabric, windows, railings, city or nature details when appropriate.
+- Reserve a CLEAN, naturally lighter text window across roughly the upper-middle 30–40 percent. It can be sky, softly lit wall, mist, distant view or window light, but it must still belong to the illustrated scene.
+- Do NOT make most of the canvas empty. Do NOT create a plain gradient with a few geometric shapes.
+- Do NOT use flat-vector mountains, minimalist poster art, clip-art, icon-style scenery, children's flat illustration, or generic stock-background composition.
+- Use soft natural/cinematic lighting, gentle texture, refined detail and realistic depth while retaining an illustrated finish.
+- Interpret the meaning of THIS quote and design a different setting when the idea changes. Avoid repeating the same balcony, woman, flowers, coffee or books composition every day.
 - {audience_rule}
 - No words, letters, numbers, captions, quote text, author names, usernames, watermarks, logos, readable signs, readable book covers or readable screens anywhere in the generated artwork.
 - Do NOT generate the Talks N Walks logo. Branding is added afterward from a fixed asset.
-- Avoid clutter behind the future quote area and maintain strong contrast for dark charcoal serif text.
+- Keep enough contrast in the text window for dark charcoal serif typography without placing a dark overlay there.
+
+The desired overall impression is: serene + detailed + premium + colourful illustrated lifestyle scene, with the quote naturally floating over a calm part of the artwork.
 
 Return one polished finished background scene only."""
-
-
-def _procedural_fallback(width: int, height: int, quote: str) -> Image.Image:
-    """Build-only fallback used only when AI visuals are not required."""
-    palettes = [
-        ((244, 229, 238), (251, 223, 193)),
-        ((226, 232, 249), (251, 218, 225)),
-        ((229, 241, 235), (249, 228, 205)),
-        ((237, 230, 247), (224, 239, 247)),
-    ]
-    top, bottom = palettes[sum(quote.encode("utf-8")) % len(palettes)]
-    image = Image.new("RGB", (width, height))
-    px = image.load()
-    for y in range(height):
-        t = y / max(1, height - 1)
-        colour = tuple(round(top[i] * (1 - t) + bottom[i] * t) for i in range(3))
-        for x in range(width):
-            px[x, y] = colour
-
-    draw = ImageDraw.Draw(image)
-    horizon = int(height * 0.72)
-    draw.ellipse(
-        (int(width * 0.70), horizon - 140, int(width * 0.82), horizon - 20),
-        fill=(255, 244, 199),
-    )
-    draw.polygon(
-        [
-            (0, horizon + 80),
-            (width * .25, horizon - 40),
-            (width * .45, horizon + 55),
-            (width * .68, horizon - 15),
-            (width, horizon + 95),
-            (width, height),
-            (0, height),
-        ],
-        fill=(190, 183, 205),
-    )
-    return image
-
-
-def _required() -> bool:
-    return os.getenv("AI_VISUAL_REQUIRED", "false").strip().lower() in {
-        "1", "true", "yes", "on"
-    }
 
 
 def _decode_image_response(payload: dict) -> bytes:
@@ -134,13 +96,11 @@ def generate_background(
     """Generate one fresh quote-aware scene; never select a stored illustration."""
     api_key = os.getenv("OPENAI_API_KEY", "").strip()
     if not api_key:
-        if _required():
-            raise RuntimeError(
-                "OPENAI_API_KEY is required for production AI visuals. "
-                "Add it as a GitHub Actions secret before publishing."
-            )
-        print("OPENAI_API_KEY is not configured; using build-only pastel fallback.")
-        return _procedural_fallback(width, height, quote)
+        raise RuntimeError(
+            "OPENAI_API_KEY is required for Talks N Walks AI artwork, including "
+            "build-only visual tests. Configure the GitHub Actions secret; a generic "
+            "fallback image will not be substituted."
+        )
 
     body = {
         "model": DEFAULT_MODEL,
@@ -150,28 +110,23 @@ def generate_background(
         "output_format": "png",
     }
 
-    try:
-        response = requests.post(
-            API_URL,
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-            },
-            json=body,
-            timeout=TIMEOUT_SECONDS,
+    response = requests.post(
+        API_URL,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        json=body,
+        timeout=TIMEOUT_SECONDS,
+    )
+    if not response.ok:
+        raise RuntimeError(
+            f"OpenAI image generation failed ({response.status_code}): "
+            f"{response.text[:500]}"
         )
-        if not response.ok:
-            raise RuntimeError(
-                f"OpenAI image generation failed ({response.status_code}): "
-                f"{response.text[:500]}"
-            )
-        raw = _decode_image_response(response.json())
-        generated = Image.open(io.BytesIO(raw)).convert("RGB")
-    except Exception:
-        if _required():
-            raise
-        print("AI image generation failed; using build-only pastel fallback.")
-        return _procedural_fallback(width, height, quote)
+
+    raw = _decode_image_response(response.json())
+    generated = Image.open(io.BytesIO(raw)).convert("RGB")
 
     # Cover the final 1080x1920 canvas and center-crop.
     scale = max(width / generated.width, height / generated.height)
