@@ -17,8 +17,8 @@ from brand_logo import load_logo
 
 
 SPRITE = Path("assets/pastel/pastel_sprite.jpg")
-TILE_W = 180
-TILE_H = 320
+TILE_W = 105
+TILE_H = 186
 QUOTE_COLOUR = "#202027"
 HANDLE_COLOUR = "#8B7186"
 QUOTE_LINE_SPACING = 10
