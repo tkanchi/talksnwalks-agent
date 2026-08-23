@@ -8,7 +8,6 @@ from pathlib import Path
 import build_reel
 from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
-from illustration_pool import apply_illustration_pool
 from quote_library import build_curated_simple_quote_file
 from visual_theme import apply_visual_theme
 
@@ -65,12 +64,6 @@ if __name__ == "__main__":
         preserve_days=0,
     )
     apply_canonical_child_topics(build_reel.QUOTES_FILE)
-    apply_illustration_pool(
-        build_reel,
-        Path("illustrations"),
-        stream="children",
-        quote_file=build_reel.QUOTES_FILE,
-    )
     apply_visual_theme(build_reel)
     build_reel.main()
     apply_audio_to_build(
