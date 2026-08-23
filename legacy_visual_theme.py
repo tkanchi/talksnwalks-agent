@@ -1,8 +1,8 @@
 """Stable illustration renderer with the locked Talks N Walks soft editorial theme.
 
-All existing illustration PNGs remain the source library.  This compositor
+All existing illustration PNGs remain the source library. This compositor
 restyles them at build time so every stream shares the same warm cream,
-sage/peach watercolor aesthetic without regenerating or replacing the assets.
+sage/peach watercolor aesthetic without changing selector or publishing logic.
 """
 
 from collections import deque
@@ -21,16 +21,19 @@ CANVAS_BACKGROUNDS = (
 BACKGROUND_COLOR = CANVAS_BACKGROUNDS[0]
 
 PALETTES = (
-    ((205, 133, 111), (166, 176, 143)),  # peach + sage
-    ((191, 151, 139), (151, 165, 142)),  # dusty blush + olive sage
-    ((217, 170, 149), (175, 185, 158)),  # warm peach + light sage
-    ((196, 158, 147), (145, 162, 143)),  # rose taupe + eucalyptus
+    ((205, 133, 111), (166, 176, 143)),
+    ((191, 151, 139), (151, 165, 142)),
+    ((217, 170, 149), (175, 185, 158)),
+    ((196, 158, 147), (145, 162, 143)),
 )
 
 CHARCOAL = (45, 43, 42)
 SOFT_INK = (67, 63, 61)
 WARM_PAPER = (250, 247, 239)
 SOFT_GOLD = (201, 163, 88)
+SKIN_PEACH = (236, 190, 162)
+HAIR_BROWN = (104, 75, 55)
+CREAM_CLOTH = (249, 242, 230)
 
 QUOTE_LINE_SPACING = 8
 MAX_QUOTE_LINES = 4
@@ -83,11 +86,7 @@ def _fit_quote(build_reel, draw, text):
         lines = _wrap_quote(draw, text, font, build_reel.MAX_QUOTE_WIDTH)
         wrapped = "\n".join(lines)
         box = draw.multiline_textbbox(
-            (0, 0),
-            wrapped,
-            font=font,
-            spacing=QUOTE_LINE_SPACING,
-            align="center",
+            (0, 0), wrapped, font=font, spacing=QUOTE_LINE_SPACING, align="center"
         )
         quote_w = box[2] - box[0]
         quote_h = box[3] - box[1]
@@ -138,7 +137,6 @@ def _remove_opaque_white_background(image):
         x, y = queue.popleft()
         red, green, blue, _ = pixels[x, y]
         pixels[x, y] = (red, green, blue, 0)
-
         if x > 0:
             add_if_background(x - 1, y)
         if x + 1 < width:
@@ -152,7 +150,12 @@ def _remove_opaque_white_background(image):
 
 
 def _style_art(art, primary, secondary):
-    """Soften existing artwork into a cream/sage/peach editorial watercolor look."""
+    """Restyle artwork without washing out people or clothing.
+
+    The approved references use crisp charcoal lines, warm peach skin, brown
+    hair, bright cream clothing and restrained sage/peach accents. Preserve the
+    original alpha so the subject remains clearly visible.
+    """
     rgba = art.convert("RGBA")
     pixels = rgba.load()
     width, height = rgba.size
@@ -163,35 +166,69 @@ def _style_art(art, primary, secondary):
             if alpha == 0:
                 continue
 
-            high = max(red, green, blue)
-            low = min(red, green, blue)
+            rgb = (red, green, blue)
+            high = max(rgb)
+            low = min(rgb)
             saturation = high - low
             luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
 
-            if luminance < 72:
-                # Keep outlines elegant rather than heavy black.
-                styled = _blend(CHARCOAL, primary, 0.06)
-                new_alpha = min(alpha, 238)
-            elif saturation > 34:
-                # Existing colored assets keep their natural identity, but are
-                # softened toward the locked pastel palette.
-                softened = _blend((red, green, blue), WARM_PAPER, 0.24)
-                accent = primary if (x + y) % 2 == 0 else secondary
-                styled = _blend(softened, accent, 0.10)
-                new_alpha = alpha
-            elif luminance < 165:
-                amount = (luminance - 72) / 93
-                accent = primary if x < width * 0.55 else secondary
-                styled = _blend(SOFT_INK, accent, 0.28 + 0.34 * amount)
-                new_alpha = min(alpha, 228)
-            else:
-                # Enclosed white/grey clothing and props get a barely-there
-                # watercolor tint instead of staying stark white.
-                accent = primary if ((x // 50) + (y // 50)) % 2 == 0 else secondary
-                styled = _blend(WARM_PAPER, accent, 0.16)
-                new_alpha = min(alpha, 220)
+            # Crisp outlines: never fade them.
+            if luminance < 58:
+                styled = _blend(CHARCOAL, HAIR_BROWN, 0.12)
 
-            pixels[x, y] = (*styled, new_alpha)
+            else:
+                # Practical RGB skin detector for the existing illustration set.
+                warm_order = red > green > blue
+                skin_like = (
+                    warm_order
+                    and 8 <= red - green <= 85
+                    and 3 <= green - blue <= 65
+                    and 70 <= luminance <= 238
+                    and saturation >= 14
+                )
+
+                # Dark warm/brown pixels are usually hair or warm shading.
+                hair_like = (
+                    luminance < 145
+                    and red >= green >= blue
+                    and red - blue >= 8
+                    and not skin_like
+                )
+
+                if skin_like:
+                    # Warm and slightly brighten skin while preserving shading.
+                    amount = 0.42 if luminance < 175 else 0.30
+                    styled = _blend(rgb, SKIN_PEACH, amount)
+                    styled = _blend(styled, WARM_PAPER, 0.06)
+
+                elif hair_like:
+                    styled = _blend(rgb, HAIR_BROWN, 0.48)
+
+                elif saturation < 24:
+                    # Neutral illustration fills become bright clothing rather
+                    # than transparent grey. Dark neutral shading stays warm.
+                    if luminance < 118:
+                        styled = _blend(SOFT_INK, HAIR_BROWN, 0.42)
+                    elif luminance < 188:
+                        accent = secondary if x >= width * 0.45 else primary
+                        styled = _blend(rgb, accent, 0.48)
+                        styled = _blend(styled, WARM_PAPER, 0.16)
+                    else:
+                        styled = _blend(rgb, CREAM_CLOTH, 0.72)
+
+                else:
+                    # Existing coloured clothes/props remain readable but are
+                    # brightened and harmonised to peach/sage.
+                    if green >= red and green >= blue:
+                        accent = secondary
+                    elif blue > red:
+                        accent = secondary
+                    else:
+                        accent = primary
+                    styled = _blend(rgb, WARM_PAPER, 0.12)
+                    styled = _blend(styled, accent, 0.26)
+
+            pixels[x, y] = (*styled, alpha)
 
     return rgba
 
@@ -200,7 +237,6 @@ def _watercolor_wash(build_reel, canvas, box, color, alpha=42, blur=42):
     overlay = build_reel.Image.new("RGBA", canvas.size, (0, 0, 0, 0))
     draw = build_reel.ImageDraw.Draw(overlay)
     x0, y0, x1, y1 = box
-    # Several overlapping translucent shapes give a softer painted edge.
     draw.ellipse((x0, y0, x1, y1), fill=(*color, alpha))
     draw.ellipse(
         (x0 + 45, y0 - 25, x1 + 30, y1 - 55),
@@ -225,7 +261,6 @@ def _draw_botanicals(build_reel, canvas, primary, secondary):
     overlay = build_reel.Image.new("RGBA", canvas.size, (0, 0, 0, 0))
     draw = build_reel.ImageDraw.Draw(overlay)
 
-    # Lower-left branch, matching the approved editorial references.
     start = (30, canvas.height - 70)
     end = (220, canvas.height - 440)
     draw.line((*start, *end), fill=(*secondary, 145), width=4)
@@ -234,16 +269,11 @@ def _draw_botanicals(build_reel, canvas, primary, secondary):
         y = start[1] + (end[1] - start[1]) * t
         side = -1 if index % 2 else 1
         color = secondary if index % 2 == 0 else primary
-        points = _leaf_points(
-            x + side * 42,
-            y - 4,
-            14,
-            43,
-            side * 0.72,
+        draw.polygon(
+            _leaf_points(x + side * 42, y - 4, 14, 43, side * 0.72),
+            fill=(*color, 115),
         )
-        draw.polygon(points, fill=(*color, 115))
 
-    # A much smaller upper-right hint keeps group/men/kids scenes uncluttered.
     start = (canvas.width - 30, 90)
     end = (canvas.width - 145, 300)
     draw.line((*start, *end), fill=(*secondary, 90), width=3)
@@ -257,14 +287,16 @@ def _draw_botanicals(build_reel, canvas, primary, secondary):
             fill=(*color, 82),
         )
 
-    # Sparse warm-gold paint flecks.
     for x, y, radius in (
         (205, canvas.height - 330, 4),
         (245, canvas.height - 295, 3),
         (canvas.width - 180, 275, 3),
         (canvas.width - 135, 235, 4),
     ):
-        draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=(*SOFT_GOLD, 120))
+        draw.ellipse(
+            (x - radius, y - radius, x + radius, y + radius),
+            fill=(*SOFT_GOLD, 120),
+        )
 
     return build_reel.Image.alpha_composite(canvas.convert("RGBA"), overlay).convert("RGB")
 
@@ -297,8 +329,6 @@ def apply_visual_theme(build_reel):
             _background_for_output(output_jpg),
         )
 
-        # Soft washes stay away from the quote area and add the gentle watercolor
-        # feeling from the approved references.
         canvas = _watercolor_wash(
             build_reel,
             canvas,
@@ -331,9 +361,7 @@ def apply_visual_theme(build_reel):
         wrapped_quote, qfont, quote_w, quote_h = _fit_quote(build_reel, draw, quote)
         hfont = build_reel.find_font(build_reel.HANDLE_SIZE, serif=False)
 
-        source_art = _remove_opaque_white_background(
-            build_reel.Image.open(illustration_path)
-        )
+        source_art = _remove_opaque_white_background(build_reel.Image.open(illustration_path))
         art = build_reel.fit_inside(
             source_art,
             build_reel.ILLUSTRATION_MAX_W,
