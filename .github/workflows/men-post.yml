@@ -1,6 +1,8 @@
 name: Men Instagram Reel
 
 on:
+  schedule:
+    - cron: "47 12 * * *" # 18:17 IST
   workflow_dispatch:
     inputs:
       day:
@@ -22,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      DAY_NUMBER: ${{ inputs.day }}
+      START_DATE: "2026-08-24"
       META_API_VERSION: "v26.0"
       META_GRAPH_HOST: "https://graph.instagram.com"
 
@@ -32,15 +34,37 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Decide whether this run publishes
+      - name: Decide day and whether this run publishes
         shell: bash
         run: |
-          if [ "${{ inputs.publish }}" = "true" ]; then
-            echo "Manual men run: publishing enabled."
-            echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            TODAY="$(date -u +%F)"
+            START_EPOCH="$(date -u -d "$START_DATE" +%s)"
+            TODAY_EPOCH="$(date -u -d "$TODAY" +%s)"
+            SCHEDULED_DAY=$(( (TODAY_EPOCH - START_EPOCH) / 86400 + 1 ))
+
+            if [ "$SCHEDULED_DAY" -lt 1 ]; then
+              echo "Men schedule starts on $START_DATE. This pre-start run will build only."
+              echo "DAY_NUMBER=1" >> "$GITHUB_ENV"
+              echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
+            elif [ "$SCHEDULED_DAY" -gt 365 ]; then
+              echo "Men 365-day pool is exhausted. Publishing disabled."
+              echo "DAY_NUMBER=365" >> "$GITHUB_ENV"
+              echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
+            else
+              echo "Scheduled Men Day $SCHEDULED_DAY: publishing enabled."
+              echo "DAY_NUMBER=$SCHEDULED_DAY" >> "$GITHUB_ENV"
+              echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+            fi
           else
-            echo "Manual men test/build-only run: publishing disabled."
-            echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
+            echo "DAY_NUMBER=${{ inputs.day }}" >> "$GITHUB_ENV"
+            if [ "${{ inputs.publish }}" = "true" ]; then
+              echo "Manual men run: publishing enabled."
+              echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+            else
+              echo "Manual men test/build-only run: publishing disabled."
+              echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
+            fi
           fi
 
       - name: Set up Python
