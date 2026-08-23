@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      START_DATE: "2026-08-24"
+      START_DATE: "2026-08-23"
       META_API_VERSION: "v26.0"
       META_GRAPH_HOST: "https://graph.instagram.com"
 
