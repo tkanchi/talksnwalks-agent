@@ -64,11 +64,11 @@ def _impact_score(row: dict[str, str], source_weights: dict[str, int] | None = N
 
     strong_terms = (
         "stop ", "choose ", "protect ", "build ", "leave ", "trust ",
-        "start ", "keep ", "don't ", "do not ", "become ", "move ",
-        "rest ", "love ", "discipline", "standards", "peace", "confidence",
-        "future", "habits", "worth", "courage", "dream", "respect",
-        "attention", "energy", "freedom", "strong", "money", "wealth",
-        "success", "healing", "boundary", "boundaries",
+        "start ", "keep ", "become ", "move ", "rest ", "love ",
+        "discipline", "standards", "peace", "confidence", "future", "habits",
+        "worth", "courage", "dream", "respect", "attention", "energy",
+        "freedom", "strong", "money", "wealth", "success", "healing",
+        "boundary", "boundaries",
     )
     score += min(12, sum(2 for term in strong_terms if term in lower))
 
@@ -80,9 +80,16 @@ def _impact_score(row: dict[str, str], source_weights: dict[str, int] | None = N
         score += 4
     if lower.startswith((
         "stop ", "choose ", "protect ", "build ", "start ", "keep ",
-        "never ", "don’t ", "don't ", "do not ", "let ", "be ",
+        "let ", "be ",
     )):
         score += 5
+
+    # Negative commands can be powerful occasionally, but rewarding them as a
+    # default caused too many early production quotes to begin with "Do not",
+    # "Don't", or "Never". Keep those quotes in the library while lowering their
+    # ranking enough to create more natural opening variety.
+    if lower.startswith(("do not ", "don't ", "don’t ", "never ")):
+        score -= 8
 
     for term in (
         "organization", "stakeholder", "performance system", "framework",
