@@ -25,6 +25,7 @@ WOMEN_QUOTE_PARTS = [
     Path("data/library/self_growth_part_03.csv"),
     Path("data/library/self_growth_part_04.csv"),
     Path("data/library/self_growth_part_05.csv"),
+    Path("data/library/user_curated_part_01.csv"),
     Path("data/library/women_empowerment_part_01.csv"),
     Path("data/library/women_empowerment_part_02.csv"),
     Path("data/library/women_empowerment_part_03.csv"),
@@ -38,7 +39,7 @@ if __name__ == "__main__":
         Path("outputs/quotes_runtime.csv"),
         target_days=365,
         exclude_prefixes=("WLEG",),
-        source_weights={"WOM": 12, "WEMP": 5, "SG": 2},
+        source_weights={"WOM": 12, "WEMP": 5, "UC": 4, "SG": 2},
     )
     apply_illustration_pool(
         build_reel,
