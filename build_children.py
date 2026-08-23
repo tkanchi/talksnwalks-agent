@@ -28,6 +28,12 @@ CHILD_TOPIC_MAP = {
     "Gratitude & Humility": "Gratitude",
     "Digital & Social Responsibility": "Digital Responsibility",
     "Health, Balance & Self-Respect": "Health",
+    "Childhood & Family": "Family",
+    "Study & Learning": "Study & Learning",
+    "Sports & Teamwork": "Sports",
+    "Teen Confidence & Identity": "Teen Confidence",
+    "Joy, Music & Dance": "Music & Dance",
+    "Peace & Spirituality": "Spirituality",
 }
 
 
@@ -53,7 +59,6 @@ def apply_canonical_child_topics(path: Path) -> Path:
 
 
 if __name__ == "__main__":
-    # Fresh experiment: start from Day 1 using the stronger age-appropriate morals pool.
     build_reel.QUOTES_FILE = build_curated_simple_quote_file(
         Path("data/references/kids_morals.csv"),
         Path("outputs/children/quotes_runtime.csv"),
