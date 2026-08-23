@@ -11,6 +11,7 @@ from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
 from illustration_pool import apply_illustration_pool
 from legacy_visual_theme import apply_visual_theme as apply_legacy_visual_theme
+from pastel_visual_theme import apply_pastel_visual_theme
 from quote_library import build_curated_simple_quote_file
 from visual_theme import apply_visual_theme as apply_ai_visual_theme
 
@@ -60,26 +61,29 @@ def apply_canonical_child_topics(path: Path) -> Path:
     return path
 
 
-def _ai_visuals_enabled() -> bool:
-    return os.getenv("AI_VISUALS_ENABLED", "false").strip().lower() in {
-        "1", "true", "yes", "on"
-    }
+def _enabled(name: str) -> bool:
+    return os.getenv(name, "false").strip().lower() in {"1", "true", "yes", "on"}
 
 
 def _apply_visuals() -> None:
-    if _ai_visuals_enabled():
+    if _enabled("AI_VISUALS_ENABLED"):
         apply_ai_visual_theme(build_reel)
-        print("AI visual renderer enabled for children build.")
+        print("External AI visual renderer enabled for children build.")
         return
 
-    apply_illustration_pool(
-        build_reel,
-        Path("illustrations"),
-        stream="children",
-        quote_file=build_reel.QUOTES_FILE,
-    )
-    apply_legacy_visual_theme(build_reel)
-    print("AI visual renderer disabled; using stable pre-AI children visuals.")
+    if _enabled("LEGACY_VISUALS_ENABLED"):
+        apply_illustration_pool(
+            build_reel,
+            Path("illustrations"),
+            stream="children",
+            quote_file=build_reel.QUOTES_FILE,
+        )
+        apply_legacy_visual_theme(build_reel)
+        print("Legacy illustration renderer enabled for children build.")
+        return
+
+    apply_pastel_visual_theme(build_reel, stream="children")
+    print("Locked pastel visual renderer enabled for children build.")
 
 
 if __name__ == "__main__":
