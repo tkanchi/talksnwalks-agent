@@ -1,48 +1,42 @@
-"""Shared visual styling for Talk N Walks reel builders.
+"""Locked visual system for Talks N Walks posts.
 
-The visual layer is intentionally self-contained: builders no longer need to
-match quotes to a growing illustration library. Each quote gets a clean,
-neutral line-art motif generated from the quote itself, while the approved
-pastel background, serif typography, spacing, and handle remain consistent.
+Every quote gets a newly generated AI background. Quote text, attribution,
+lower-case Instagram handle and the small monochrome brand mark are added in
+code afterward so those elements stay exact and consistent.
+
+The historical illustration library is NOT used to choose post artwork. One
+fixed reading image is retained only as the brand-logo source.
 """
 
 from __future__ import annotations
 
-import hashlib
+import csv
+import os
 import re
 from pathlib import Path
 
+from PIL import Image, ImageDraw, ImageOps
 
-PASTEL_BACKGROUNDS = (
-    "#F6E6E8",  # blush pink
-    "#E8F1F5",  # powder blue
-    "#E9F3E8",  # sage mint
-    "#F4EEDC",  # soft butter
-    "#EEE8F5",  # pale lavender
-    "#F5E8DE",  # peach cream
-    "#E5F2EF",  # soft aqua
-    "#F2E7EC",  # dusty rose
-    "#E9EDF6",  # periwinkle mist
-    "#EFF1E2",  # pale olive
-    "#F3E5DF",  # muted coral
-    "#E6F0EB",  # eucalyptus mist
+from ai_visual import generate_background
+
+
+QUOTE_COLOUR = "#171820"
+ACCENT_COLOUR = "#A984B8"
+QUOTE_LINE_SPACING = 10
+MAX_QUOTE_LINES = 6
+MAX_QUOTE_HEIGHT = 480
+QUOTE_MAX_SIZE = 64
+QUOTE_MIN_SIZE = 32
+MAX_QUOTE_WIDTH = 880
+AUTHOR_SIZE = 34
+HANDLE_SIZE = 27
+LOGO_SIZE = 104
+
+# This is a fixed BRAND asset only. It is never used as post artwork.
+# The logo is converted to monochrome and placed underneath @talksnwalks101.
+LOGO_SOURCE = Path(
+    os.getenv("BRAND_LOGO_SOURCE", "illustrations/women_reading_cozy_floor_01.png")
 )
-BACKGROUND_COLOR = PASTEL_BACKGROUNDS[0]
-QUOTE_LINE_SPACING = 8
-MAX_QUOTE_LINES = 4
-MAX_QUOTE_HEIGHT = 300
-ART_W = 560
-ART_H = 420
-LINE_WIDTH = 4
-
-
-def _background_for_output(output_jpg):
-    """Choose a repeatable pastel from the Day number in the output filename."""
-    match = re.search(r"day_(\d+)", output_jpg.stem, re.IGNORECASE)
-    if not match:
-        return BACKGROUND_COLOR
-    day = int(match.group(1))
-    return PASTEL_BACKGROUNDS[(day - 1) % len(PASTEL_BACKGROUNDS)]
 
 
 def _wrap_quote(draw, text, font, max_width):
@@ -63,122 +57,200 @@ def _wrap_quote(draw, text, font, max_width):
     return lines
 
 
-def _fit_quote(build_reel, draw, text):
+def _fit_quote(build_reel, draw, quote):
+    display = f"“{quote.strip()}”"
     fallback = None
-    for size in range(build_reel.QUOTE_MAX_SIZE, build_reel.QUOTE_MIN_SIZE - 1, -1):
+    for size in range(QUOTE_MAX_SIZE, QUOTE_MIN_SIZE - 1, -1):
         font = build_reel.find_font(size, serif=True)
-        lines = _wrap_quote(draw, text, font, build_reel.MAX_QUOTE_WIDTH)
+        lines = _wrap_quote(draw, display, font, MAX_QUOTE_WIDTH)
         wrapped = "\n".join(lines)
         box = draw.multiline_textbbox(
-            (0, 0), wrapped, font=font, spacing=QUOTE_LINE_SPACING, align="center"
+            (0, 0),
+            wrapped,
+            font=font,
+            spacing=QUOTE_LINE_SPACING,
+            align="center",
         )
-        quote_w = box[2] - box[0]
-        quote_h = box[3] - box[1]
-        fallback = (wrapped, font, quote_w, quote_h)
-        if (
-            len(lines) <= MAX_QUOTE_LINES
-            and quote_w <= build_reel.MAX_QUOTE_WIDTH
-            and quote_h <= MAX_QUOTE_HEIGHT
-        ):
+        width = box[2] - box[0]
+        height = box[3] - box[1]
+        fallback = (wrapped, font, width, height)
+        if len(lines) <= MAX_QUOTE_LINES and height <= MAX_QUOTE_HEIGHT:
             return fallback
     return fallback
 
 
-def _motif_variant(quote: str) -> int:
-    """Return a stable visual variant without maintaining semantic match rules."""
-    return hashlib.sha256(quote.encode("utf-8")).digest()[0] % 4
+def _day_from_output(output_jpg: Path) -> int | None:
+    match = re.search(r"day_(\d+)", output_jpg.stem, re.IGNORECASE)
+    return int(match.group(1)) if match else None
 
 
-def _draw_neutral_motif(draw, quote: str, left: int, top: int):
-    """Draw lightweight gender- and age-neutral line art for the quote card."""
-    cx = left + ART_W // 2
-    cy = top + ART_H // 2
-    variant = _motif_variant(quote)
+def _row_for_output(build_reel, output_jpg: Path) -> dict[str, str]:
+    day = _day_from_output(output_jpg)
+    if not day or not Path(build_reel.QUOTES_FILE).exists():
+        return {}
+    with Path(build_reel.QUOTES_FILE).open(newline="", encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+    return rows[day - 1] if 0 < day <= len(rows) else {}
 
-    if variant == 0:
-        # Horizon / rising sun / open path.
-        draw.arc((cx - 105, cy - 150, cx + 105, cy + 60), 195, 345, fill="black", width=LINE_WIDTH)
-        draw.line((left + 80, cy + 35, left + ART_W - 80, cy + 35), fill="black", width=LINE_WIDTH)
-        draw.line((cx - 42, cy + 35, cx - 8, top + ART_H - 35), fill="black", width=LINE_WIDTH)
-        draw.line((cx + 42, cy + 35, cx + 8, top + ART_H - 35), fill="black", width=LINE_WIDTH)
-    elif variant == 1:
-        # Compass / direction / forward movement.
-        r = 108
-        draw.ellipse((cx - r, cy - r, cx + r, cy + r), outline="black", width=LINE_WIDTH)
-        draw.line((cx, cy - 145, cx, cy + 145), fill="black", width=LINE_WIDTH)
-        draw.line((cx - 145, cy, cx + 145, cy), fill="black", width=LINE_WIDTH)
-        draw.polygon(((cx, cy - 92), (cx - 24, cy + 20), (cx, cy), (cx + 24, cy + 20)), outline="black")
-    elif variant == 2:
-        # Mountain / progress / perspective.
-        draw.line((left + 70, top + ART_H - 70, cx - 55, top + 105), fill="black", width=LINE_WIDTH)
-        draw.line((cx - 55, top + 105, cx + 20, top + 215), fill="black", width=LINE_WIDTH)
-        draw.line((cx + 20, top + 215, cx + 85, top + 145), fill="black", width=LINE_WIDTH)
-        draw.line((cx + 85, top + 145, left + ART_W - 70, top + ART_H - 70), fill="black", width=LINE_WIDTH)
-        draw.ellipse((left + ART_W - 155, top + 55, left + ART_W - 105, top + 105), outline="black", width=LINE_WIDTH)
-    else:
-        # Orbit / balance / possibility.
-        draw.ellipse((cx - 115, cy - 115, cx + 115, cy + 115), outline="black", width=LINE_WIDTH)
-        draw.arc((cx - 185, cy - 70, cx + 185, cy + 70), 12, 168, fill="black", width=LINE_WIDTH)
-        draw.arc((cx - 185, cy - 70, cx + 185, cy + 70), 192, 348, fill="black", width=LINE_WIDTH)
-        draw.ellipse((cx + 150, cy - 16, cx + 174, cy + 8), fill="black")
+
+def _attribution(row: dict[str, str]) -> str:
+    source_type = (row.get("SourceType") or "").strip().lower()
+    author = (row.get("Author") or "").strip()
+    inspired_by = (row.get("InspiredBy") or "").strip()
+
+    if source_type == "inspired_by" and (inspired_by or author):
+        return f"Inspired by {inspired_by or author}"
+    if author:
+        return f"— {author}"
+    return ""
+
+
+def _lighten_text_zone(canvas: Image.Image) -> Image.Image:
+    """Add only a very soft light veil; never a dark top gradient."""
+    overlay = Image.new("RGBA", canvas.size, (255, 250, 246, 0))
+    draw = ImageDraw.Draw(overlay)
+    draw.rectangle((0, 0, canvas.width, int(canvas.height * 0.54)), fill=(255, 250, 246, 44))
+    return Image.alpha_composite(canvas.convert("RGBA"), overlay).convert("RGB")
+
+
+def _monochrome_logo(build_reel, size: int = LOGO_SIZE) -> Image.Image:
+    """Create the fixed small black-and-white logo from one dedicated source."""
+    if not LOGO_SOURCE.exists():
+        raise FileNotFoundError(f"Fixed brand logo source is missing: {LOGO_SOURCE}")
+
+    source = build_reel.Image.open(LOGO_SOURCE).convert("RGBA")
+    source = build_reel.trim_transparent(source)
+    source.thumbnail((size - 18, size - 18), Image.Resampling.LANCZOS)
+
+    # Convert artwork detail to black while making pale/white areas transparent.
+    gray = ImageOps.grayscale(source)
+    original_alpha = source.getchannel("A")
+    detail_alpha = gray.point(lambda value: max(0, min(255, (232 - value) * 3)))
+    detail_alpha = Image.composite(detail_alpha, Image.new("L", source.size, 0), original_alpha)
+    black = Image.new("RGBA", source.size, (0, 0, 0, 0))
+    black.putalpha(detail_alpha)
+
+    badge = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    badge_draw = ImageDraw.Draw(badge)
+    badge_draw.ellipse((2, 2, size - 3, size - 3), fill=(255, 255, 255, 218), outline=(20, 20, 20, 255), width=2)
+    x = (size - black.width) // 2
+    y = (size - black.height) // 2
+    badge.alpha_composite(black, (x, y))
+    return badge
+
+
+def _draw_divider(draw, center_x: int, y: int, font):
+    line_w = 140
+    gap = 28
+    draw.line((center_x - gap - line_w, y, center_x - gap, y), fill=ACCENT_COLOUR, width=2)
+    draw.line((center_x + gap, y, center_x + gap + line_w, y), fill=ACCENT_COLOUR, width=2)
+    heart = "♡"
+    box = draw.textbbox((0, 0), heart, font=font)
+    draw.text((center_x - (box[2] - box[0]) / 2, y - 18), heart, fill=ACCENT_COLOUR, font=font)
 
 
 def _prepare_placeholder(build_reel):
-    """Keep the legacy builder contract without depending on illustration files."""
+    """Keep the legacy builder contract without selecting an illustration."""
     build_reel.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    placeholder = build_reel.OUTPUT_DIR / ".neutral_template.png"
+    placeholder = build_reel.OUTPUT_DIR / ".ai_visual_placeholder.png"
     build_reel.Image.new("RGBA", (1, 1), (0, 0, 0, 0)).save(placeholder)
     build_reel.ILLUSTRATION_DIR = Path(build_reel.OUTPUT_DIR)
     build_reel.ILLUSTRATIONS = [placeholder.name]
 
 
 def apply_visual_theme(build_reel):
-    """Apply the shared pastel quote template with generated neutral line art."""
+    """Install the locked Talks N Walks AI visual renderer."""
     _prepare_placeholder(build_reel)
 
     def compose_post(quote, illustration_path, output_jpg):
-        canvas = build_reel.Image.new(
-            "RGB",
-            (build_reel.CANVAS_W, build_reel.CANVAS_H),
-            _background_for_output(output_jpg),
-        )
-        draw = build_reel.ImageDraw.Draw(canvas)
-        wrapped_quote, qfont, quote_w, quote_h = _fit_quote(build_reel, draw, quote)
-        hfont = build_reel.find_font(build_reel.HANDLE_SIZE, serif=False)
+        output_jpg = Path(output_jpg)
+        row = _row_for_output(build_reel, output_jpg)
+        audience = (row.get("Audience") or "All").strip()
+        topic = (row.get("Topic") or row.get("Theme") or "Mindset").strip()
+        author_line = _attribution(row)
 
-        hbox = draw.textbbox((0, 0), build_reel.HANDLE, font=hfont)
+        debug_background = output_jpg.with_name(output_jpg.stem + "_background.jpg")
+        canvas = generate_background(
+            quote,
+            audience=audience,
+            topic=topic,
+            width=build_reel.CANVAS_W,
+            height=build_reel.CANVAS_H,
+            debug_path=debug_background,
+        )
+        canvas = _lighten_text_zone(canvas)
+        draw = build_reel.ImageDraw.Draw(canvas)
+
+        wrapped, quote_font, quote_w, quote_h = _fit_quote(build_reel, draw, quote)
+        author_font = build_reel.find_font(AUTHOR_SIZE, serif=True)
+        handle_font = build_reel.find_font(HANDLE_SIZE, serif=False)
+        symbol_font = build_reel.find_font(32, serif=False)
+
+        attribution_h = 0
+        if author_line:
+            box = draw.textbbox((0, 0), author_line, font=author_font)
+            attribution_h = box[3] - box[1]
+
+        handle = build_reel.HANDLE.lower()
+        hbox = draw.textbbox((0, 0), handle, font=handle_font)
         handle_w = hbox[2] - hbox[0]
         handle_h = hbox[3] - hbox[1]
 
-        total_height = (
+        # Keep all deterministic text/logo inside the quiet upper half.
+        divider_gap = 36
+        author_gap = 28 if author_line else 10
+        handle_gap = 30
+        logo_gap = 16
+        total_h = (
             quote_h
-            + build_reel.QUOTE_TO_ART_GAP
-            + ART_H
-            + build_reel.ART_TO_HANDLE_GAP
+            + divider_gap
+            + 28
+            + author_gap
+            + attribution_h
+            + handle_gap
             + handle_h
+            + logo_gap
+            + LOGO_SIZE
         )
-        block_top = int(build_reel.BLOCK_CENTER_Y - total_height / 2)
-        quote_y = block_top
-        art_y = quote_y + quote_h + build_reel.QUOTE_TO_ART_GAP
-        handle_y = art_y + ART_H + build_reel.ART_TO_HANDLE_GAP
+        block_top = max(220, int(620 - total_h / 2))
 
+        quote_y = block_top
         draw.multiline_text(
             ((build_reel.CANVAS_W - quote_w) / 2, quote_y),
-            wrapped_quote,
-            fill="black",
-            font=qfont,
+            wrapped,
+            fill=QUOTE_COLOUR,
+            font=quote_font,
             spacing=QUOTE_LINE_SPACING,
             align="center",
         )
 
-        _draw_neutral_motif(draw, quote, (build_reel.CANVAS_W - ART_W) // 2, art_y)
+        divider_y = quote_y + quote_h + divider_gap
+        _draw_divider(draw, build_reel.CANVAS_W // 2, divider_y, symbol_font)
 
+        cursor_y = divider_y + 28 + author_gap
+        if author_line:
+            abox = draw.textbbox((0, 0), author_line, font=author_font)
+            author_w = abox[2] - abox[0]
+            draw.text(
+                ((build_reel.CANVAS_W - author_w) / 2, cursor_y),
+                author_line,
+                fill=QUOTE_COLOUR,
+                font=author_font,
+            )
+            cursor_y += attribution_h
+
+        cursor_y += handle_gap
         draw.text(
-            ((build_reel.CANVAS_W - handle_w) / 2, handle_y),
-            build_reel.HANDLE,
-            fill="black",
-            font=hfont,
+            ((build_reel.CANVAS_W - handle_w) / 2, cursor_y),
+            handle,
+            fill=ACCENT_COLOUR,
+            font=handle_font,
         )
+        cursor_y += handle_h + logo_gap
+
+        logo = _monochrome_logo(build_reel)
+        logo_x = (build_reel.CANVAS_W - logo.width) // 2
+        canvas.paste(logo, (logo_x, int(cursor_y)), logo)
 
         output_jpg.parent.mkdir(parents=True, exist_ok=True)
         canvas.save(output_jpg, "JPEG", quality=94, optimize=True, progressive=True)
