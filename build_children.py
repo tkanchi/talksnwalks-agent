@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 import csv
+import os
 from pathlib import Path
 
 import build_reel
 from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
+from illustration_pool import apply_illustration_pool
+from legacy_visual_theme import apply_visual_theme as apply_legacy_visual_theme
 from quote_library import build_curated_simple_quote_file
-from visual_theme import apply_visual_theme
+from visual_theme import apply_visual_theme as apply_ai_visual_theme
 
 
 CONTENT_NAME = "children"
@@ -57,6 +60,28 @@ def apply_canonical_child_topics(path: Path) -> Path:
     return path
 
 
+def _ai_visuals_enabled() -> bool:
+    return os.getenv("AI_VISUALS_ENABLED", "false").strip().lower() in {
+        "1", "true", "yes", "on"
+    }
+
+
+def _apply_visuals() -> None:
+    if _ai_visuals_enabled():
+        apply_ai_visual_theme(build_reel)
+        print("AI visual renderer enabled for children build.")
+        return
+
+    apply_illustration_pool(
+        build_reel,
+        Path("illustrations"),
+        stream="children",
+        quote_file=build_reel.QUOTES_FILE,
+    )
+    apply_legacy_visual_theme(build_reel)
+    print("AI visual renderer disabled; using stable pre-AI children visuals.")
+
+
 if __name__ == "__main__":
     build_reel.QUOTES_FILE = build_curated_simple_quote_file(
         Path("data/references/kids_morals.csv"),
@@ -64,7 +89,7 @@ if __name__ == "__main__":
         preserve_days=0,
     )
     apply_canonical_child_topics(build_reel.QUOTES_FILE)
-    apply_visual_theme(build_reel)
+    _apply_visuals()
     build_reel.main()
     apply_audio_to_build(
         build_reel.QUOTES_FILE,
