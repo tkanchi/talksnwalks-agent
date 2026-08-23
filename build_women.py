@@ -1,8 +1,8 @@
 """Women/general content entry point for Talk N Walks.
 
 Builds a fresh Day-1 production pool from the quote libraries and adds
-stream-aware visuals plus topic-aware audio. AI artwork is opt-in so scheduled
-production remains safe when no external image API is configured.
+stream-aware visuals plus topic-aware audio. The locked offline pastel renderer
+is the default; external AI and the legacy illustration renderer are opt-in.
 """
 
 import os
@@ -13,6 +13,7 @@ from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
 from illustration_pool import apply_illustration_pool
 from legacy_visual_theme import apply_visual_theme as apply_legacy_visual_theme
+from pastel_visual_theme import apply_pastel_visual_theme
 from quote_library import build_curated_runtime_quote_file
 from visual_theme import apply_visual_theme as apply_ai_visual_theme
 
@@ -35,26 +36,29 @@ WOMEN_QUOTE_PARTS = [
 ]
 
 
-def _ai_visuals_enabled() -> bool:
-    return os.getenv("AI_VISUALS_ENABLED", "false").strip().lower() in {
-        "1", "true", "yes", "on"
-    }
+def _enabled(name: str) -> bool:
+    return os.getenv(name, "false").strip().lower() in {"1", "true", "yes", "on"}
 
 
 def _apply_visuals() -> None:
-    if _ai_visuals_enabled():
+    if _enabled("AI_VISUALS_ENABLED"):
         apply_ai_visual_theme(build_reel)
-        print("AI visual renderer enabled for women/general build.")
+        print("External AI visual renderer enabled for women/general build.")
         return
 
-    apply_illustration_pool(
-        build_reel,
-        Path("illustrations"),
-        stream="women",
-        quote_file=build_reel.QUOTES_FILE,
-    )
-    apply_legacy_visual_theme(build_reel)
-    print("AI visual renderer disabled; using stable pre-AI women/general visuals.")
+    if _enabled("LEGACY_VISUALS_ENABLED"):
+        apply_illustration_pool(
+            build_reel,
+            Path("illustrations"),
+            stream="women",
+            quote_file=build_reel.QUOTES_FILE,
+        )
+        apply_legacy_visual_theme(build_reel)
+        print("Legacy illustration renderer enabled for women/general build.")
+        return
+
+    apply_pastel_visual_theme(build_reel, stream="women")
+    print("Locked pastel visual renderer enabled for women/general build.")
 
 
 if __name__ == "__main__":
