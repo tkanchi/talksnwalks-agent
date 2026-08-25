@@ -1,74 +1,70 @@
-"""Approved pastel watercolor backgrounds for Talk N Walks reels.
+"""Approved pastel watercolor botanical backgrounds for Talk N Walks reels.
 
-Keeps the existing quote, illustration, handle and publishing behavior intact,
-while using approved watercolor background files from ``tnw_backgrounds``.
-PNG, JPG and JPEG backgrounds are discovered automatically. A procedural
-watercolor background remains only as a safe fallback if an asset cannot load.
+Keeps the existing quote, illustration, handle and publishing behavior intact.
+Backgrounds are generated directly in the renderer so every build gets the
+approved very-light pastel watercolor look with botanical detail only in the
+top-right and bottom-left corners. The center remains clean for readability.
 """
 
 from __future__ import annotations
 
 import random
-from pathlib import Path
 
-from PIL import ImageFilter, ImageOps
+from PIL import ImageFilter
 
 import legacy_visual_theme as legacy
 
 
-BACKGROUND_VERSION = "watercolor-files-v2"
-BACKGROUND_DIR = Path("tnw_backgrounds")
-BACKGROUND_SUFFIXES = {".png", ".jpg", ".jpeg"}
-MEN_EXCLUDED_COLOR_WORDS = {"pink", "lilac", "lavender", "blush"}
+BACKGROUND_VERSION = "watercolor-botanical-v3"
 
 GENERAL_PRESETS = (
     {
         "name": "sage_blush",
         "base": (255, 253, 249),
-        "wash_a": (218, 233, 220),
-        "wash_b": (247, 225, 216),
-        "leaf_a": (166, 188, 164),
-        "leaf_b": (222, 195, 176),
+        "wash_a": (211, 230, 214),
+        "wash_b": (247, 219, 211),
+        "leaf_a": (150, 180, 155),
+        "leaf_b": (219, 185, 171),
     },
     {
         "name": "soft_peach",
-        "base": (255, 252, 246),
-        "wash_a": (250, 225, 205),
-        "wash_b": (248, 235, 211),
-        "leaf_a": (217, 177, 146),
-        "leaf_b": (235, 197, 176),
+        "base": (255, 253, 248),
+        "wash_a": (249, 218, 193),
+        "wash_b": (244, 231, 201),
+        "leaf_a": (203, 166, 132),
+        "leaf_b": (226, 185, 161),
     },
     {
         "name": "blush_lilac",
-        "base": (255, 252, 250),
-        "wash_a": (247, 225, 225),
-        "wash_b": (232, 224, 245),
-        "leaf_a": (201, 178, 211),
-        "leaf_b": (225, 183, 190),
+        "base": (255, 253, 251),
+        "wash_a": (245, 218, 221),
+        "wash_b": (229, 217, 243),
+        "leaf_a": (191, 170, 205),
+        "leaf_b": (220, 174, 184),
     },
     {
-        "name": "lilac_pink",
-        "base": (255, 252, 252),
-        "wash_a": (232, 225, 248),
-        "wash_b": (248, 224, 236),
-        "leaf_a": (192, 167, 220),
-        "leaf_b": (226, 177, 202),
+        "name": "lilac_sage",
+        "base": (254, 253, 251),
+        "wash_a": (230, 220, 244),
+        "wash_b": (216, 232, 217),
+        "leaf_a": (177, 164, 202),
+        "leaf_b": (157, 184, 160),
     },
     {
         "name": "peach_gold",
         "base": (255, 253, 247),
-        "wash_a": (250, 225, 201),
-        "wash_b": (249, 237, 203),
-        "leaf_a": (219, 180, 130),
-        "leaf_b": (231, 186, 160),
+        "wash_a": (248, 220, 192),
+        "wash_b": (246, 232, 194),
+        "leaf_a": (204, 169, 126),
+        "leaf_b": (225, 181, 151),
     },
     {
-        "name": "blush_coral",
-        "base": (255, 252, 249),
-        "wash_a": (248, 225, 218),
-        "wash_b": (246, 235, 224),
-        "leaf_a": (219, 163, 156),
-        "leaf_b": (232, 187, 174),
+        "name": "coral_sage",
+        "base": (255, 253, 250),
+        "wash_a": (246, 219, 210),
+        "wash_b": (215, 231, 216),
+        "leaf_a": (211, 159, 153),
+        "leaf_b": (154, 181, 158),
     },
 )
 
@@ -76,26 +72,34 @@ MEN_PRESETS = (
     {
         "name": "sage_mint",
         "base": (254, 253, 248),
-        "wash_a": (217, 232, 218),
-        "wash_b": (226, 239, 234),
-        "leaf_a": (151, 177, 154),
-        "leaf_b": (181, 201, 184),
+        "wash_a": (211, 230, 214),
+        "wash_b": (222, 237, 229),
+        "leaf_a": (143, 173, 148),
+        "leaf_b": (173, 195, 179),
     },
     {
         "name": "soft_peach_sand",
         "base": (255, 253, 247),
-        "wash_a": (248, 229, 209),
-        "wash_b": (240, 229, 205),
-        "leaf_a": (198, 169, 132),
-        "leaf_b": (211, 185, 151),
+        "wash_a": (247, 222, 200),
+        "wash_b": (239, 229, 204),
+        "leaf_a": (190, 160, 124),
+        "leaf_b": (207, 181, 148),
     },
     {
         "name": "powder_blue_teal",
         "base": (252, 254, 252),
-        "wash_a": (220, 234, 237),
-        "wash_b": (216, 233, 228),
-        "leaf_a": (139, 170, 168),
-        "leaf_b": (164, 188, 181),
+        "wash_a": (213, 232, 236),
+        "wash_b": (209, 230, 224),
+        "leaf_a": (128, 162, 161),
+        "leaf_b": (153, 181, 176),
+    },
+    {
+        "name": "sand_sage",
+        "base": (255, 254, 249),
+        "wash_a": (239, 227, 205),
+        "wash_b": (214, 230, 214),
+        "leaf_a": (184, 159, 125),
+        "leaf_b": (146, 173, 149),
     },
 )
 
@@ -104,197 +108,216 @@ def _preset_for(stream: str, output_jpg):
     day = legacy._day_number(output_jpg)
     normalized = (stream or "women").strip().lower()
     presets = MEN_PRESETS if normalized == "men" else GENERAL_PRESETS
-    return random.Random(f"{normalized}:{day}:{BACKGROUND_VERSION}").choice(presets)
+    return random.Random(
+        f"{normalized}:{day}:{BACKGROUND_VERSION}"
+    ).choice(presets)
 
 
-def _background_files(stream: str) -> list[Path]:
-    """Discover approved background image files, with a men-safe color filter."""
-    normalized = (stream or "women").strip().lower()
-    files = sorted(
-        (
-            path
-            for path in BACKGROUND_DIR.iterdir()
-            if path.is_file() and path.suffix.lower() in BACKGROUND_SUFFIXES
-        ),
-        key=lambda path: path.name.lower(),
-    )
-
-    if normalized == "men":
-        men_safe = [
-            path
-            for path in files
-            if not any(word in path.stem.lower() for word in MEN_EXCLUDED_COLOR_WORDS)
-        ]
-        if men_safe:
-            files = men_safe
-
-    if not files:
-        raise FileNotFoundError(
-            f"No approved PNG/JPG/JPEG backgrounds found in {BACKGROUND_DIR}"
-        )
-    return files
-
-
-def _background_path_for(stream: str, output_jpg) -> Path:
-    """Choose a stable pseudo-random background without repeats inside a cycle."""
-    day = max(1, legacy._day_number(output_jpg))
-    normalized = (stream or "women").strip().lower()
-    files = _background_files(normalized)
-    cycle = (day - 1) // len(files)
-    order = list(files)
-    random.Random(f"{normalized}:{cycle}:{BACKGROUND_VERSION}").shuffle(order)
-    return order[(day - 1) % len(order)]
-
-
-def _load_background(build_reel, stream: str, output_jpg):
-    path = _background_path_for(stream, output_jpg)
-    image = build_reel.Image.open(path).convert("RGB")
-    target = (build_reel.CANVAS_W, build_reel.CANVAS_H)
-    if image.size != target:
-        image = ImageOps.fit(
-            image,
-            target,
-            method=build_reel.Image.Resampling.LANCZOS,
-            centering=(0.5, 0.5),
-        )
-    return image, path
-
-
-def _soft_wash(build_reel, canvas, box, color, *, alpha=32, blur=72):
+def _soft_wash(build_reel, canvas, box, color, *, alpha=30, blur=78, seed=0):
+    """Layer translucent irregular blobs into one soft watercolor wash."""
     overlay = build_reel.Image.new("RGBA", canvas.size, (0, 0, 0, 0))
     draw = build_reel.ImageDraw.Draw(overlay)
-    x0, y0, x1, y1 = box
-    draw.ellipse((x0, y0, x1, y1), fill=(*color, alpha))
-    draw.ellipse(
-        (x0 + 55, y0 + 25, x1 + 95, y1 - 40),
-        fill=(*color, max(10, alpha // 2)),
-    )
-    overlay = overlay.filter(ImageFilter.GaussianBlur(blur))
-    return build_reel.Image.alpha_composite(canvas.convert("RGBA"), overlay).convert("RGB")
+    rng = random.Random(seed)
 
-
-def _watercolor_stroke(build_reel, canvas, box, color, *, alpha=28, blur=28):
-    """Add a soft irregular watercolor stroke without filling the clean center."""
-    overlay = build_reel.Image.new("RGBA", canvas.size, (0, 0, 0, 0))
-    draw = build_reel.ImageDraw.Draw(overlay)
     x0, y0, x1, y1 = box
     width = max(1, x1 - x0)
     height = max(1, y1 - y0)
 
-    for index, scale in enumerate((1.00, 0.84, 0.68)):
-        inset_x = int(width * (1.0 - scale) * 0.5)
-        inset_y = int(height * (1.0 - scale) * 0.5)
-        shift_x = 22 * index
-        shift_y = -12 * index
+    for index in range(8):
+        scale_x = rng.uniform(0.50, 1.00)
+        scale_y = rng.uniform(0.45, 1.00)
+        blob_w = width * scale_x
+        blob_h = height * scale_y
+        cx = rng.uniform(x0 + blob_w * 0.25, x1 - blob_w * 0.15)
+        cy = rng.uniform(y0 + blob_h * 0.20, y1 - blob_h * 0.15)
+        local_alpha = max(7, alpha - index * 2 + rng.randint(-3, 4))
         draw.ellipse(
             (
-                x0 + inset_x + shift_x,
-                y0 + inset_y + shift_y,
-                x1 - inset_x + shift_x,
-                y1 - inset_y + shift_y,
+                int(cx - blob_w / 2),
+                int(cy - blob_h / 2),
+                int(cx + blob_w / 2),
+                int(cy + blob_h / 2),
             ),
-            fill=(*color, max(8, alpha - index * 7)),
+            fill=(*color, local_alpha),
         )
 
     overlay = overlay.filter(ImageFilter.GaussianBlur(blur))
-    return build_reel.Image.alpha_composite(canvas.convert("RGBA"), overlay).convert("RGB")
+    return build_reel.Image.alpha_composite(
+        canvas.convert("RGBA"), overlay
+    ).convert("RGB")
 
 
-def _botanical_branch(build_reel, canvas, start, end, primary, secondary, *, mirror=False):
+def _watercolor_stroke(
+    build_reel,
+    canvas,
+    start,
+    end,
+    color,
+    *,
+    alpha=38,
+    width=145,
+    blur=24,
+    seed=0,
+):
+    """Paint a broad translucent watercolor brush stroke near a corner."""
+    overlay = build_reel.Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+    draw = build_reel.ImageDraw.Draw(overlay)
+    rng = random.Random(seed)
+
+    sx, sy = start
+    ex, ey = end
+
+    for index in range(5):
+        jitter = 24 + index * 3
+        offset_x = rng.randint(-jitter, jitter)
+        offset_y = rng.randint(-jitter, jitter)
+        line_alpha = max(8, alpha - index * 5)
+        line_width = max(30, width - index * 18)
+        draw.line(
+            (
+                sx + offset_x,
+                sy + offset_y,
+                ex + offset_x,
+                ey + offset_y,
+            ),
+            fill=(*color, line_alpha),
+            width=line_width,
+        )
+
+    overlay = overlay.filter(ImageFilter.GaussianBlur(blur))
+    return build_reel.Image.alpha_composite(
+        canvas.convert("RGBA"), overlay
+    ).convert("RGB")
+
+
+def _botanical_branch(
+    build_reel,
+    canvas,
+    start,
+    end,
+    primary,
+    secondary,
+    *,
+    mirror=False,
+):
+    """Draw one airy translucent botanical branch."""
     overlay = build_reel.Image.new("RGBA", canvas.size, (0, 0, 0, 0))
     draw = build_reel.ImageDraw.Draw(overlay)
     sx, sy = start
     ex, ey = end
-    draw.line((sx, sy, ex, ey), fill=(*secondary, 92), width=3)
 
-    for index, t in enumerate((0.17, 0.31, 0.46, 0.61, 0.76, 0.90)):
+    draw.line((sx, sy, ex, ey), fill=(*secondary, 105), width=3)
+
+    for index, t in enumerate((0.16, 0.30, 0.44, 0.59, 0.73, 0.87)):
         x = sx + (ex - sx) * t
         y = sy + (ey - sy) * t
         side = -1 if (index + (1 if mirror else 0)) % 2 else 1
         color = primary if index % 2 == 0 else secondary
-        rx = 13 if index < 4 else 10
-        ry = 38 if index < 4 else 30
-        angle = side * (0.62 if mirror else 0.72)
-        points = legacy._leaf_points(x + side * 35, y - 3, rx, ry, angle)
-        draw.polygon(points, fill=(*color, 96))
 
-        inner_points = legacy._leaf_points(
-            x + side * 35,
-            y - 3,
-            max(7, rx - 3),
-            max(20, ry - 7),
+        rx = 16 if index < 4 else 13
+        ry = 44 if index < 4 else 36
+        angle = side * (0.60 if mirror else 0.72)
+        leaf_x = x + side * 42
+
+        outer = legacy._leaf_points(leaf_x, y - 4, rx, ry, angle)
+        draw.polygon(outer, fill=(*color, 88))
+
+        inner = legacy._leaf_points(
+            leaf_x,
+            y - 4,
+            max(8, rx - 4),
+            max(21, ry - 9),
             angle,
         )
-        draw.polygon(inner_points, fill=(*color, 38))
+        draw.polygon(inner, fill=(*color, 30))
 
-    softened = overlay.filter(ImageFilter.GaussianBlur(0.8))
+    softened = overlay.filter(ImageFilter.GaussianBlur(0.9))
     canvas = build_reel.Image.alpha_composite(canvas.convert("RGBA"), softened)
     canvas = build_reel.Image.alpha_composite(canvas, overlay)
     return canvas.convert("RGB")
 
 
-def _build_background(build_reel, preset):
-    """Procedural fallback used only when an approved background file cannot load."""
+def _build_background(build_reel, preset, *, stream: str, output_jpg):
+    """Create the approved light watercolor botanical background."""
     canvas = build_reel.Image.new(
-        "RGB", (build_reel.CANVAS_W, build_reel.CANVAS_H), preset["base"]
+        "RGB",
+        (build_reel.CANVAS_W, build_reel.CANVAS_H),
+        preset["base"],
     )
     w, h = build_reel.CANVAS_W, build_reel.CANVAS_H
+    day = max(1, legacy._day_number(output_jpg))
+    normalized = (stream or "women").strip().lower()
+    seed_base = f"{normalized}:{day}:{BACKGROUND_VERSION}"
 
+    # Keep the central quote/illustration zone clean. All visible watercolor
+    # lives predominantly in the two approved corners.
     canvas = _soft_wash(
         build_reel,
         canvas,
-        (-240, -150, int(w * 0.50), int(h * 0.42)),
-        preset["wash_a"],
-        alpha=18,
-        blur=96,
-    )
-    canvas = _soft_wash(
-        build_reel,
-        canvas,
-        (int(w * 0.55), -180, w + 250, int(h * 0.42)),
-        preset["wash_b"],
-        alpha=39,
-        blur=92,
-    )
-    canvas = _soft_wash(
-        build_reel,
-        canvas,
-        (-250, int(h * 0.61), int(w * 0.49), h + 250),
+        (int(w * 0.55), -170, w + 260, int(h * 0.39)),
         preset["wash_a"],
         alpha=42,
-        blur=96,
+        blur=82,
+        seed=f"{seed_base}:tr-a",
     )
     canvas = _soft_wash(
         build_reel,
         canvas,
-        (int(w * 0.69), int(h * 0.70), w + 220, h + 180),
+        (int(w * 0.67), -80, w + 170, int(h * 0.48)),
         preset["wash_b"],
-        alpha=16,
-        blur=96,
+        alpha=32,
+        blur=72,
+        seed=f"{seed_base}:tr-b",
     )
-
-    canvas = _watercolor_stroke(
+    canvas = _soft_wash(
         build_reel,
         canvas,
-        (int(w * 0.68), -60, w + 120, 430),
+        (-260, int(h * 0.63), int(w * 0.46), h + 220),
+        preset["wash_b"],
+        alpha=43,
+        blur=84,
+        seed=f"{seed_base}:bl-a",
+    )
+    canvas = _soft_wash(
+        build_reel,
+        canvas,
+        (-160, int(h * 0.73), int(w * 0.36), h + 120),
         preset["wash_a"],
         alpha=31,
-        blur=34,
+        blur=70,
+        seed=f"{seed_base}:bl-b",
+    )
+
+    # Broad translucent brush strokes make the watercolor visibly different
+    # from the old flat beige/white background.
+    canvas = _watercolor_stroke(
+        build_reel,
+        canvas,
+        (int(w * 0.72), 40),
+        (w + 65, 430),
+        preset["wash_b"],
+        alpha=44,
+        width=165,
+        blur=26,
+        seed=f"{seed_base}:stroke-tr",
     )
     canvas = _watercolor_stroke(
         build_reel,
         canvas,
-        (-130, h - 500, int(w * 0.34), h + 70),
-        preset["wash_b"],
-        alpha=33,
-        blur=36,
+        (-70, h - 390),
+        (int(w * 0.30), h + 35),
+        preset["wash_a"],
+        alpha=46,
+        width=175,
+        blur=28,
+        seed=f"{seed_base}:stroke-bl",
     )
 
     canvas = _botanical_branch(
         build_reel,
         canvas,
-        (w + 8, 15),
-        (w - 205, 355),
+        (w + 16, 18),
+        (w - 245, 400),
         preset["leaf_a"],
         preset["leaf_b"],
         mirror=True,
@@ -302,8 +325,8 @@ def _build_background(build_reel, preset):
     canvas = _botanical_branch(
         build_reel,
         canvas,
-        (-8, h - 15),
-        (230, h - 410),
+        (-18, h - 18),
+        (265, h - 455),
         preset["leaf_a"],
         preset["leaf_b"],
     )
@@ -311,23 +334,22 @@ def _build_background(build_reel, preset):
 
 
 def apply_visual_theme(build_reel, *, stream: str = "women"):
-    """Apply approved watercolor image backgrounds to the existing renderer."""
+    """Apply the approved watercolor botanical theme to the existing renderer."""
     legacy.apply_visual_theme(build_reel)
     fallback_compose = build_reel.compose_post
 
     def compose_post(quote, illustration_path, output_jpg):
-        background_path = None
         try:
             preset = _preset_for(stream, output_jpg)
             primary, secondary = legacy._palette_for_output(output_jpg)
-            try:
-                canvas, background_path = _load_background(build_reel, stream, output_jpg)
-            except Exception as bg_exc:
-                print(f"Approved background file fallback: {bg_exc}")
-                canvas = _build_background(build_reel, preset)
+            canvas = _build_background(
+                build_reel,
+                preset,
+                stream=stream,
+                output_jpg=output_jpg,
+            )
 
             draw = build_reel.ImageDraw.Draw(canvas)
-
             wrapped_quote, qfont, quote_w, quote_h = legacy._fit_quote(
                 build_reel, draw, quote
             )
@@ -372,7 +394,12 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
             canvas.paste(art, (art_x, art_y), art)
 
             canvas = legacy._draw_handle_brush(
-                build_reel, canvas, handle_y, handle_w, handle_h, primary
+                build_reel,
+                canvas,
+                handle_y,
+                handle_w,
+                handle_h,
+                primary,
             )
             draw = build_reel.ImageDraw.Draw(canvas)
             draw.text(
@@ -390,10 +417,10 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
                 optimize=True,
                 progressive=True,
             )
-            if background_path is not None:
-                print(f"Approved reel background: {background_path.name} ({BACKGROUND_VERSION})")
-            else:
-                print(f"Watercolor procedural fallback: {preset['name']} ({BACKGROUND_VERSION})")
+            print(
+                f"Approved watercolor botanical background: "
+                f"{preset['name']} ({BACKGROUND_VERSION})"
+            )
         except Exception as exc:
             print(f"Watercolor background fallback: {exc}")
             fallback_compose(quote, illustration_path, output_jpg)
