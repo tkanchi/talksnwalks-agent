@@ -22,6 +22,22 @@ Pastel colours should dominate. Preferred families:
 
 Avoid harsh black backgrounds, neon colours, heavy saturation and fiery orange/gold skies.
 
+For the Men stream, keep the pastel treatment but avoid pink and lavender. Prefer sage/mint, soft peach/sand, powder blue and muted teal.
+
+## Reel background
+
+Use the approved very-light watercolor botanical background family for future reels:
+
+- warm ivory / near-white center for quote readability
+- very soft pastel watercolor strokes around the edges
+- delicate leaves in the **top-right** and **bottom-left** corners
+- generous clean space through the middle
+- subtle day-to-day variation rather than one fixed colour
+
+Women/general and Children/teens may rotate through sage/blush, soft peach, blush/lilac, lilac/pink, peach/gold and blush/coral variants.
+
+Men must rotate only through men-safe variants such as sage/mint, soft peach/sand and powder blue/teal.
+
 ## Scene direction
 
 Prefer gentle everyday scenes with visual depth, for example:
@@ -60,16 +76,15 @@ If a quote is universal, prefer a unisex scene such as nature, travel, workspace
 
 ## Branding
 
-The background artwork must not generate or redraw branding.
+The artwork/background must not generate or redraw branding.
 
-Code adds branding afterward:
+Code adds only:
 
 1. quote / attribution
 2. lowercase `@talksnwalks101`
-3. the fixed small monochrome Talks N Walks logo underneath the handle
 
-The logo is a locked asset and should not be regenerated as part of a scene.
+**Do not add a logo to posts unless this rule is explicitly changed later.**
 
 ## Production principle
 
-Do not substitute a visibly poor generic fallback simply to make a build pass. Keep the previous stable renderer available as an explicit fallback, but the preferred no-API production renderer is the curated pastel scene library.
+Keep the previous stable renderer available as a safe fallback. The preferred production renderer should preserve clean typography and the approved illustration while using the locked light watercolor botanical background family.
