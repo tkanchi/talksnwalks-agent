@@ -1,24 +1,31 @@
-"""Reference-inspired pastel watercolor backgrounds for Talk N Walks reels.
+"""Approved pastel watercolor backgrounds for Talk N Walks reels.
 
 Keeps the existing quote, illustration, handle and publishing behavior intact,
-while replacing the flat/procedural canvas with a very light watercolor-paper
-background family inspired by the approved botanical references: soft washes
-around the edges, leaves in the top-right and bottom-left corners, and a clean
-center for quote readability.
-
-Men use a separate pastel subset without pink or lavender.
+while using the approved 1080x1920 watercolor background files from
+``tnw_backgrounds``. A procedural watercolor background remains only as a safe
+fallback if an asset cannot be loaded.
 """
 
 from __future__ import annotations
 
 import random
+from pathlib import Path
 
-from PIL import ImageFilter
+from PIL import ImageFilter, ImageOps
 
 import legacy_visual_theme as legacy
 
 
-BACKGROUND_VERSION = "watercolor-v2"
+BACKGROUND_VERSION = "watercolor-files-v1"
+BACKGROUND_DIR = Path("tnw_backgrounds")
+BACKGROUND_FILES = (
+    "background_01_sage_blush.jpg",
+    "background_02_soft_peach.jpg",
+    "background_03_blush_lilac.jpg",
+    "background_04_lilac_pink.jpg",
+    "background_05_peach_gold.jpg",
+    "background_06_blush_coral.jpg",
+)
 
 GENERAL_PRESETS = (
     {
@@ -103,8 +110,31 @@ def _preset_for(stream: str, output_jpg):
     day = legacy._day_number(output_jpg)
     normalized = (stream or "women").strip().lower()
     presets = MEN_PRESETS if normalized == "men" else GENERAL_PRESETS
-    # Deterministic pseudo-random choice: rebuilds of the same stream/day remain identical.
     return random.Random(f"{normalized}:{day}:{BACKGROUND_VERSION}").choice(presets)
+
+
+def _background_path_for(stream: str, output_jpg) -> Path:
+    """Choose a stable shuffled background, avoiding repeats within each 6-day cycle."""
+    day = max(1, legacy._day_number(output_jpg))
+    normalized = (stream or "women").strip().lower()
+    cycle = (day - 1) // len(BACKGROUND_FILES)
+    order = list(BACKGROUND_FILES)
+    random.Random(f"{normalized}:{cycle}:{BACKGROUND_VERSION}").shuffle(order)
+    return BACKGROUND_DIR / order[(day - 1) % len(order)]
+
+
+def _load_background(build_reel, stream: str, output_jpg):
+    path = _background_path_for(stream, output_jpg)
+    image = build_reel.Image.open(path).convert("RGB")
+    target = (build_reel.CANVAS_W, build_reel.CANVAS_H)
+    if image.size != target:
+        image = ImageOps.fit(
+            image,
+            target,
+            method=build_reel.Image.Resampling.LANCZOS,
+            centering=(0.5, 0.5),
+        )
+    return image, path
 
 
 def _soft_wash(build_reel, canvas, box, color, *, alpha=32, blur=72):
@@ -165,7 +195,6 @@ def _botanical_branch(build_reel, canvas, start, end, primary, secondary, *, mir
         points = legacy._leaf_points(x + side * 35, y - 3, rx, ry, angle)
         draw.polygon(points, fill=(*color, 96))
 
-        # A smaller translucent pass gives the leaves a softer watercolor feel.
         inner_points = legacy._leaf_points(
             x + side * 35,
             y - 3,
@@ -182,12 +211,12 @@ def _botanical_branch(build_reel, canvas, start, end, primary, secondary, *, mir
 
 
 def _build_background(build_reel, preset):
+    """Procedural fallback used only when an approved background file cannot load."""
     canvas = build_reel.Image.new(
         "RGB", (build_reel.CANVAS_W, build_reel.CANVAS_H), preset["base"]
     )
     w, h = build_reel.CANVAS_W, build_reel.CANVAS_H
 
-    # Keep the middle light, but make the approved watercolor edges clearly visible.
     canvas = _soft_wash(
         build_reel,
         canvas,
@@ -221,7 +250,6 @@ def _build_background(build_reel, preset):
         blur=96,
     )
 
-    # Layered watercolor strokes in the two locked botanical corners.
     canvas = _watercolor_stroke(
         build_reel,
         canvas,
@@ -239,7 +267,6 @@ def _build_background(build_reel, preset):
         blur=36,
     )
 
-    # Locked botanical placement from the approved references.
     canvas = _botanical_branch(
         build_reel,
         canvas,
@@ -261,16 +288,21 @@ def _build_background(build_reel, preset):
 
 
 def apply_visual_theme(build_reel, *, stream: str = "women"):
-    """Apply the approved light watercolor botanical background family."""
-    # Install the proven renderer first so any unexpected error has a safe fallback.
+    """Apply the approved watercolor image backgrounds to the existing renderer."""
     legacy.apply_visual_theme(build_reel)
     fallback_compose = build_reel.compose_post
 
     def compose_post(quote, illustration_path, output_jpg):
+        background_path = None
         try:
             preset = _preset_for(stream, output_jpg)
             primary, secondary = legacy._palette_for_output(output_jpg)
-            canvas = _build_background(build_reel, preset)
+            try:
+                canvas, background_path = _load_background(build_reel, stream, output_jpg)
+            except Exception as bg_exc:
+                print(f"Approved background file fallback: {bg_exc}")
+                canvas = _build_background(build_reel, preset)
+
             draw = build_reel.ImageDraw.Draw(canvas)
 
             wrapped_quote, qfont, quote_w, quote_h = legacy._fit_quote(
@@ -335,7 +367,10 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
                 optimize=True,
                 progressive=True,
             )
-            print(f"Watercolor background: {preset['name']} ({BACKGROUND_VERSION})")
+            if background_path is not None:
+                print(f"Approved reel background: {background_path.name} ({BACKGROUND_VERSION})")
+            else:
+                print(f"Watercolor procedural fallback: {preset['name']} ({BACKGROUND_VERSION})")
         except Exception as exc:
             print(f"Watercolor background fallback: {exc}")
             fallback_compose(quote, illustration_path, output_jpg)
