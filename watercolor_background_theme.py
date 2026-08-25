@@ -18,6 +18,8 @@ from PIL import ImageFilter
 import legacy_visual_theme as legacy
 
 
+BACKGROUND_VERSION = "watercolor-v2"
+
 GENERAL_PRESETS = (
     {
         "name": "sage_blush",
@@ -102,7 +104,7 @@ def _preset_for(stream: str, output_jpg):
     normalized = (stream or "women").strip().lower()
     presets = MEN_PRESETS if normalized == "men" else GENERAL_PRESETS
     # Deterministic pseudo-random choice: rebuilds of the same stream/day remain identical.
-    return random.Random(f"{normalized}:{day}:watercolor-v1").choice(presets)
+    return random.Random(f"{normalized}:{day}:{BACKGROUND_VERSION}").choice(presets)
 
 
 def _soft_wash(build_reel, canvas, box, color, *, alpha=32, blur=72):
@@ -118,12 +120,39 @@ def _soft_wash(build_reel, canvas, box, color, *, alpha=32, blur=72):
     return build_reel.Image.alpha_composite(canvas.convert("RGBA"), overlay).convert("RGB")
 
 
+def _watercolor_stroke(build_reel, canvas, box, color, *, alpha=28, blur=28):
+    """Add a soft irregular watercolor stroke without filling the clean center."""
+    overlay = build_reel.Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+    draw = build_reel.ImageDraw.Draw(overlay)
+    x0, y0, x1, y1 = box
+    width = max(1, x1 - x0)
+    height = max(1, y1 - y0)
+
+    for index, scale in enumerate((1.00, 0.84, 0.68)):
+        inset_x = int(width * (1.0 - scale) * 0.5)
+        inset_y = int(height * (1.0 - scale) * 0.5)
+        shift_x = 22 * index
+        shift_y = -12 * index
+        draw.ellipse(
+            (
+                x0 + inset_x + shift_x,
+                y0 + inset_y + shift_y,
+                x1 - inset_x + shift_x,
+                y1 - inset_y + shift_y,
+            ),
+            fill=(*color, max(8, alpha - index * 7)),
+        )
+
+    overlay = overlay.filter(ImageFilter.GaussianBlur(blur))
+    return build_reel.Image.alpha_composite(canvas.convert("RGBA"), overlay).convert("RGB")
+
+
 def _botanical_branch(build_reel, canvas, start, end, primary, secondary, *, mirror=False):
     overlay = build_reel.Image.new("RGBA", canvas.size, (0, 0, 0, 0))
     draw = build_reel.ImageDraw.Draw(overlay)
     sx, sy = start
     ex, ey = end
-    draw.line((sx, sy, ex, ey), fill=(*secondary, 80), width=3)
+    draw.line((sx, sy, ex, ey), fill=(*secondary, 92), width=3)
 
     for index, t in enumerate((0.17, 0.31, 0.46, 0.61, 0.76, 0.90)):
         x = sx + (ex - sx) * t
@@ -133,12 +162,23 @@ def _botanical_branch(build_reel, canvas, start, end, primary, secondary, *, mir
         rx = 13 if index < 4 else 10
         ry = 38 if index < 4 else 30
         angle = side * (0.62 if mirror else 0.72)
-        draw.polygon(
-            legacy._leaf_points(x + side * 35, y - 3, rx, ry, angle),
-            fill=(*color, 76),
-        )
+        points = legacy._leaf_points(x + side * 35, y - 3, rx, ry, angle)
+        draw.polygon(points, fill=(*color, 96))
 
-    return build_reel.Image.alpha_composite(canvas.convert("RGBA"), overlay).convert("RGB")
+        # A smaller translucent pass gives the leaves a softer watercolor feel.
+        inner_points = legacy._leaf_points(
+            x + side * 35,
+            y - 3,
+            max(7, rx - 3),
+            max(20, ry - 7),
+            angle,
+        )
+        draw.polygon(inner_points, fill=(*color, 38))
+
+    softened = overlay.filter(ImageFilter.GaussianBlur(0.8))
+    canvas = build_reel.Image.alpha_composite(canvas.convert("RGBA"), softened)
+    canvas = build_reel.Image.alpha_composite(canvas, overlay)
+    return canvas.convert("RGB")
 
 
 def _build_background(build_reel, preset):
@@ -147,22 +187,56 @@ def _build_background(build_reel, preset):
     )
     w, h = build_reel.CANVAS_W, build_reel.CANVAS_H
 
-    # Keep the center almost white; watercolor lives mainly around the edges.
+    # Keep the middle light, but make the approved watercolor edges clearly visible.
     canvas = _soft_wash(
-        build_reel, canvas, (-210, -120, int(w * 0.42), int(h * 0.46)),
-        preset["wash_a"], alpha=25, blur=86,
+        build_reel,
+        canvas,
+        (-240, -150, int(w * 0.50), int(h * 0.42)),
+        preset["wash_a"],
+        alpha=18,
+        blur=96,
     )
     canvas = _soft_wash(
-        build_reel, canvas, (int(w * 0.64), -150, w + 220, int(h * 0.36)),
-        preset["wash_b"], alpha=21, blur=82,
+        build_reel,
+        canvas,
+        (int(w * 0.55), -180, w + 250, int(h * 0.42)),
+        preset["wash_b"],
+        alpha=39,
+        blur=92,
     )
     canvas = _soft_wash(
-        build_reel, canvas, (-210, int(h * 0.68), int(w * 0.40), h + 210),
-        preset["wash_b"], alpha=23, blur=86,
+        build_reel,
+        canvas,
+        (-250, int(h * 0.61), int(w * 0.49), h + 250),
+        preset["wash_a"],
+        alpha=42,
+        blur=96,
     )
     canvas = _soft_wash(
-        build_reel, canvas, (int(w * 0.70), int(h * 0.70), w + 220, h + 180),
-        preset["wash_a"], alpha=20, blur=88,
+        build_reel,
+        canvas,
+        (int(w * 0.69), int(h * 0.70), w + 220, h + 180),
+        preset["wash_b"],
+        alpha=16,
+        blur=96,
+    )
+
+    # Layered watercolor strokes in the two locked botanical corners.
+    canvas = _watercolor_stroke(
+        build_reel,
+        canvas,
+        (int(w * 0.68), -60, w + 120, 430),
+        preset["wash_a"],
+        alpha=31,
+        blur=34,
+    )
+    canvas = _watercolor_stroke(
+        build_reel,
+        canvas,
+        (-130, h - 500, int(w * 0.34), h + 70),
+        preset["wash_b"],
+        alpha=33,
+        blur=36,
     )
 
     # Locked botanical placement from the approved references.
@@ -261,7 +335,7 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
                 optimize=True,
                 progressive=True,
             )
-            print(f"Watercolor background: {preset['name']}")
+            print(f"Watercolor background: {preset['name']} ({BACKGROUND_VERSION})")
         except Exception as exc:
             print(f"Watercolor background fallback: {exc}")
             fallback_compose(quote, illustration_path, output_jpg)
