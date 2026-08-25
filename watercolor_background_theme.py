@@ -1,9 +1,10 @@
 """Approved pastel watercolor botanical backgrounds for Talk N Walks reels.
 
 Keeps the existing quote, illustration, handle and publishing behavior intact.
-Backgrounds are generated directly in the renderer so every build gets the
-approved very-light pastel watercolor look with botanical detail only in the
-top-right and bottom-left corners. The center remains clean for readability.
+Backgrounds are generated directly in the renderer so every build gets a
+clearly pastel watercolor background with botanical detail only in the
+top-right and bottom-left corners. The center remains clean for readability,
+and the base pastel changes every day.
 """
 
 from __future__ import annotations
@@ -15,12 +16,12 @@ from PIL import ImageFilter
 import legacy_visual_theme as legacy
 
 
-BACKGROUND_VERSION = "watercolor-botanical-v3"
+BACKGROUND_VERSION = "watercolor-botanical-v4"
 
 GENERAL_PRESETS = (
     {
         "name": "sage_blush",
-        "base": (255, 253, 249),
+        "base": (240, 247, 241),
         "wash_a": (211, 230, 214),
         "wash_b": (247, 219, 211),
         "leaf_a": (150, 180, 155),
@@ -28,7 +29,7 @@ GENERAL_PRESETS = (
     },
     {
         "name": "soft_peach",
-        "base": (255, 253, 248),
+        "base": (252, 239, 229),
         "wash_a": (249, 218, 193),
         "wash_b": (244, 231, 201),
         "leaf_a": (203, 166, 132),
@@ -36,7 +37,7 @@ GENERAL_PRESETS = (
     },
     {
         "name": "blush_lilac",
-        "base": (255, 253, 251),
+        "base": (247, 239, 246),
         "wash_a": (245, 218, 221),
         "wash_b": (229, 217, 243),
         "leaf_a": (191, 170, 205),
@@ -44,7 +45,7 @@ GENERAL_PRESETS = (
     },
     {
         "name": "lilac_sage",
-        "base": (254, 253, 251),
+        "base": (241, 240, 249),
         "wash_a": (230, 220, 244),
         "wash_b": (216, 232, 217),
         "leaf_a": (177, 164, 202),
@@ -52,7 +53,7 @@ GENERAL_PRESETS = (
     },
     {
         "name": "peach_gold",
-        "base": (255, 253, 247),
+        "base": (252, 243, 226),
         "wash_a": (248, 220, 192),
         "wash_b": (246, 232, 194),
         "leaf_a": (204, 169, 126),
@@ -60,7 +61,7 @@ GENERAL_PRESETS = (
     },
     {
         "name": "coral_sage",
-        "base": (255, 253, 250),
+        "base": (249, 239, 233),
         "wash_a": (246, 219, 210),
         "wash_b": (215, 231, 216),
         "leaf_a": (211, 159, 153),
@@ -71,7 +72,7 @@ GENERAL_PRESETS = (
 MEN_PRESETS = (
     {
         "name": "sage_mint",
-        "base": (254, 253, 248),
+        "base": (238, 246, 240),
         "wash_a": (211, 230, 214),
         "wash_b": (222, 237, 229),
         "leaf_a": (143, 173, 148),
@@ -79,7 +80,7 @@ MEN_PRESETS = (
     },
     {
         "name": "soft_peach_sand",
-        "base": (255, 253, 247),
+        "base": (249, 240, 227),
         "wash_a": (247, 222, 200),
         "wash_b": (239, 229, 204),
         "leaf_a": (190, 160, 124),
@@ -87,7 +88,7 @@ MEN_PRESETS = (
     },
     {
         "name": "powder_blue_teal",
-        "base": (252, 254, 252),
+        "base": (235, 245, 247),
         "wash_a": (213, 232, 236),
         "wash_b": (209, 230, 224),
         "leaf_a": (128, 162, 161),
@@ -95,7 +96,7 @@ MEN_PRESETS = (
     },
     {
         "name": "sand_sage",
-        "base": (255, 254, 249),
+        "base": (245, 241, 229),
         "wash_a": (239, 227, 205),
         "wash_b": (214, 230, 214),
         "leaf_a": (184, 159, 125),
@@ -105,12 +106,12 @@ MEN_PRESETS = (
 
 
 def _preset_for(stream: str, output_jpg):
-    day = legacy._day_number(output_jpg)
+    """Rotate presets by day so consecutive days never use the same base color."""
+    day = max(1, legacy._day_number(output_jpg))
     normalized = (stream or "women").strip().lower()
     presets = MEN_PRESETS if normalized == "men" else GENERAL_PRESETS
-    return random.Random(
-        f"{normalized}:{day}:{BACKGROUND_VERSION}"
-    ).choice(presets)
+    stream_offset = sum(ord(char) for char in normalized) % len(presets)
+    return presets[((day - 1) + stream_offset) % len(presets)]
 
 
 def _soft_wash(build_reel, canvas, box, color, *, alpha=30, blur=78, seed=0):
