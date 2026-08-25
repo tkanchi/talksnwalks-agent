@@ -1,9 +1,9 @@
 """Approved pastel watercolor backgrounds for Talk N Walks reels.
 
 Keeps the existing quote, illustration, handle and publishing behavior intact,
-while using the approved 1080x1920 watercolor background files from
-``tnw_backgrounds``. A procedural watercolor background remains only as a safe
-fallback if an asset cannot be loaded.
+while using approved watercolor background files from ``tnw_backgrounds``.
+PNG, JPG and JPEG backgrounds are discovered automatically. A procedural
+watercolor background remains only as a safe fallback if an asset cannot load.
 """
 
 from __future__ import annotations
@@ -16,16 +16,10 @@ from PIL import ImageFilter, ImageOps
 import legacy_visual_theme as legacy
 
 
-BACKGROUND_VERSION = "watercolor-files-v1"
+BACKGROUND_VERSION = "watercolor-files-v2"
 BACKGROUND_DIR = Path("tnw_backgrounds")
-BACKGROUND_FILES = (
-    "background_01_sage_blush.jpg",
-    "background_02_soft_peach.jpg",
-    "background_03_blush_lilac.jpg",
-    "background_04_lilac_pink.jpg",
-    "background_05_peach_gold.jpg",
-    "background_06_blush_coral.jpg",
-)
+BACKGROUND_SUFFIXES = {".png", ".jpg", ".jpeg"}
+MEN_EXCLUDED_COLOR_WORDS = {"pink", "lilac", "lavender", "blush"}
 
 GENERAL_PRESETS = (
     {
@@ -113,14 +107,43 @@ def _preset_for(stream: str, output_jpg):
     return random.Random(f"{normalized}:{day}:{BACKGROUND_VERSION}").choice(presets)
 
 
+def _background_files(stream: str) -> list[Path]:
+    """Discover approved background image files, with a men-safe color filter."""
+    normalized = (stream or "women").strip().lower()
+    files = sorted(
+        (
+            path
+            for path in BACKGROUND_DIR.iterdir()
+            if path.is_file() and path.suffix.lower() in BACKGROUND_SUFFIXES
+        ),
+        key=lambda path: path.name.lower(),
+    )
+
+    if normalized == "men":
+        men_safe = [
+            path
+            for path in files
+            if not any(word in path.stem.lower() for word in MEN_EXCLUDED_COLOR_WORDS)
+        ]
+        if men_safe:
+            files = men_safe
+
+    if not files:
+        raise FileNotFoundError(
+            f"No approved PNG/JPG/JPEG backgrounds found in {BACKGROUND_DIR}"
+        )
+    return files
+
+
 def _background_path_for(stream: str, output_jpg) -> Path:
-    """Choose a stable shuffled background, avoiding repeats within each 6-day cycle."""
+    """Choose a stable pseudo-random background without repeats inside a cycle."""
     day = max(1, legacy._day_number(output_jpg))
     normalized = (stream or "women").strip().lower()
-    cycle = (day - 1) // len(BACKGROUND_FILES)
-    order = list(BACKGROUND_FILES)
+    files = _background_files(normalized)
+    cycle = (day - 1) // len(files)
+    order = list(files)
     random.Random(f"{normalized}:{cycle}:{BACKGROUND_VERSION}").shuffle(order)
-    return BACKGROUND_DIR / order[(day - 1) % len(order)]
+    return order[(day - 1) % len(order)]
 
 
 def _load_background(build_reel, stream: str, output_jpg):
@@ -288,7 +311,7 @@ def _build_background(build_reel, preset):
 
 
 def apply_visual_theme(build_reel, *, stream: str = "women"):
-    """Apply the approved watercolor image backgrounds to the existing renderer."""
+    """Apply approved watercolor image backgrounds to the existing renderer."""
     legacy.apply_visual_theme(build_reel)
     fallback_compose = build_reel.compose_post
 
