@@ -2,7 +2,7 @@
 
 All illustrations live in one ``illustrations/`` folder and use:
 
-    audience_topic_scene_XX.png
+    audience_topic_scene_XX.<png|jpg|jpeg>
 
 The selector uses the quote Topic plus ``data/topics.csv`` IllustrationTags to
 prefer a relevant scene. Matching is a preference only: every eligible unique
@@ -18,8 +18,9 @@ from collections import Counter, defaultdict, deque
 from pathlib import Path
 
 
+IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg"}
 FILENAME_RE = re.compile(
-    r"^(women|men|kids|teens|all|family)_([a-z0-9]+)_([a-z0-9_]+)_([0-9]{2})\.png$"
+    r"^(women|men|kids|teens|all|family)_([a-z0-9]+)_([a-z0-9_]+)_([0-9]{2})\.(?:png|jpe?g)$"
 )
 
 # Small semantic bridge between canonical taxonomy tags and the broad second
@@ -132,6 +133,18 @@ def _content_hash(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _image_paths(directory: Path) -> list[Path]:
+    directory = Path(directory)
+    return sorted(
+        (
+            path
+            for path in directory.iterdir()
+            if path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES
+        ),
+        key=lambda path: path.name.lower(),
+    )
+
+
 def _normalise_label(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", " ", (value or "").lower()).strip()
 
@@ -191,18 +204,15 @@ def _eligible_for_stream(filename: str, stream: str | None) -> bool:
 
 def _unique_paths(directory: Path, stream: str | None = None) -> list[Path]:
     directory = Path(directory)
-    paths = sorted(
-        (
-            path
-            for path in directory.glob("*.png")
-            if _eligible_for_stream(path.name, stream)
-        ),
-        key=lambda path: path.name.lower(),
-    )
+    paths = [
+        path
+        for path in _image_paths(directory)
+        if _eligible_for_stream(path.name, stream)
+    ]
     if not paths:
         label = f" for stream '{stream}'" if stream else ""
         raise FileNotFoundError(
-            f"No eligible, correctly named PNG illustrations found in {directory}{label}"
+            f"No eligible, correctly named PNG/JPG/JPEG illustrations found in {directory}{label}"
         )
 
     seen_hashes: set[str] = set()
@@ -217,7 +227,7 @@ def _unique_paths(directory: Path, stream: str | None = None) -> list[Path]:
 
 
 def unique_illustration_names(directory: Path, stream: str | None = None) -> list[str]:
-    """Return eligible unique PNGs in deterministic, topic-spread order."""
+    """Return eligible unique images in deterministic, topic-spread order."""
     unique_paths = _unique_paths(directory, stream=stream)
 
     groups: dict[str, deque[str]] = defaultdict(deque)
@@ -371,7 +381,7 @@ def matched_illustration_names(
 def audit_illustrations(directory: Path) -> dict[str, object]:
     """Return naming counts and exact-content duplicate groups."""
     directory = Path(directory)
-    paths = sorted(directory.glob("*.png"), key=lambda path: path.name.lower())
+    paths = _image_paths(directory)
 
     invalid: list[str] = []
     audience_counts: Counter[str] = Counter()
@@ -402,7 +412,7 @@ def write_inventory_csv(directory: Path, destination: Path) -> Path:
     """Write a current inventory from filenames and exact file hashes."""
     directory = Path(directory)
     destination = Path(destination)
-    paths = sorted(directory.glob("*.png"), key=lambda path: path.name.lower())
+    paths = _image_paths(directory)
 
     first_by_hash: dict[str, str] = {}
     rows: list[dict[str, str]] = []
@@ -457,11 +467,11 @@ def apply_illustration_pool(
         unique_count = len(_unique_paths(target, stream=stream))
         print(
             f"Illustration assignments [{stream}]: {len(names)} days "
-            f"across {unique_count} unique eligible PNGs"
+            f"across {unique_count} unique eligible image files"
         )
     else:
         names = unique_illustration_names(target, stream=stream)
-        print(f"Illustration pool [{stream or 'all'}]: {len(names)} unique PNGs")
+        print(f"Illustration pool [{stream or 'all'}]: {len(names)} unique image files")
 
     build_reel.ILLUSTRATION_DIR = target
     build_reel.ILLUSTRATIONS = names
