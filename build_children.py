@@ -10,7 +10,7 @@ from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
 from engagement_card import apply_engagement_card
 from illustration_pool import apply_illustration_pool
-from legacy_visual_theme import apply_visual_theme as apply_legacy_visual_theme
+from watercolor_background_theme import apply_visual_theme
 from quote_library import build_curated_simple_quote_file
 
 
@@ -66,8 +66,8 @@ def _apply_visuals() -> None:
         stream="children",
         quote_file=build_reel.QUOTES_FILE,
     )
-    apply_legacy_visual_theme(build_reel)
-    print("Illustration-based children visuals enabled.")
+    apply_visual_theme(build_reel, stream="children")
+    print("Approved watercolor-background children visuals enabled.")
 
 
 if __name__ == "__main__":
