@@ -7,6 +7,9 @@ All illustrations live in one ``illustrations/`` folder and use:
 The selector uses the quote Topic plus ``data/topics.csv`` IllustrationTags to
 prefer a relevant scene. Matching is a preference only: every eligible unique
 image is exhausted before any image can repeat.
+
+Animal/pet artwork is kept in its own rotation and is only eligible for quotes
+that explicitly reference pets or animals.
 """
 
 from __future__ import annotations
@@ -122,6 +125,36 @@ QUOTE_KEYWORDS = {
     "heal": "wellness",
     "health": "wellness",
     "sport": "sports",
+}
+
+# Animal scene words are detected from the filename topic/scene tokens. This
+# list intentionally covers common pets plus obvious animal artwork so a future
+# horse/bird/rabbit image cannot silently enter the general illustration cycle.
+ANIMAL_IMAGE_TOKENS = {
+    "animal", "animals",
+    "pet", "pets",
+    "dog", "dogs", "puppy", "puppies",
+    "cat", "cats", "kitten", "kittens",
+    "rabbit", "rabbits", "bunny", "bunnies",
+    "hamster", "hamsters",
+    "bird", "birds", "parrot", "parrots",
+    "horse", "horses",
+    "fish",
+}
+
+# A quote must explicitly contain one of these words/phrases (or use them in
+# Topic/Theme) before animal artwork becomes eligible.
+PET_QUOTE_TERMS = {
+    "animal", "animals",
+    "pet", "pets",
+    "dog", "dogs", "puppy", "puppies",
+    "cat", "cats", "kitten", "kittens",
+    "rabbit", "rabbits", "bunny", "bunnies",
+    "hamster", "hamsters",
+    "bird", "birds", "parrot", "parrots",
+    "horse", "horses",
+    "fish",
+    "paw", "paws",
 }
 
 
@@ -289,6 +322,38 @@ def _image_tokens(path: Path) -> set[str]:
     return tokens
 
 
+def _is_animal_image(path: Path) -> bool:
+    """Return True when the illustration filename clearly contains an animal."""
+    return bool(_image_tokens(path) & ANIMAL_IMAGE_TOKENS)
+
+
+def _is_pet_related_quote(row: dict[str, str]) -> bool:
+    """Require an explicit pet/animal reference before selecting animal artwork."""
+    text = " ".join(
+        (
+            row.get("Topic", ""),
+            row.get("Theme", ""),
+            row.get("Quote", ""),
+        )
+    ).lower()
+    words = set(re.findall(r"[a-z]+", text))
+    if words & PET_QUOTE_TERMS:
+        return True
+
+    # Common pet expressions that are clearer as phrases than single tokens.
+    return any(
+        phrase in text
+        for phrase in (
+            "fur baby",
+            "fur babies",
+            "four legged",
+            "four-legged",
+            "pet parent",
+            "pet parents",
+        )
+    )
+
+
 def _audience_score(audience: str, stream: str) -> int:
     stream = stream.lower()
     if stream == "women":
@@ -336,7 +401,8 @@ def matched_illustration_names(
 ) -> list[str]:
     """Return one topic-aware illustration assignment per quote row.
 
-    A complete eligible-image cycle is exhausted before any image can repeat.
+    Animal images rotate only across explicitly pet/animal-related quotes.
+    Non-animal images keep their own complete no-repeat cycle.
     """
     pool = _unique_paths(directory, stream=stream)
     with Path(quote_file).open(newline="", encoding="utf-8") as f:
@@ -348,17 +414,33 @@ def matched_illustration_names(
     spread_order = unique_illustration_names(directory, stream=stream)
     spread_rank = {name: index for index, name in enumerate(spread_order)}
 
-    available = list(pool)
+    animal_pool = [path for path in pool if _is_animal_image(path)]
+    general_pool = [path for path in pool if not _is_animal_image(path)]
+    if not general_pool:
+        raise FileNotFoundError(
+            f"No non-animal illustrations are eligible for stream '{stream}'"
+        )
+
+    available_animal = list(animal_pool)
+    available_general = list(general_pool)
     selected: list[str] = []
     last_name: str | None = None
 
     for row in rows:
-        if not available:
-            available = list(pool)
+        pet_related = _is_pet_related_quote(row)
+
+        if pet_related and animal_pool:
+            if not available_animal:
+                available_animal = list(animal_pool)
+            candidates = available_animal
+        else:
+            if not available_general:
+                available_general = list(general_pool)
+            candidates = available_general
 
         quote_tokens = _quote_tokens(row, taxonomy)
         ranked = sorted(
-            available,
+            candidates,
             key=lambda path: (
                 -_candidate_score(path, quote_tokens, stream),
                 spread_rank[path.name],
@@ -373,7 +455,7 @@ def matched_illustration_names(
 
         selected.append(chosen.name)
         last_name = chosen.name
-        available.remove(chosen)
+        candidates.remove(chosen)
 
     return selected
 
