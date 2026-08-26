@@ -1,8 +1,9 @@
 """Plain premium daily backgrounds for Talk N Walks reels.
 
 Keeps the existing quote, illustration, handle and publishing behavior intact.
-Backgrounds use the finalized muted palette as simple solid fills. No botanical
-shapes, fake leaves, gradients, watercolor blobs or busy textures are drawn.
+Backgrounds use quiet near-neutral solid fills chosen to support already-coloured
+illustrations. No botanical shapes, fake leaves, gradients, watercolor blobs or
+busy textures are drawn.
 """
 
 from __future__ import annotations
@@ -10,10 +11,11 @@ from __future__ import annotations
 import legacy_visual_theme as legacy
 
 
-BACKGROUND_VERSION = "muted-solid-v1"
+BACKGROUND_VERSION = "muted-solid-v2"
 
-# Finalized Talk N Walks daily background palette.
-# Exact values from the approved palette board.
+# Finalized Talk N Walks palette. Coloured artwork uses the quieter neutrals
+# below; sage/blush remain available for future controlled use but are not in
+# the automatic production families.
 PALETTE = (
     {"name": "warm_ivory", "hex": "#F3EFE7", "rgb": (243, 239, 231)},
     {"name": "soft_stone", "hex": "#E8E3DC", "rgb": (232, 227, 220)},
@@ -24,14 +26,77 @@ PALETTE = (
     {"name": "blue_grey", "hex": "#DEE4E8", "rgb": (222, 228, 232)},
     {"name": "soft_blush", "hex": "#E8DDDA", "rgb": (232, 221, 218)},
 )
+PALETTE_BY_NAME = {item["name"]: item for item in PALETTE}
+
+SAFE_NEUTRALS = (
+    "warm_ivory",
+    "soft_stone",
+    "dusty_beige",
+    "pale_taupe",
+    "mist_grey",
+    "blue_grey",
+)
+WARM_ART_BACKGROUNDS = ("mist_grey", "blue_grey", "soft_stone")
+COOL_ART_BACKGROUNDS = ("warm_ivory", "soft_stone", "dusty_beige", "pale_taupe")
+BUSY_ART_BACKGROUNDS = ("warm_ivory", "mist_grey", "soft_stone")
 
 
-def _preset_for(stream: str, output_jpg):
-    """Rotate the finalized palette daily with a stable stream-specific offset."""
+def _classify_artwork(art):
+    """Classify artwork broadly so the background supports rather than competes."""
+    sample = art.convert("RGBA").copy()
+    sample.thumbnail((96, 96))
+    pixels = sample.load()
+
+    warmth_total = 0.0
+    saturation_total = 0.0
+    count = 0
+
+    for y in range(sample.height):
+        for x in range(sample.width):
+            red, green, blue, alpha = pixels[x, y]
+            if alpha < 24:
+                continue
+            if red > 245 and green > 245 and blue > 245:
+                continue
+
+            warmth_total += red - blue
+            saturation_total += max(red, green, blue) - min(red, green, blue)
+            count += 1
+
+    if count == 0:
+        return "neutral"
+
+    average_warmth = warmth_total / count
+    average_saturation = saturation_total / count
+
+    if average_saturation >= 58:
+        return "busy"
+    if average_warmth >= 10:
+        return "warm"
+    if average_warmth <= -10:
+        return "cool"
+    return "neutral"
+
+
+def _background_family(art):
+    classification = _classify_artwork(art)
+    if classification == "warm":
+        return WARM_ART_BACKGROUNDS
+    if classification == "cool":
+        return COOL_ART_BACKGROUNDS
+    if classification == "busy":
+        return BUSY_ART_BACKGROUNDS
+    return SAFE_NEUTRALS
+
+
+def _preset_for(stream: str, output_jpg, art):
+    """Rotate within an artwork-safe neutral family with a stable stream offset."""
     day = max(1, legacy._day_number(output_jpg))
     normalized = (stream or "women").strip().lower()
-    stream_offset = sum(ord(char) for char in normalized) % len(PALETTE)
-    return PALETTE[((day - 1) + stream_offset) % len(PALETTE)]
+    family = _background_family(art)
+    stream_offset = sum(ord(char) for char in normalized) % len(family)
+    name = family[((day - 1) + stream_offset) % len(family)]
+    return PALETTE_BY_NAME[name]
 
 
 def _build_background(build_reel, preset):
@@ -50,8 +115,11 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
 
     def compose_post(quote, illustration_path, output_jpg):
         try:
-            preset = _preset_for(stream, output_jpg)
-            primary, secondary = legacy._palette_for_output(output_jpg)
+            source_art = legacy._remove_opaque_white_background(
+                build_reel.Image.open(illustration_path)
+            )
+            preset = _preset_for(stream, output_jpg, source_art)
+            primary, _ = legacy._palette_for_output(output_jpg)
             canvas = _build_background(build_reel, preset)
 
             draw = build_reel.ImageDraw.Draw(canvas)
@@ -60,15 +128,13 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
             )
             hfont = build_reel.find_font(build_reel.HANDLE_SIZE, serif=False)
 
-            source_art = legacy._remove_opaque_white_background(
-                build_reel.Image.open(illustration_path)
-            )
             art = build_reel.fit_inside(
                 source_art,
                 build_reel.ILLUSTRATION_MAX_W,
                 build_reel.ILLUSTRATION_MAX_H,
             )
-            art = legacy._style_art(art, primary, secondary)
+            # Coloured illustrations are already approved artwork. Preserve their
+            # original colours instead of re-tinting them with the legacy palette.
 
             hbox = draw.textbbox((0, 0), build_reel.HANDLE, font=hfont)
             handle_w = hbox[2] - hbox[0]
