@@ -133,6 +133,7 @@ def _source_metadata():
                             metadata[quote_id] = {
                                 "SourceType": (row.get("SourceType") or "").strip(),
                                 "InspiredBy": (row.get("InspiredBy") or "").strip(),
+                                "Author": (row.get("Author") or "").strip(),
                             }
             except (OSError, csv.Error):
                 continue
@@ -155,14 +156,11 @@ def _source_label(build_reel, output_jpg):
         source_type = (row.get("SourceType") or "").strip().lower()
         metadata = _source_metadata().get(quote_id, {})
         book = (metadata.get("InspiredBy") or "").strip()
+        author = (metadata.get("Author") or "").strip()
 
-        if book and source_type == "inspired_by":
-            return f"Inspired by: {book}"
-        if book and source_type in {"direct_quote", "public_domain"}:
-            return f"From: {book}"
-        if source_type in {"original", "legacy_original", "original_moral", ""}:
-            return ""
-        return "Talk N Walks Source Library"
+        if book and author and source_type == "inspired_by":
+            return f"Inspired by: {book} — {author}"
+        return ""
     except Exception:
         return ""
 
