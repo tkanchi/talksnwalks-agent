@@ -148,7 +148,7 @@ def _source_label(build_reel, output_jpg):
         with build_reel.QUOTES_FILE.open(newline="", encoding="utf-8") as handle:
             rows = list(csv.DictReader(handle))
         if day > len(rows):
-            return "Talk N Walks Original"
+            return ""
 
         row = rows[day - 1]
         quote_id = (row.get("QuoteID") or "").strip()
@@ -161,10 +161,10 @@ def _source_label(build_reel, output_jpg):
         if book and source_type in {"direct_quote", "public_domain"}:
             return f"From: {book}"
         if source_type in {"original", "legacy_original", "original_moral", ""}:
-            return "Talk N Walks Original"
+            return ""
         return "Talk N Walks Source Library"
     except Exception:
-        return "Talk N Walks Original"
+        return ""
 
 
 def apply_visual_theme(build_reel, *, stream: str = "women"):
@@ -222,15 +222,16 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
                 align="center",
             )
 
-            source_box = draw.textbbox((0, 0), source_label, font=source_font)
-            source_w = source_box[2] - source_box[0]
-            source_y = quote_y + quote_h + SOURCE_TOP_GAP
-            draw.text(
-                ((build_reel.CANVAS_W - source_w) / 2, source_y),
-                source_label,
-                fill=legacy.SOFT_INK,
-                font=source_font,
-            )
+            if source_label:
+                source_box = draw.textbbox((0, 0), source_label, font=source_font)
+                source_w = source_box[2] - source_box[0]
+                source_y = quote_y + quote_h + SOURCE_TOP_GAP
+                draw.text(
+                    ((build_reel.CANVAS_W - source_w) / 2, source_y),
+                    source_label,
+                    fill=legacy.SOFT_INK,
+                    font=source_font,
+                )
 
             art_x = (build_reel.CANVAS_W - art.width) // 2
             canvas.paste(art, (art_x, art_y), art)
