@@ -304,8 +304,8 @@ def _draw_botanicals(build_reel, canvas, primary, secondary):
 def _draw_handle_brush(build_reel, canvas, handle_y, handle_w, handle_h, primary):
     overlay = build_reel.Image.new("RGBA", canvas.size, (0, 0, 0, 0))
     draw = build_reel.ImageDraw.Draw(overlay)
-    pad_x = 38
-    pad_y = 14
+    pad_x = 28
+    pad_y = 10
     x0 = (canvas.width - handle_w) / 2 - pad_x
     x1 = (canvas.width + handle_w) / 2 + pad_x
     y0 = handle_y - pad_y
@@ -313,7 +313,7 @@ def _draw_handle_brush(build_reel, canvas, handle_y, handle_w, handle_h, primary
     draw.rounded_rectangle(
         (x0, y0, x1, y1),
         radius=max(18, int((y1 - y0) / 2)),
-        fill=(*primary, 62),
+        fill=(*primary, 42),
     )
     return build_reel.Image.alpha_composite(canvas.convert("RGBA"), overlay).convert("RGB")
 
