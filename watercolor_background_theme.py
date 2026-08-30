@@ -14,33 +14,35 @@ from pathlib import Path
 import legacy_visual_theme as legacy
 
 
-BACKGROUND_VERSION = "approved-pastel-v3"
+BACKGROUND_VERSION = "approved-pastel-v4"
 
-# User-approved light pastel palette. Keep these shades light; do not introduce
-# darker variants, black, charcoal or muddy near-neutrals as backgrounds.
+# User-approved pastel families, intentionally lifted to cleaner/lighter tints.
+# Do not introduce darker variants, black, charcoal or muddy near-neutrals as
+# backgrounds. These values should stay pale enough for the quote to remain the
+# visual focus while still giving each day a clear color identity.
 PALETTE = (
-    {"name": "vanilla", "hex": "#F8F3D9", "rgb": (248, 243, 217)},
-    {"name": "butter", "hex": "#F7E7A9", "rgb": (247, 231, 169)},
-    {"name": "lemon", "hex": "#F9F2B3", "rgb": (249, 242, 179)},
-    {"name": "daffodil", "hex": "#F7ED9C", "rgb": (247, 237, 156)},
-    {"name": "apricot", "hex": "#F9D8B0", "rgb": (249, 216, 176)},
-    {"name": "peach", "hex": "#F8D0B0", "rgb": (248, 208, 176)},
-    {"name": "melon", "hex": "#F7C7A8", "rgb": (247, 199, 168)},
-    {"name": "seafoam", "hex": "#DDF3E4", "rgb": (221, 243, 228)},
-    {"name": "mint", "hex": "#DDF7E3", "rgb": (221, 247, 227)},
-    {"name": "aqua", "hex": "#D9F2F0", "rgb": (217, 242, 240)},
-    {"name": "salmon", "hex": "#F8C1B4", "rgb": (248, 193, 180)},
-    {"name": "coral", "hex": "#F7B7A8", "rgb": (247, 183, 168)},
-    {"name": "blush", "hex": "#F8DADF", "rgb": (248, 218, 223)},
-    {"name": "petal", "hex": "#F9D6E2", "rgb": (249, 214, 226)},
-    {"name": "rose", "hex": "#F6C9D8", "rgb": (246, 201, 216)},
-    {"name": "wisteria", "hex": "#E7DDF6", "rgb": (231, 221, 246)},
-    {"name": "lavender", "hex": "#EADCF8", "rgb": (234, 220, 248)},
-    {"name": "lilac", "hex": "#E4D8F5", "rgb": (228, 216, 245)},
-    {"name": "ice", "hex": "#E8F4FB", "rgb": (232, 244, 251)},
-    {"name": "powder", "hex": "#DDECF9", "rgb": (221, 236, 249)},
-    {"name": "sky", "hex": "#D7EAFB", "rgb": (215, 234, 251)},
-    {"name": "azure", "hex": "#D6E8FA", "rgb": (214, 232, 250)},
+    {"name": "vanilla", "hex": "#FFF8E7", "rgb": (255, 248, 231)},
+    {"name": "butter", "hex": "#FFF2C2", "rgb": (255, 242, 194)},
+    {"name": "lemon", "hex": "#FFF7C7", "rgb": (255, 247, 199)},
+    {"name": "daffodil", "hex": "#FFF2B3", "rgb": (255, 242, 179)},
+    {"name": "apricot", "hex": "#FFE8D1", "rgb": (255, 232, 209)},
+    {"name": "peach", "hex": "#FFE2D2", "rgb": (255, 226, 210)},
+    {"name": "melon", "hex": "#FFDCCA", "rgb": (255, 220, 202)},
+    {"name": "seafoam", "hex": "#E8F8F1", "rgb": (232, 248, 241)},
+    {"name": "mint", "hex": "#E9FAEF", "rgb": (233, 250, 239)},
+    {"name": "aqua", "hex": "#E6F8F8", "rgb": (230, 248, 248)},
+    {"name": "salmon", "hex": "#FFE0D8", "rgb": (255, 224, 216)},
+    {"name": "coral", "hex": "#FFD9D1", "rgb": (255, 217, 209)},
+    {"name": "blush", "hex": "#FCE9ED", "rgb": (252, 233, 237)},
+    {"name": "petal", "hex": "#FBE5EE", "rgb": (251, 229, 238)},
+    {"name": "rose", "hex": "#F8DFE7", "rgb": (248, 223, 231)},
+    {"name": "wisteria", "hex": "#F1EAF9", "rgb": (241, 234, 249)},
+    {"name": "lavender", "hex": "#F3EAFB", "rgb": (243, 234, 251)},
+    {"name": "lilac", "hex": "#EEE7FA", "rgb": (238, 231, 250)},
+    {"name": "ice", "hex": "#F0F9FD", "rgb": (240, 249, 253)},
+    {"name": "powder", "hex": "#EAF4FC", "rgb": (234, 244, 252)},
+    {"name": "sky", "hex": "#E7F3FC", "rgb": (231, 243, 252)},
+    {"name": "azure", "hex": "#E5F1FB", "rgb": (229, 241, 251)},
 )
 PALETTE_BY_NAME = {item["name"]: item for item in PALETTE}
 
