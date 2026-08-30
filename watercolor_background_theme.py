@@ -68,8 +68,8 @@ SEPARATOR_COLOR = (140, 125, 115)
 
 SOURCE_FONT_SIZE = 20
 QUOTE_TO_SEPARATOR_GAP = 18
-SEPARATOR_WIDTH = 140
-SEPARATOR_HEIGHT = 2
+SEPARATOR_WIDTH = 6
+SEPARATOR_HEIGHT = 6
 SEPARATOR_TO_SOURCE_GAP = 14
 SOURCE_TO_ART_GAP = 28
 _SOURCE_METADATA_CACHE = None
@@ -228,7 +228,7 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
                         separator_x2,
                         separator_y + SEPARATOR_HEIGHT,
                     ),
-                    radius=1,
+                    radius=3,
                     fill=SEPARATOR_COLOR,
                 )
 
