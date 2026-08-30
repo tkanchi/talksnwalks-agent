@@ -152,8 +152,10 @@ def build_curated_runtime_quote_file(
     legacy_prefixes: tuple[str, ...] = (),
     exclude_prefixes: tuple[str, ...] = (),
     source_weights: dict[str, int] | None = None,
+    required_source_type: str | None = None,
+    require_book_author: bool = False,
 ) -> Path:
-    """Create a varied high-impact pool, with optional explicit legacy exclusion."""
+    """Create a varied high-impact pool, with optional source/attribution filters."""
     raw_rows = _load_rows(parts)
 
     seen: set[str] = set()
@@ -162,6 +164,14 @@ def build_curated_runtime_quote_file(
         quote_id = row.get("QuoteID", "")
         if any(quote_id.startswith(prefix) for prefix in exclude_prefixes):
             continue
+        source_type = row.get("SourceType", "").strip()
+        if required_source_type and source_type != required_source_type:
+            continue
+        if require_book_author:
+            book = row.get("InspiredBy", "").strip()
+            author = row.get("Author", "").strip()
+            if not book or not author:
+                continue
         quote = row.get("Quote", "").strip()
         normalised = _normalise_quote(quote)
         if not normalised or normalised in seen:
