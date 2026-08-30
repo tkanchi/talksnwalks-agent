@@ -66,14 +66,10 @@ MEN_BACKGROUNDS = (
 # Soft brown ink: deliberately not black/charcoal.
 TEXT_PRIMARY = (78, 63, 54)
 TEXT_SECONDARY = (110, 92, 82)
-SEPARATOR_COLOR = (140, 125, 115)
 
 SOURCE_FONT_SIZE = 20
-QUOTE_TO_SEPARATOR_GAP = 18
-SEPARATOR_WIDTH = 6
-SEPARATOR_HEIGHT = 6
-SEPARATOR_TO_SOURCE_GAP = 14
-SOURCE_TO_ART_GAP = 28
+QUOTE_TO_SOURCE_GAP = 24
+SOURCE_TO_ART_GAP = 30
 _SOURCE_METADATA_CACHE = None
 
 
@@ -188,13 +184,7 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
             if source_label:
                 source_box = draw.textbbox((0, 0), source_label, font=source_font)
                 source_h = source_box[3] - source_box[1]
-                quote_to_art = (
-                    QUOTE_TO_SEPARATOR_GAP
-                    + SEPARATOR_HEIGHT
-                    + SEPARATOR_TO_SOURCE_GAP
-                    + source_h
-                    + SOURCE_TO_ART_GAP
-                )
+                quote_to_art = QUOTE_TO_SOURCE_GAP + source_h + SOURCE_TO_ART_GAP
             else:
                 quote_to_art = build_reel.QUOTE_TO_ART_GAP
 
@@ -220,27 +210,9 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
             )
 
             if source_label:
-                separator_y = quote_y + quote_h + QUOTE_TO_SEPARATOR_GAP
-                separator_x1 = (build_reel.CANVAS_W - SEPARATOR_WIDTH) // 2
-                separator_x2 = separator_x1 + SEPARATOR_WIDTH
-                draw.rounded_rectangle(
-                    (
-                        separator_x1,
-                        separator_y,
-                        separator_x2,
-                        separator_y + SEPARATOR_HEIGHT,
-                    ),
-                    radius=3,
-                    fill=SEPARATOR_COLOR,
-                )
-
                 source_box = draw.textbbox((0, 0), source_label, font=source_font)
                 source_w = source_box[2] - source_box[0]
-                source_y = (
-                    separator_y
-                    + SEPARATOR_HEIGHT
-                    + SEPARATOR_TO_SOURCE_GAP
-                )
+                source_y = quote_y + quote_h + QUOTE_TO_SOURCE_GAP
                 draw.text(
                     ((build_reel.CANVAS_W - source_w) / 2, source_y),
                     source_label,
