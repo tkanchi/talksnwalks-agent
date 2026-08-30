@@ -1,8 +1,6 @@
 name: Men Instagram Reel
 
 on:
-  schedule:
-    - cron: "47 12 * * *" # 18:17 IST
   workflow_dispatch:
     inputs:
       day:
