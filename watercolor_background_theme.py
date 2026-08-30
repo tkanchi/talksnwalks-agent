@@ -8,6 +8,9 @@ busy textures are drawn.
 
 from __future__ import annotations
 
+import csv
+from pathlib import Path
+
 import legacy_visual_theme as legacy
 
 
@@ -39,6 +42,10 @@ SAFE_NEUTRALS = (
 WARM_ART_BACKGROUNDS = ("mist_grey", "blue_grey", "soft_stone")
 COOL_ART_BACKGROUNDS = ("warm_ivory", "soft_stone", "dusty_beige", "pale_taupe")
 BUSY_ART_BACKGROUNDS = ("warm_ivory", "mist_grey", "soft_stone")
+
+SOURCE_FONT_SIZE = 20
+SOURCE_TOP_GAP = 24
+_SOURCE_METADATA_CACHE = None
 
 
 def _classify_artwork(art):
@@ -108,6 +115,58 @@ def _build_background(build_reel, preset):
     )
 
 
+def _source_metadata():
+    """Load source metadata once without changing the production quote selector."""
+    global _SOURCE_METADATA_CACHE
+    if _SOURCE_METADATA_CACHE is not None:
+        return _SOURCE_METADATA_CACHE
+
+    metadata = {}
+    library_dir = Path("data/library")
+    if library_dir.exists():
+        for path in sorted(library_dir.glob("*.csv")):
+            try:
+                with path.open(newline="", encoding="utf-8") as handle:
+                    for row in csv.DictReader(handle):
+                        quote_id = (row.get("QuoteID") or "").strip()
+                        if quote_id:
+                            metadata[quote_id] = {
+                                "SourceType": (row.get("SourceType") or "").strip(),
+                                "InspiredBy": (row.get("InspiredBy") or "").strip(),
+                            }
+            except (OSError, csv.Error):
+                continue
+
+    _SOURCE_METADATA_CACHE = metadata
+    return metadata
+
+
+def _source_label(build_reel, output_jpg):
+    """Return truthful on-art source text for the selected quote."""
+    try:
+        day = max(1, legacy._day_number(output_jpg))
+        with build_reel.QUOTES_FILE.open(newline="", encoding="utf-8") as handle:
+            rows = list(csv.DictReader(handle))
+        if day > len(rows):
+            return "Talk N Walks Original"
+
+        row = rows[day - 1]
+        quote_id = (row.get("QuoteID") or "").strip()
+        source_type = (row.get("SourceType") or "").strip().lower()
+        metadata = _source_metadata().get(quote_id, {})
+        book = (metadata.get("InspiredBy") or "").strip()
+
+        if book and source_type == "inspired_by":
+            return f"Inspired by: {book}"
+        if book and source_type in {"direct_quote", "public_domain"}:
+            return f"From: {book}"
+        if source_type in {"original", "legacy_original", "original_moral", ""}:
+            return "Talk N Walks Original"
+        return "Talk N Walks Source Library"
+    except Exception:
+        return "Talk N Walks Original"
+
+
 def apply_visual_theme(build_reel, *, stream: str = "women"):
     """Apply the finalized plain muted background system to the existing renderer."""
     legacy.apply_visual_theme(build_reel)
@@ -127,6 +186,8 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
                 build_reel, draw, quote
             )
             hfont = build_reel.find_font(build_reel.HANDLE_SIZE, serif=False)
+            source_font = build_reel.find_font(SOURCE_FONT_SIZE, serif=False)
+            source_label = _source_label(build_reel, output_jpg)
 
             art = build_reel.fit_inside(
                 source_art,
@@ -159,6 +220,16 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
                 font=qfont,
                 spacing=legacy.QUOTE_LINE_SPACING,
                 align="center",
+            )
+
+            source_box = draw.textbbox((0, 0), source_label, font=source_font)
+            source_w = source_box[2] - source_box[0]
+            source_y = quote_y + quote_h + SOURCE_TOP_GAP
+            draw.text(
+                ((build_reel.CANVAS_W - source_w) / 2, source_y),
+                source_label,
+                fill=legacy.SOFT_INK,
+                font=source_font,
             )
 
             art_x = (build_reel.CANVAS_W - art.width) // 2
