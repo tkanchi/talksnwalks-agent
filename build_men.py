@@ -46,6 +46,8 @@ if __name__ == "__main__":
         target_days=365,
         exclude_prefixes=("MLEG",),
         source_weights={"MEN": 12, "SG": 2},
+        required_source_type="inspired_by",
+        require_book_author=True,
     )
     _apply_visuals()
     apply_engagement_card(build_reel)
