@@ -1,9 +1,9 @@
-"""Plain premium daily backgrounds for Talk N Walks reels.
+"""Approved pastel daily backgrounds for Talk N Walks reels.
 
 Keeps the existing quote, illustration, handle and publishing behavior intact.
-Backgrounds use quiet near-neutral solid fills chosen to support already-coloured
-illustrations. No botanical shapes, fake leaves, gradients, watercolor blobs or
-busy textures are drawn.
+Backgrounds use only the approved light pastel families. Quote/source/handle text
+uses soft brown ink rather than black or charcoal. No botanical shapes, fake
+leaves, gradients, watercolor blobs or busy textures are drawn.
 """
 
 from __future__ import annotations
@@ -14,100 +14,79 @@ from pathlib import Path
 import legacy_visual_theme as legacy
 
 
-BACKGROUND_VERSION = "muted-solid-v2"
+BACKGROUND_VERSION = "approved-pastel-v3"
 
-# Finalized Talk N Walks palette. Coloured artwork uses the quieter neutrals
-# below; sage/blush remain available for future controlled use but are not in
-# the automatic production families.
+# User-approved light pastel palette. Keep these shades light; do not introduce
+# darker variants, black, charcoal or muddy near-neutrals as backgrounds.
 PALETTE = (
-    {"name": "warm_ivory", "hex": "#F3EFE7", "rgb": (243, 239, 231)},
-    {"name": "soft_stone", "hex": "#E8E3DC", "rgb": (232, 227, 220)},
-    {"name": "dusty_beige", "hex": "#E6DCCF", "rgb": (230, 220, 207)},
-    {"name": "pale_taupe", "hex": "#DDD4CB", "rgb": (221, 212, 203)},
-    {"name": "mist_grey", "hex": "#E4E6E3", "rgb": (228, 230, 227)},
-    {"name": "muted_sage", "hex": "#DDE4DA", "rgb": (221, 228, 218)},
-    {"name": "blue_grey", "hex": "#DEE4E8", "rgb": (222, 228, 232)},
-    {"name": "soft_blush", "hex": "#E8DDDA", "rgb": (232, 221, 218)},
+    {"name": "vanilla", "hex": "#F8F3D9", "rgb": (248, 243, 217)},
+    {"name": "butter", "hex": "#F7E7A9", "rgb": (247, 231, 169)},
+    {"name": "lemon", "hex": "#F9F2B3", "rgb": (249, 242, 179)},
+    {"name": "daffodil", "hex": "#F7ED9C", "rgb": (247, 237, 156)},
+    {"name": "apricot", "hex": "#F9D8B0", "rgb": (249, 216, 176)},
+    {"name": "peach", "hex": "#F8D0B0", "rgb": (248, 208, 176)},
+    {"name": "melon", "hex": "#F7C7A8", "rgb": (247, 199, 168)},
+    {"name": "seafoam", "hex": "#DDF3E4", "rgb": (221, 243, 228)},
+    {"name": "mint", "hex": "#DDF7E3", "rgb": (221, 247, 227)},
+    {"name": "aqua", "hex": "#D9F2F0", "rgb": (217, 242, 240)},
+    {"name": "salmon", "hex": "#F8C1B4", "rgb": (248, 193, 180)},
+    {"name": "coral", "hex": "#F7B7A8", "rgb": (247, 183, 168)},
+    {"name": "blush", "hex": "#F8DADF", "rgb": (248, 218, 223)},
+    {"name": "petal", "hex": "#F9D6E2", "rgb": (249, 214, 226)},
+    {"name": "rose", "hex": "#F6C9D8", "rgb": (246, 201, 216)},
+    {"name": "wisteria", "hex": "#E7DDF6", "rgb": (231, 221, 246)},
+    {"name": "lavender", "hex": "#EADCF8", "rgb": (234, 220, 248)},
+    {"name": "lilac", "hex": "#E4D8F5", "rgb": (228, 216, 245)},
+    {"name": "ice", "hex": "#E8F4FB", "rgb": (232, 244, 251)},
+    {"name": "powder", "hex": "#DDECF9", "rgb": (221, 236, 249)},
+    {"name": "sky", "hex": "#D7EAFB", "rgb": (215, 234, 251)},
+    {"name": "azure", "hex": "#D6E8FA", "rgb": (214, 232, 250)},
 )
 PALETTE_BY_NAME = {item["name"]: item for item in PALETTE}
 
-SAFE_NEUTRALS = (
-    "warm_ivory",
-    "soft_stone",
-    "dusty_beige",
-    "pale_taupe",
-    "mist_grey",
-    "blue_grey",
+WOMEN_BACKGROUNDS = tuple(item["name"] for item in PALETTE)
+MEN_BACKGROUNDS = (
+    "vanilla",
+    "butter",
+    "lemon",
+    "daffodil",
+    "apricot",
+    "peach",
+    "seafoam",
+    "mint",
+    "aqua",
+    "ice",
+    "powder",
+    "sky",
+    "azure",
 )
-WARM_ART_BACKGROUNDS = ("mist_grey", "blue_grey", "soft_stone")
-COOL_ART_BACKGROUNDS = ("warm_ivory", "soft_stone", "dusty_beige", "pale_taupe")
-BUSY_ART_BACKGROUNDS = ("warm_ivory", "mist_grey", "soft_stone")
+
+# Soft brown ink: deliberately not black/charcoal.
+TEXT_PRIMARY = (78, 63, 54)
+TEXT_SECONDARY = (110, 92, 82)
+SEPARATOR_COLOR = (140, 125, 115)
 
 SOURCE_FONT_SIZE = 20
-SOURCE_TOP_GAP = 24
+QUOTE_TO_SEPARATOR_GAP = 18
+SEPARATOR_WIDTH = 140
+SEPARATOR_HEIGHT = 2
+SEPARATOR_TO_SOURCE_GAP = 14
+SOURCE_TO_ART_GAP = 28
 _SOURCE_METADATA_CACHE = None
 
 
-def _classify_artwork(art):
-    """Classify artwork broadly so the background supports rather than competes."""
-    sample = art.convert("RGBA").copy()
-    sample.thumbnail((96, 96))
-    pixels = sample.load()
-
-    warmth_total = 0.0
-    saturation_total = 0.0
-    count = 0
-
-    for y in range(sample.height):
-        for x in range(sample.width):
-            red, green, blue, alpha = pixels[x, y]
-            if alpha < 24:
-                continue
-            if red > 245 and green > 245 and blue > 245:
-                continue
-
-            warmth_total += red - blue
-            saturation_total += max(red, green, blue) - min(red, green, blue)
-            count += 1
-
-    if count == 0:
-        return "neutral"
-
-    average_warmth = warmth_total / count
-    average_saturation = saturation_total / count
-
-    if average_saturation >= 58:
-        return "busy"
-    if average_warmth >= 10:
-        return "warm"
-    if average_warmth <= -10:
-        return "cool"
-    return "neutral"
-
-
-def _background_family(art):
-    classification = _classify_artwork(art)
-    if classification == "warm":
-        return WARM_ART_BACKGROUNDS
-    if classification == "cool":
-        return COOL_ART_BACKGROUNDS
-    if classification == "busy":
-        return BUSY_ART_BACKGROUNDS
-    return SAFE_NEUTRALS
-
-
-def _preset_for(stream: str, output_jpg, art):
-    """Rotate within an artwork-safe neutral family with a stable stream offset."""
+def _preset_for(stream: str, output_jpg, art=None):
+    """Rotate deterministically through the approved stream-specific palette."""
     day = max(1, legacy._day_number(output_jpg))
     normalized = (stream or "women").strip().lower()
-    family = _background_family(art)
+    family = MEN_BACKGROUNDS if normalized == "men" else WOMEN_BACKGROUNDS
     stream_offset = sum(ord(char) for char in normalized) % len(family)
     name = family[((day - 1) + stream_offset) % len(family)]
     return PALETTE_BY_NAME[name]
 
 
 def _build_background(build_reel, preset):
-    """Create a plain solid premium background with no decorative shapes."""
+    """Create a plain solid approved pastel background."""
     return build_reel.Image.new(
         "RGB",
         (build_reel.CANVAS_W, build_reel.CANVAS_H),
@@ -143,7 +122,7 @@ def _source_metadata():
 
 
 def _source_label(build_reel, output_jpg):
-    """Return truthful on-art source text for the selected quote."""
+    """Return truthful book and author text for the selected inspired-by quote."""
     try:
         day = max(1, legacy._day_number(output_jpg))
         with build_reel.QUOTES_FILE.open(newline="", encoding="utf-8") as handle:
@@ -159,15 +138,19 @@ def _source_label(build_reel, output_jpg):
         author = (metadata.get("Author") or "").strip()
 
         if book and author and source_type == "inspired_by":
-            return f"Inspired by: {book} — {author}"
+            return f"Inspired by Book: {book} — {author}"
         return ""
     except Exception:
         return ""
 
 
 def apply_visual_theme(build_reel, *, stream: str = "women"):
-    """Apply the finalized plain muted background system to the existing renderer."""
+    """Apply the finalized light pastel background system to the existing renderer."""
     legacy.apply_visual_theme(build_reel)
+
+    # Keep even the legacy emergency fallback away from black/charcoal text.
+    legacy.CHARCOAL = TEXT_PRIMARY
+    legacy.SOFT_INK = TEXT_SECONDARY
     fallback_compose = build_reel.compose_post
 
     def compose_post(quote, illustration_path, output_jpg):
@@ -199,35 +182,67 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
             handle_w = hbox[2] - hbox[0]
             handle_h = hbox[3] - hbox[1]
 
+            source_h = 0
+            if source_label:
+                source_box = draw.textbbox((0, 0), source_label, font=source_font)
+                source_h = source_box[3] - source_box[1]
+                quote_to_art = (
+                    QUOTE_TO_SEPARATOR_GAP
+                    + SEPARATOR_HEIGHT
+                    + SEPARATOR_TO_SOURCE_GAP
+                    + source_h
+                    + SOURCE_TO_ART_GAP
+                )
+            else:
+                quote_to_art = build_reel.QUOTE_TO_ART_GAP
+
             total_height = (
                 quote_h
-                + build_reel.QUOTE_TO_ART_GAP
+                + quote_to_art
                 + art.height
                 + build_reel.ART_TO_HANDLE_GAP
                 + handle_h
             )
             block_top = int(build_reel.BLOCK_CENTER_Y - total_height / 2)
             quote_y = block_top
-            art_y = quote_y + quote_h + build_reel.QUOTE_TO_ART_GAP
+            art_y = quote_y + quote_h + quote_to_art
             handle_y = art_y + art.height + build_reel.ART_TO_HANDLE_GAP
 
             draw.multiline_text(
                 ((build_reel.CANVAS_W - quote_w) / 2, quote_y),
                 wrapped_quote,
-                fill=legacy.CHARCOAL,
+                fill=TEXT_PRIMARY,
                 font=qfont,
                 spacing=legacy.QUOTE_LINE_SPACING,
                 align="center",
             )
 
             if source_label:
+                separator_y = quote_y + quote_h + QUOTE_TO_SEPARATOR_GAP
+                separator_x1 = (build_reel.CANVAS_W - SEPARATOR_WIDTH) // 2
+                separator_x2 = separator_x1 + SEPARATOR_WIDTH
+                draw.rounded_rectangle(
+                    (
+                        separator_x1,
+                        separator_y,
+                        separator_x2,
+                        separator_y + SEPARATOR_HEIGHT,
+                    ),
+                    radius=1,
+                    fill=SEPARATOR_COLOR,
+                )
+
                 source_box = draw.textbbox((0, 0), source_label, font=source_font)
                 source_w = source_box[2] - source_box[0]
-                source_y = quote_y + quote_h + SOURCE_TOP_GAP
+                source_y = (
+                    separator_y
+                    + SEPARATOR_HEIGHT
+                    + SEPARATOR_TO_SOURCE_GAP
+                )
                 draw.text(
                     ((build_reel.CANVAS_W - source_w) / 2, source_y),
                     source_label,
-                    fill=legacy.SOFT_INK,
+                    fill=TEXT_SECONDARY,
                     font=source_font,
                 )
 
@@ -246,7 +261,7 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
             draw.text(
                 ((build_reel.CANVAS_W - handle_w) / 2, handle_y),
                 build_reel.HANDLE.lower(),
-                fill=legacy.SOFT_INK,
+                fill=TEXT_SECONDARY,
                 font=hfont,
             )
 
@@ -259,11 +274,11 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
                 progressive=True,
             )
             print(
-                f"Finalized plain background: {preset['name']} "
+                f"Approved pastel background: {preset['name']} "
                 f"{preset['hex']} ({BACKGROUND_VERSION})"
             )
         except Exception as exc:
-            print(f"Plain background fallback: {exc}")
+            print(f"Approved pastel background fallback: {exc}")
             fallback_compose(quote, illustration_path, output_jpg)
 
     build_reel.compose_post = compose_post
