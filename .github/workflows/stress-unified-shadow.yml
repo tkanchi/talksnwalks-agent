@@ -28,11 +28,54 @@ jobs:
       - name: Protect active shadow history
         run: cp shadow_logs/unified/selection_history_active.json /tmp/unified_shadow_stress_history.json
 
+      - name: Audit illustration registry against real assets
+        run: |
+          python - <<'PY'
+          import csv
+          import json
+          from pathlib import Path
+          from build_month1_content_plan import filename_for_stem
+
+          registry = Path('data/illustration_objects.csv')
+          art_dir = Path('illustrations/objects/core')
+          with registry.open(newline='', encoding='utf-8') as handle:
+              rows = list(csv.DictReader(handle))
+          if not rows:
+              raise SystemExit('Illustration registry is empty')
+
+          missing = []
+          for row in rows:
+              if (row.get('StyleStatus') or '').strip().lower() != 'approved':
+                  continue
+              filename = filename_for_stem(row.get('FileStem', ''))
+              path = art_dir / filename
+              if not path.exists():
+                  missing.append({
+                      'object_id': (row.get('ObjectID') or '').strip(),
+                      'object': (row.get('Object') or '').strip(),
+                      'filename': filename,
+                  })
+                  row['StyleStatus'] = 'missing_asset'
+
+          with registry.open('w', newline='', encoding='utf-8') as handle:
+              writer = csv.DictWriter(handle, fieldnames=rows[0].keys())
+              writer.writeheader()
+              writer.writerows(rows)
+
+          Path('/tmp/missing_illustrations.json').write_text(
+              json.dumps(missing, indent=2), encoding='utf-8'
+          )
+          print(f'Missing approved illustration assets: {len(missing)}')
+          for item in missing:
+              print(f"  {item['object_id']} {item['filename']}")
+          PY
+
       - name: Build 30-post non-persistent shadow simulation
         run: python build_unified_shadow.py --count 30 --history /tmp/unified_shadow_stress_history.json
 
       - name: Analyze repetition and variety
         run: |
+          cp /tmp/missing_illustrations.json outputs/unified_shadow/missing_illustrations.json
           python analyze_shadow_stress.py \
             --manifest outputs/unified_shadow/manifest.json \
             --json outputs/unified_shadow/stress_report.json \
@@ -64,5 +107,6 @@ jobs:
             outputs/unified_shadow/manifest.json
             outputs/unified_shadow/stress_report.json
             outputs/unified_shadow/stress_report.md
+            outputs/unified_shadow/missing_illustrations.json
             outputs/unified_shadow/packages/**
           if-no-files-found: error
