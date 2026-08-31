@@ -7,7 +7,8 @@ rather than a second quotation from the author.
 Priority:
 1. Approved hand-written Month-1 support lines.
 2. Support already present in a source library.
-3. Deterministic editorial support based on canonical topic first, then legacy theme.
+3. Deterministic editorial support led by the actual quote semantics, with
+   canonical topic and legacy theme used only as fallbacks.
 """
 
 from __future__ import annotations
@@ -23,6 +24,41 @@ APPROVED_SUPPORT_FILE = ROOT / "data" / "supporting_text_month_01.csv"
 
 WORD_RE = re.compile(r"\b[\w’'-]+\b")
 NORMALIZE_RE = re.compile(r"[^a-z0-9]+")
+
+# Ordered from more specific editorial concepts to broader ones. A trailing *
+# means word-prefix matching. This prevents stale legacy Topic metadata from
+# producing support that contradicts the actual book-inspired quote.
+QUOTE_FOCUS_RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("leadership", ("leadership", "leader*", "directing", "connecting people", "responsibility")),
+    ("body confidence", ("body confidence", "physical space", "taking up space", "appearance", "body image")),
+    ("justice and equality", ("justice", "equality", "inclusive", "inclusion", "vulnerable", "fairness")),
+    ("money mindset", ("financial", "money", "wealth", "income", "millionaire*")),
+    ("digital responsibility", ("digital", "screen*", "phone*", "technology", "online", "internet")),
+    ("communication and social skills", ("communication", "conversation*", "listen*", "receives meaning", "safe conversations")),
+    ("mental health", ("mental health", "trigger*", "inner language", "self-talk", "healing", "anxiety", "stress")),
+    ("rest and recovery", ("self-care", "rest", "recovery", "recover*", "sleep*")),
+    ("fitness", ("fitness", "workout*", "exercise*", "training", "gym")),
+    ("career", ("career", "promotion*", "workplace", "job*")),
+    ("strategy and decision-making", ("decision*", "choice*", "choosing", "priorit*", "deserves your energy")),
+    ("execution", ("interrupt*", "productivity", "finish*", "task*", "urgent", "urgency")),
+    ("discipline", ("discipline", "routine*", "habit*", "consistency", "deliberate", "morning")),
+    ("resilience", ("resilien*", "setback*", "mental toughness", "difficult thing*", "comeback*", "no longer available")),
+    ("courage", ("courage", "brave", "fear", "uncertainty", "vulnerab*")),
+    ("self-belief", ("confidence", "self-belief", "believe in yourself", "self-worth", "worth")),
+    ("purpose and meaning", ("purpose", "meaningful", "calling", "sense of meaning")),
+    ("peace", ("peace", "calm", "letting go", "manage them", "steady you", "stillness")),
+    ("goals", ("goal*", "future", "vision", "ambition", "prepare for it", "success")),
+    ("growth", ("growth", "grow*", "unchanged", "change*", "old patterns", "permanent")),
+    ("authenticity and identity", ("authentic*", "identity", "stand alone", "solitude", "be yourself")),
+    ("relationships", ("relationship*", "partner*", "disapprove", "boundary*", "boundaries")),
+    ("friendship", ("friend*", "friendship", "teamwork")),
+    ("love", ("love", "romance", "romantic")),
+    ("kindness", ("kindness", "kind", "compassion")),
+    ("integrity and character", ("integrity", "character", "values", "nobody watching")),
+    ("happiness", ("happiness", "joy", "joyful")),
+    ("study and learning", ("learn*", "study*", "teacher*", "school", "education")),
+    ("hope", ("hope", "possibility", "possibilities", "new chapter")),
+)
 
 # {focus} is always used as an object/complement. That avoids subject-verb
 # agreement problems with compound phrases while keeping the voice natural.
@@ -119,6 +155,27 @@ def load_approved_overrides(path: Path = APPROVED_SUPPORT_FILE) -> dict[str, str
         }
 
 
+def _needle_matches(text: str, needle: str) -> bool:
+    needle = clean(needle).casefold()
+    if not needle:
+        return False
+    if needle.endswith("*"):
+        stem = re.escape(needle[:-1])
+        return bool(re.search(rf"\b{stem}[\w'-]*", text))
+    if " " in needle or "-" in needle:
+        return needle in text
+    return bool(re.search(rf"\b{re.escape(needle)}\b", text))
+
+
+def semantic_focuses(row: dict[str, str]) -> list[str]:
+    text = clean(row.get("Quote")).casefold()
+    return [
+        focus
+        for focus, needles in QUOTE_FOCUS_RULES
+        if any(_needle_matches(text, needle) for needle in needles)
+    ]
+
+
 def focus_phrase(value: str) -> str:
     phrase = clean(value).replace(" & ", " and ")
     phrase = re.sub(r"\s*\|\s*", " and ", phrase)
@@ -129,9 +186,12 @@ def focus_phrase(value: str) -> str:
 
 
 def focus_options(row: dict[str, str]) -> list[str]:
-    # Canonical Topic is cleaner and more reader-friendly than many imported
-    # legacy theme strings. Legacy theme remains a fallback for uniqueness.
+    # Actual quote meaning wins. Metadata is only a fallback for abstract lines
+    # that do not contain enough language to infer a clear concept.
     options: list[str] = []
+    for focus in semantic_focuses(row):
+        if focus not in options:
+            options.append(focus)
     for key in ("Topic", "OriginalTheme", "TopicCategory"):
         focus = focus_phrase(row.get(key, ""))
         if focus and focus not in options:
