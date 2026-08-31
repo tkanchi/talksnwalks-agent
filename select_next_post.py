@@ -14,7 +14,6 @@ from build_month1_content_plan import (
     YOUTH_AUDIENCE_VALUES,
     filename_for_stem,
     is_youth_safe,
-    object_score,
 )
 
 ROOT = Path(__file__).resolve().parent
@@ -31,6 +30,79 @@ MONTHS = {
     "JUL": 7, "AUG": 8, "SEP": 9, "OCT": 10, "NOV": 11, "DEC": 12,
 }
 WEEKDAYS = {"MON": 0, "TUE": 1, "WED": 2, "THU": 3, "FRI": 4, "SAT": 5, "SUN": 6}
+
+# Illustration matching is driven by the actual quote/support copy first. Topic
+# metadata remains a fallback because some legacy rows carry imperfect taxonomy.
+SEMANTIC_TOPIC_KEYWORDS = {
+    "Leadership": ("leadership", "leader", "leading", "directing", "responsibility"),
+    "Self-Belief": ("confidence", "self-belief", "believe in yourself", "belief in yourself"),
+    "Authenticity & Identity": ("authentic", "identity", "pretend", "be yourself", "yourself", "belonging"),
+    "Friendship": ("friend", "friendship", "teamwork", "circle"),
+    "Family": ("family", "home", "parent", "mother", "father", "sibling"),
+    "Career": ("career", "job", "workplace", "professional"),
+    "Entrepreneurship": ("business", "startup", "entrepreneur"),
+    "Strategy & Decision-Making": ("strategy", "decision", "choice", "priorit", "trade-off"),
+    "Execution": ("execute", "execution", "finish", "task", "interrupt", "productivity", "priority"),
+    "Discipline": ("discipline", "consistency", "routine", "practice", "habit", "deliberate"),
+    "Goals": ("goal", "dream", "vision", "ambition", "achievement"),
+    "Peace": ("peace", "calm", "quiet", "stillness"),
+    "Mental Health": ("mental health", "inner language", "self-talk", "trigger", "thought", "healing", "stress"),
+    "Rest & Recovery": ("rest", "sleep", "recover", "recovery", "self-care", "pause"),
+    "Health": ("health", "wellness", "hydrate"),
+    "Fitness": ("fitness", "workout", "gym", "training", "exercise"),
+    "Body Confidence": ("body confidence", "body respect", "physical space", "appearance", "self-love"),
+    "Reading & Books": ("book", "read", "library"),
+    "Study & Learning": ("study", "learn", "learning", "student", "school", "teacher", "education", "curiosity"),
+    "Digital Responsibility": ("digital", "screen", "phone", "technology", "online", "internet", "device"),
+    "Travel & Adventure": ("travel", "adventure", "journey", "trip"),
+    "Kindness": ("kind", "kindness", "compassion"),
+    "Love": ("love", "romance", "self-love"),
+    "Relationships": ("relationship", "relationships", "partner"),
+    "Communication & Social Skills": ("communication", "listen", "conversation", "speak", "voice", "heard", "meaning"),
+    "Hope": ("hope", "optimis", "future"),
+    "Resilience": ("resilien", "setback", "comeback", "recover from", "mental toughness", "difficult things"),
+    "Courage": ("courage", "brave", "bold", "fear"),
+    "Purpose & Meaning": ("purpose", "meaning", "calling"),
+    "Gratitude": ("gratitude", "grateful", "thankful", "thank you"),
+    "Money Mindset": ("money", "wealth", "financial", "income", "millionaire"),
+    "Integrity & Character": ("integrity", "values", "character", "responsibility"),
+    "Justice & Equality": ("justice", "equality", "equal", "inclusive", "vulnerable", "fairness"),
+    "Happiness": ("happiness", "joy"),
+}
+
+# Quote-language concepts are translated to tags already present in the object
+# registry. This gives literal clues (screen -> laptop, morning -> sunrise,
+# self-talk -> journal) more weight than a broad taxonomy label.
+SEMANTIC_TAG_KEYWORDS = {
+    "learning": ("learn", "student", "school", "teacher", "education", "study"),
+    "reading": ("read", "book", "library"),
+    "focus": ("focus", "attention", "interrupt", "concentrat", "deep work", "distraction"),
+    "time": ("time", "morning", "schedule", "deadline"),
+    "new-day": ("morning", "new day", "start the day"),
+    "reflection": ("inner language", "self-talk", "reflect", "trigger", "thought", "notice yourself"),
+    "writing": ("journal", "inner language", "self-talk"),
+    "challenge": ("challenge", "difficult", "hard thing", "setback", "toughness"),
+    "strength": ("strength", "mental toughness", "stronger"),
+    "health": ("health", "wellness", "body respect", "self-care"),
+    "relationship": ("relationship", "communication", "conversation", "listen", "partner"),
+    "kindness": ("kind", "kindness", "compassion"),
+    "love": ("love", "self-love", "romance"),
+    "family": ("family", "parent", "mother", "father", "home"),
+    "freedom": ("freedom", "boundary", "boundaries", "control"),
+    "choice": ("choice", "decision", "boundary", "boundaries"),
+    "planning": ("plan", "planning", "priority", "priorities", "routine", "habit"),
+    "execution": ("execute", "execution", "finish", "task", "action", "productivity"),
+    "business": ("business", "career", "workplace", "entrepreneur"),
+    "leadership": ("leadership", "leader", "leading", "directing"),
+    "responsibility": ("responsibility", "accountability", "integrity", "values"),
+    "goals": ("goal", "goals", "ambition", "achievement", "financial"),
+    "purpose": ("purpose", "meaning", "calling"),
+    "direction": ("direction", "path", "calling"),
+    "opportunity": ("opportunity", "new chapter", "possibility"),
+    "calm": ("calm", "peace", "quiet", "stillness"),
+    "rest": ("rest", "sleep", "recovery", "pause"),
+    "travel": ("travel", "journey", "adventure", "trip"),
+}
 
 
 def clean(value: object) -> str:
@@ -53,6 +125,58 @@ def load_csv(path: Path) -> list[dict[str, str]]:
 def stable_tiebreak(on_date: date, row: dict[str, str]) -> str:
     payload = f"{on_date.isoformat()}|{clean(row.get('QuoteID'))}".encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
+
+
+def semantic_text(row: dict[str, str]) -> str:
+    return " ".join(
+        [clean(row.get("Quote")), clean(row.get("SupportingText"))]
+    ).casefold()
+
+
+def semantic_topics(row: dict[str, str]) -> set[str]:
+    text = semantic_text(row)
+    return {
+        topic
+        for topic, needles in SEMANTIC_TOPIC_KEYWORDS.items()
+        if any(needle in text for needle in needles)
+    }
+
+
+def semantic_tags(row: dict[str, str]) -> set[str]:
+    text = semantic_text(row)
+    return {
+        tag
+        for tag, needles in SEMANTIC_TAG_KEYWORDS.items()
+        if any(needle in text for needle in needles)
+    }
+
+
+def illustration_semantic_score(obj: dict[str, str], quote: dict[str, str]) -> int:
+    topic = clean(quote.get("Topic"))
+    hints = semantic_topics(quote)
+    qtags = semantic_tags(quote)
+    primary = split_pipe(obj.get("PrimaryTopics", ""))
+    secondary = split_pipe(obj.get("SecondaryTopics", ""))
+    otags = {tag.casefold() for tag in split_csv(obj.get("Tags", ""))}
+
+    score = 0
+    if hints:
+        score += 240 * len(hints & primary)
+        score += 120 * len(hints & secondary)
+        # Canonical topic is only a supporting signal when the copy has already
+        # supplied clearer semantics.
+        if topic in primary:
+            score += 35
+        if topic in secondary:
+            score += 20
+    else:
+        if topic in primary:
+            score += 140
+        if topic in secondary:
+            score += 75
+
+    score += 95 * len(qtags & otags)
+    return score
 
 
 def is_book_eligible(row: dict[str, str]) -> bool:
@@ -99,8 +223,6 @@ def resolve_event_date(rule: str, year: int) -> date | None:
             raise ValueError(f"Unsupported NTH_WEEKDAY rule: {rule}")
         return nth_weekday(year, month, weekday, int(nth_raw))
 
-    # Variable lunar/religious dates are never guessed. They remain inactive until
-    # a trusted annual date is resolved elsewhere in the data layer.
     if rule.startswith("LOOKUP:"):
         return None
 
@@ -271,29 +393,54 @@ def choose_illustration(
     quote: dict[str, str],
     objects: list[dict[str, str]],
     history: dict,
-) -> tuple[dict[str, str], str]:
+) -> tuple[dict[str, str], str, int]:
     approved = [obj for obj in objects if clean(obj.get("StyleStatus")).lower() == "approved"]
     if not approved:
         raise RuntimeError("No approved illustration objects available")
 
     entries = history_entries(history)
-    object_counts = Counter(clean(entry.get("object_id")) for entry in entries)
+    object_counts = Counter(clean(entry.get("object_id")) for entry in entries[-30:])
     recent_object_ids = [clean(entry.get("object_id")) for entry in entries[-5:]]
     recent_tags: set[str] = set()
     for entry in entries[-3:]:
         recent_tags.update(entry.get("illustration_tags", []) or [])
 
+    scores = {
+        clean(obj.get("ObjectID")): illustration_semantic_score(obj, quote)
+        for obj in approved
+    }
+    best_score = max(scores.values())
+
+    # Semantics first: variety is allowed only inside a reasonably relevant
+    # band. A recent-but-perfect object is preferable to an unrelated object.
+    if best_score > 0:
+        floor = max(1, best_score - 160)
+        pool = [obj for obj in approved if scores[clean(obj.get("ObjectID"))] >= floor]
+    else:
+        pool = list(approved)
+
+    non_recent = [obj for obj in pool if clean(obj.get("ObjectID")) not in recent_object_ids]
+    if non_recent:
+        pool = non_recent
+    elif len(pool) > 1 and recent_object_ids:
+        not_last = [obj for obj in pool if clean(obj.get("ObjectID")) != recent_object_ids[-1]]
+        if not_last:
+            pool = not_last
+
     def rank(obj: dict[str, str]) -> tuple:
         oid = clean(obj.get("ObjectID"))
-        tags = {tag.lower() for tag in split_csv(obj.get("Tags", ""))}
-        relevance = object_score(obj, quote)
-        repeat_penalty = 1000 if oid in recent_object_ids else 0
-        tag_penalty = 120 * len(tags & recent_tags)
-        adjusted = relevance - repeat_penalty - tag_penalty
-        return (-adjusted, object_counts[oid], oid)
+        tags = {tag.casefold() for tag in split_csv(obj.get("Tags", ""))}
+        tag_overlap = len(tags & recent_tags)
+        return (
+            object_counts[oid],
+            tag_overlap,
+            -scores[oid],
+            oid,
+        )
 
-    chosen = min(approved, key=rank)
-    return chosen, filename_for_stem(chosen.get("FileStem", ""))
+    chosen = min(pool, key=rank)
+    oid = clean(chosen.get("ObjectID"))
+    return chosen, filename_for_stem(chosen.get("FileStem", "")), scores[oid]
 
 
 def choose_background(history: dict) -> str:
@@ -325,7 +472,7 @@ def build_selection(on_date: date, history: dict) -> dict:
     quote = dict(quote)
     quote["SupportingTextSource"] = "master"
 
-    obj, illustration = choose_illustration(quote, objects, history)
+    obj, illustration, illustration_score = choose_illustration(quote, objects, history)
     background = choose_background(history)
     placement = choose_placement(obj, history)
 
@@ -340,6 +487,7 @@ def build_selection(on_date: date, history: dict) -> dict:
             "ObjectID": clean(obj.get("ObjectID")),
             "Illustration": illustration,
             "IllustrationTags": clean(obj.get("Tags")),
+            "IllustrationScore": str(illustration_score),
             "Placement": placement,
             "BackgroundFamily": background,
         }
@@ -361,8 +509,9 @@ def history_entry(selection: dict[str, str]) -> dict:
         "event_date": clean(selection.get("EventResolvedDate")),
         "object_id": clean(selection.get("ObjectID")),
         "illustration": clean(selection.get("Illustration")),
+        "illustration_score": int(clean(selection.get("IllustrationScore")) or "0"),
         "illustration_tags": sorted(
-            tag.lower() for tag in split_csv(selection.get("IllustrationTags", ""))
+            tag.casefold() for tag in split_csv(selection.get("IllustrationTags", ""))
         ),
         "placement": clean(selection.get("Placement")),
         "background": clean(selection.get("BackgroundFamily")),
@@ -393,8 +542,9 @@ def output_payload(selection: dict[str, str]) -> dict:
         "event_date": clean(selection.get("EventResolvedDate")),
         "object_id": clean(selection.get("ObjectID")),
         "illustration": clean(selection.get("Illustration")),
+        "illustration_score": int(clean(selection.get("IllustrationScore")) or "0"),
         "illustration_tags": sorted(
-            tag.lower() for tag in split_csv(selection.get("IllustrationTags", ""))
+            tag.casefold() for tag in split_csv(selection.get("IllustrationTags", ""))
         ),
         "placement": clean(selection.get("Placement")),
         "background": clean(selection.get("BackgroundFamily")),
