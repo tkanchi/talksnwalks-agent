@@ -9,7 +9,8 @@ The audit is intentionally conservative. Subjective issues are flagged for revie
 not silently rewritten or deleted. Existing high-confidence corrections from
 quote_text_quality.py are applied to the clean candidate copy only.
 
-Run directly or via the Phase 1.5 GitHub Actions audit workflow.
+Run directly or via the Phase 1.5 GitHub Actions audit workflow. The attention file
+keeps semantic review focused on rows that actually need a decision.
 """
 
 from __future__ import annotations
