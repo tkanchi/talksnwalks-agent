@@ -9,7 +9,9 @@ QUOTES = ROOT / 'data' / 'quotes_master_clean.csv'
 OBJECTS = ROOT / 'data' / 'illustration_objects.csv'
 OUTPUT = ROOT / 'data' / 'content_plan_month_01.csv'
 
-TARGET = 70
+# Current approved book-only pool has general and women-specific material.
+# Men/youth book libraries will be added separately before restoring those quotas.
+TARGET = 50
 BACKGROUND_FAMILIES = [
     'vanilla', 'seafoam', 'powder', 'blush', 'lavender',
     'apricot', 'ice', 'mint', 'petal', 'sky',
@@ -17,8 +19,6 @@ BACKGROUND_FAMILIES = [
 AUDIENCE_QUOTAS = {
     'all': 40,
     'women': 10,
-    'men': 10,
-    'youth': 10,
 }
 
 SEMANTIC_TOPIC_KEYWORDS = {
@@ -75,14 +75,16 @@ def audience_bucket(audience: str) -> str:
     return 'all'
 
 
+def is_book_based(row: dict[str, str]) -> bool:
+    return (
+        clean(row.get('SourceType')).lower() == 'inspired_by'
+        and bool(clean(row.get('InspiredBy')))
+        and bool(clean(row.get('Author')))
+    )
+
+
 def source_score(row: dict[str, str]) -> int:
-    score = 0
-    if clean(row.get('SourceType')).lower() == 'inspired_by' and clean(row.get('InspiredBy')) and clean(row.get('Author')):
-        score += 100
-    elif clean(row.get('SourceType')).lower() == 'original':
-        score += 45
-    elif clean(row.get('SourceType')).lower() == 'legacy_original':
-        score += 20
+    score = 100 if is_book_based(row) else 0
     if audience_bucket(row.get('Audience', '')) == 'all':
         score += 12
     if clean(row.get('SupportingText')):
@@ -130,7 +132,7 @@ def choose_quotes(rows: list[dict[str, str]]) -> list[dict[str, str]]:
     buckets = defaultdict(list)
     for row in selected:
         buckets[audience_bucket(row.get('Audience', ''))].append(row)
-    order = ['all', 'women', 'all', 'men', 'all', 'youth', 'all']
+    order = ['all', 'women', 'all']
     mixed: list[dict[str, str]] = []
     while len(mixed) < TARGET:
         progressed = False
@@ -144,7 +146,7 @@ def choose_quotes(rows: list[dict[str, str]]) -> list[dict[str, str]]:
             break
 
     if len(mixed) != TARGET:
-        raise RuntimeError(f'Expected {TARGET} selected quotes, got {len(mixed)}')
+        raise RuntimeError(f'Expected {TARGET} selected book-inspired quotes, got {len(mixed)}')
     return mixed
 
 
@@ -231,7 +233,10 @@ def assign_objects(quotes: list[dict[str, str]], objects: list[dict[str, str]]) 
 
 def main() -> None:
     with QUOTES.open(newline='', encoding='utf-8') as f:
-        quote_rows = [r for r in csv.DictReader(f) if clean(r.get('QualityStatus')) == 'approved']
+        quote_rows = [
+            r for r in csv.DictReader(f)
+            if clean(r.get('QualityStatus')) == 'approved' and is_book_based(r)
+        ]
     with OBJECTS.open(newline='', encoding='utf-8') as f:
         object_rows = [r for r in csv.DictReader(f) if clean(r.get('StyleStatus')) == 'approved']
 
@@ -245,9 +250,7 @@ def main() -> None:
     ]
     rows = []
     for idx, (quote, obj, placement) in enumerate(mapped, start=1):
-        source_line = ''
-        if clean(quote.get('SourceType')).lower() == 'inspired_by' and clean(quote.get('InspiredBy')) and clean(quote.get('Author')):
-            source_line = f"Inspired by Book: {clean(quote.get('InspiredBy'))} — {clean(quote.get('Author'))}"
+        source_line = f"Inspired by Book: {clean(quote.get('InspiredBy'))} — {clean(quote.get('Author'))}"
         rows.append({
             'PostNumber': f'{idx:03d}',
             'QuoteID': clean(quote.get('QuoteID')),
@@ -275,7 +278,7 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(rows)
 
-    print(f'Built {len(rows)} mapped posts -> {OUTPUT}')
+    print(f'Built {len(rows)} mapped book-inspired posts -> {OUTPUT}')
     print('Audience mix:', dict(Counter(audience_bucket(r['Audience']) for r in rows)))
     print('Unique topics:', len({r['Topic'] for r in rows}))
     print('Unique illustrations:', len({r['Illustration'] for r in rows}))
