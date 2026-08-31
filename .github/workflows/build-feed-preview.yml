@@ -1,0 +1,43 @@
+name: Build 4x5 feed previews
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'build_feed_preview.py'
+      - 'data/content_plan_month_01.csv'
+      - 'illustrations/objects/core/**'
+      - '.github/workflows/build-feed-preview.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Pillow
+        run: python -m pip install --upgrade pillow
+      - name: Build first 8 feed previews
+        run: python build_feed_preview.py
+      - name: Verify preview dimensions
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          files = sorted(Path('outputs/feed_preview').glob('*.png'))
+          assert len(files) == 8, len(files)
+          for path in files:
+              with Image.open(path) as im:
+                  assert im.size == (1080, 1350), (path, im.size)
+          print('Verified 8 previews at 1080x1350')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: feed-preview-first-8
+          path: outputs/feed_preview/*.png
+          if-no-files-found: error
