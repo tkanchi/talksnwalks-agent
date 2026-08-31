@@ -221,6 +221,21 @@ def select_quote(
     recent_books = [clean(entry.get("book")) for entry in entries[-4:]]
 
     for event in active_events(on_date, events):
+        event_key = (clean(event.get("EventID")), clean(event.get("ResolvedDate")))
+        event_limit = 3 if clean(event.get("Priority")).lower() == "high" else 2
+        used_event_count = sum(
+            1
+            for entry in entries
+            if (clean(entry.get("event_id")), clean(entry.get("event_date"))) == event_key
+        )
+        last_event_key = (
+            (clean(entries[-1].get("event_id")), clean(entries[-1].get("event_date")))
+            if entries
+            else ("", "")
+        )
+        if used_event_count >= event_limit or last_event_key == event_key:
+            continue
+
         event_has_youth = bool(split_pipe(event.get("Audiences", "")) & YOUTH_AUDIENCE_VALUES)
         event_candidates: list[tuple[dict[str, str], int, int, str]] = []
         for row in candidates:
@@ -363,6 +378,7 @@ def history_entry(selection: dict[str, str]) -> dict:
         "author": clean(selection.get("Author")),
         "event_id": clean(selection.get("EventID")),
         "event": clean(selection.get("Event")),
+        "event_date": clean(selection.get("EventResolvedDate")),
         "object_id": clean(selection.get("ObjectID")),
         "illustration": clean(selection.get("Illustration")),
         "illustration_tags": sorted(
