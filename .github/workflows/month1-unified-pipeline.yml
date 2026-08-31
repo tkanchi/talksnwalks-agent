@@ -79,10 +79,13 @@ jobs:
           REQUIRE_REAL_AUDIO: ${{ github.event_name == 'workflow_dispatch' && inputs.publish || false }}
         run: python build_month1_pipeline.py
 
+      - name: Load build metadata
+        shell: bash
+        run: cat outputs/unified/publish.env >> "$GITHUB_ENV"
+
       - name: Verify build outputs
         shell: bash
         run: |
-          cat outputs/unified/publish.env >> "$GITHUB_ENV"
           python - <<'PY'
           from pathlib import Path
           from PIL import Image
