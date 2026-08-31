@@ -1,16 +1,13 @@
 """Phase 1.5 quality audit for the unified Talk N Walks quote library.
 
 Produces additive outputs and does not alter live production inputs:
-- data/quotes_master_clean.csv: safe candidate rows for the future unified selector.
+- data/quotes_master_clean.csv: approved rows for the future unified selector.
 - data/quotes_master_review.csv: every master row with deterministic quality flags.
-- data/quotes_master_attention.csv: only rows needing review or exclusion decisions.
+- data/quotes_master_attention.csv: only rows excluded or still needing review.
 
-The audit is intentionally conservative. Subjective issues are flagged for review,
-not silently rewritten or deleted. Existing high-confidence corrections from
-quote_text_quality.py are applied to the clean candidate copy only.
-
-Run directly or via the Phase 1.5 GitHub Actions audit workflow. The attention file
-keeps semantic review focused on rows that actually need a decision.
+High-confidence copy edits come from quote_text_quality.py. Human-reviewed false
+positives are explicitly approved here so words such as 'control' or 'weakness'
+do not cause healthy content to be rejected mechanically.
 """
 
 from __future__ import annotations
@@ -38,9 +35,6 @@ HARD_FLAGS = {
     "missing_topic_category",
     "missing_book_attribution",
 }
-
-# Informational signals such as gender-coded wording and a negative-command
-# opener are useful for later selector variety, but are not quality failures.
 SEMANTIC_REVIEW_FLAGS = {
     "aggressive_tone",
     "very_short",
@@ -48,6 +42,18 @@ SEMANTIC_REVIEW_FLAGS = {
     "legacy_unattributed",
     "missing_source_type",
     "topic_category_mismatch",
+}
+
+# Individually reviewed Phase 1.5 rows whose flagged wording is appropriate in
+# context. These are not blanket exceptions: only these exact QuoteIDs bypass a
+# semantic flag, and hard data-quality failures still exclude them.
+MANUAL_APPROVE_IDS = {
+    "CH035", "CH038", "CH082",
+    "MEN021", "MEN024",
+    "SG104", "SG172", "SG176", "SG279", "SG365",
+    "UC082",
+    "WEMP043", "WEMP080", "WEMP092", "WEMP110", "WEMP145", "WEMP160", "WEMP188",
+    "WOM008", "WOM028", "WOM162", "WOM236", "WOM332",
 }
 
 GENDER_TERMS = re.compile(
@@ -59,8 +65,6 @@ AGGRESSIVE_TERMS = re.compile(
     re.IGNORECASE,
 )
 NEGATIVE_COMMAND = re.compile(r"^(do not|don't|don’t|never)\b", re.IGNORECASE)
-
-# Topics where gender/family terms can be essential rather than accidental.
 GENDER_CONTEXT_TOPICS = {
     "Mother", "Father", "Sisters", "Brothers", "Marriage", "Parenting", "Family"
 }
@@ -129,9 +133,11 @@ def _flags(row: dict[str, str], topics: dict[str, str]) -> list[str]:
     return flags
 
 
-def _status(flags: list[str]) -> str:
+def _status(quote_id: str, flags: list[str]) -> str:
     if any(flag in HARD_FLAGS for flag in flags):
         return "exclude"
+    if quote_id in MANUAL_APPROVE_IDS:
+        return "approved"
     if any(flag in SEMANTIC_REVIEW_FLAGS for flag in flags):
         return "review"
     return "approved"
@@ -157,13 +163,17 @@ def audit() -> tuple[int, int, int, Counter[str]]:
 
     for row in rows:
         row = {key: _clean(value) for key, value in row.items()}
-        flags = _flags(row, topics)
-        status = _status(flags)
+        quote_id = row.get("QuoteID", "")
+        candidate_quote = polish_quote_text(QUOTE_CORRECTIONS.get(quote_id, row.get("Quote", "")))
+
+        # Audit the corrected candidate wording so a high-confidence rewrite can
+        # actually resolve the issue that prompted the edit.
+        audit_row = {**row, "Quote": candidate_quote}
+        flags = _flags(audit_row, topics)
+        status = _status(quote_id, flags)
         statuses[status] += 1
         flag_counts.update(flags)
 
-        quote_id = row.get("QuoteID", "")
-        candidate_quote = polish_quote_text(QUOTE_CORRECTIONS.get(quote_id, row.get("Quote", "")))
         reviewed_row = {
             **row,
             "CandidateQuote": candidate_quote,
@@ -194,7 +204,7 @@ def audit() -> tuple[int, int, int, Counter[str]]:
         writer.writerows(clean_rows)
 
     print(f"Audited {len(rows)} master rows")
-    print(f"Approved candidate rows: {statuses['approved']}")
+    print(f"Approved clean rows: {statuses['approved']}")
     print(f"Review-required rows: {statuses['review']}")
     print(f"Excluded rows: {statuses['exclude']}")
     print(f"Attention rows: {len(attention)}")
