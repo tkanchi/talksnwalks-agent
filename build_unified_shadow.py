@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from datetime import date, datetime, timedelta
@@ -36,6 +37,66 @@ CATEGORY_HASHTAGS = {
 }
 BASE_HASHTAGS = ("#bookinspiration", "#dailywisdom", "#talksnwalks")
 
+# A short editorial bridge makes captions feel written for a person rather than
+# assembled from fields. These are deliberately reader-facing and do not claim
+# to be words from the cited author.
+CAPTION_NOTES = {
+    "Relationships": (
+        "Worth remembering in the conversations that matter.",
+        "One to keep close when listening matters more than reacting.",
+        "A useful thought for the way we show up with people.",
+        "Some relationship lessons only make sense once we practice them.",
+    ),
+    "Family": (
+        "One to carry into the small moments at home.",
+        "Worth remembering around the people closest to us.",
+        "The everyday moments with family are often where this matters most.",
+        "A quiet reminder for the relationships we can easily take for granted.",
+    ),
+    "Wellness": (
+        "Worth sitting with when you think about how you care for yourself.",
+        "A useful reminder for days when your energy feels stretched.",
+        "Sometimes the smallest steady practice is the one worth keeping.",
+        "One to revisit when taking care of yourself starts feeling complicated.",
+    ),
+    "Mindset": (
+        "One to come back to when your thoughts get noisy.",
+        "Worth keeping nearby for the harder days.",
+        "A small thought to carry into the next choice.",
+        "Sometimes noticing the pattern is already useful progress.",
+    ),
+    "Business": (
+        "A useful thought to carry into the next decision.",
+        "Worth keeping in mind when priorities start competing.",
+        "One to revisit before urgency decides the direction for you.",
+        "A practical idea for the work that actually matters.",
+    ),
+    "Youth": (
+        "A simple idea to keep close while learning and growing.",
+        "Worth remembering when progress looks different from someone else's.",
+        "One for the days you are still figuring things out.",
+        "Learning is rarely as neat as it looks from the outside.",
+    ),
+    "Values": (
+        "A quiet reminder for the way we treat people.",
+        "Worth remembering in the small decisions nobody applauds.",
+        "Character usually shows up in ordinary moments first.",
+        "One to keep close when the easy choice is not the kindest.",
+    ),
+    "Lifestyle": (
+        "A small thought for ordinary life.",
+        "Worth carrying into the rest of the day.",
+        "One to notice in the middle of everyday routines.",
+        "Sometimes the useful part is simply paying attention.",
+    ),
+}
+GENERIC_CAPTION_NOTES = (
+    "One to sit with for a moment.",
+    "Worth coming back to when it meets the right day.",
+    "A small thought to carry into today.",
+    "Keep the part that feels useful and come back to it later.",
+)
+
 
 def hashtag_slug(text: str) -> str:
     slug = re.sub(r"[^a-z0-9]+", "", clean(text).casefold())
@@ -60,16 +121,25 @@ def build_hashtags(selection: dict[str, str]) -> list[str]:
         if tag and tag not in deduped:
             deduped.append(tag)
 
-    # Keep captions focused: exactly five relevant hashtags.
     return deduped[:5]
+
+
+def caption_note(selection: dict[str, str]) -> str:
+    category = clean(selection.get("TopicCategory"))
+    options = CAPTION_NOTES.get(category, GENERIC_CAPTION_NOTES)
+    quote_id = clean(selection.get("QuoteID"))
+    digest = hashlib.sha256(quote_id.encode("utf-8")).digest()
+    return options[int.from_bytes(digest[:2], "big") % len(options)]
 
 
 def build_caption(selection: dict[str, str], hashtags: list[str]) -> str:
     support = clean(selection.get("SupportingText"))
     book = clean(selection.get("InspiredBy"))
     author = clean(selection.get("Author"))
+    note = caption_note(selection)
     return (
         f"{support}\n\n"
+        f"{note}\n\n"
         f"Inspired by {book} by {author}.\n\n"
         f"{HANDLE}\n"
         f"{' '.join(hashtags)}"
