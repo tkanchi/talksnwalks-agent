@@ -39,7 +39,24 @@ BACKGROUND_RGB = {
     'petal': (246, 219, 233),
     'sky': (217, 234, 248),
 }
+BACKGROUND_KEYS = list(BACKGROUND_RGB.keys())
 CENTER_LIGHT = (255, 252, 246)
+
+
+def resolve_background(family: str | None, index: int) -> tuple[int, int, int]:
+    """Look up the requested background color, tolerating case/whitespace.
+
+    Previously this fell back to the same 'vanilla' default for ANY unmatched
+    value (wrong casing, extra spaces, blank cell, typo) — which made every
+    export look identical regardless of what the CSV said. Now an unmatched
+    value rotates through the palette by post index instead of collapsing
+    everything onto one color, so backgrounds stay varied even if the plan
+    data is messy.
+    """
+    key = (family or '').strip().lower()
+    if key in BACKGROUND_RGB:
+        return BACKGROUND_RGB[key]
+    return BACKGROUND_RGB[BACKGROUND_KEYS[index % len(BACKGROUND_KEYS)]]
 
 
 def find_font(size: int, *, italic: bool = False):
@@ -160,8 +177,8 @@ def draw_bottom_divider(draw, y: int) -> None:
     )
 
 
-def compose(row: dict[str, str], output_path: Path) -> None:
-    bg = BACKGROUND_RGB.get((row.get('BackgroundFamily') or '').strip(), BACKGROUND_RGB['vanilla'])
+def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
+    bg = resolve_background(row.get('BackgroundFamily'), index)
     canvas = build_background(bg)
     draw = ImageDraw.Draw(canvas)
 
@@ -237,7 +254,7 @@ def main() -> None:
     for index, row in enumerate(rows, start=1):
         qid = (row.get('QuoteID') or f'post_{index:02d}').strip()
         output = OUTPUT_DIR / f'{index:02d}_{qid}.png'
-        compose(row, output)
+        compose(row, output, index=index - 1)
         print(output)
 
 
