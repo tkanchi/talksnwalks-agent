@@ -1,0 +1,86 @@
+name: Simulate unified next-post selector
+
+on:
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: "Optional YYYY-MM-DD simulation start date"
+        required: false
+        default: ""
+      count:
+        description: "Number of consecutive post selections to simulate"
+        required: false
+        default: "10"
+
+permissions:
+  contents: read
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Pillow
+        run: python -m pip install --upgrade pillow
+
+      - name: Simulate unified next posts
+        env:
+          START_DATE: ${{ github.event.inputs.start_date }}
+          COUNT: ${{ github.event.inputs.count }}
+        run: |
+          args=(--count "${COUNT:-10}")
+          if [ -n "${START_DATE:-}" ]; then
+            args+=(--start-date "$START_DATE")
+          fi
+          python simulate_unified_selector.py "${args[@]}"
+
+      - name: Verify simulation artifact
+        env:
+          EXPECTED_COUNT: ${{ github.event.inputs.count }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from PIL import Image
+
+          root = Path("outputs/unified_selector")
+          expected = int(os.getenv("EXPECTED_COUNT") or "10")
+          manifest = json.loads((root / "simulation_manifest.json").read_text(encoding="utf-8"))
+          history = json.loads((root / "simulation_history.json").read_text(encoding="utf-8"))
+
+          assert len(manifest) == expected, len(manifest)
+          assert len(history["selections"]) == expected, len(history["selections"])
+          assert len({row["quote_id"] for row in manifest}) == expected
+          assert all(row["source_type"] == "inspired_by" for row in manifest)
+          assert all(row["book"] and row["author"] for row in manifest)
+
+          previews = sorted((root / "previews").glob("*.png"))
+          selections = sorted((root / "selections").glob("*.json"))
+          assert len(previews) == expected, len(previews)
+          assert len(selections) == expected, len(selections)
+
+          for preview in previews:
+              with Image.open(preview) as image:
+                  assert image.size == (1080, 1350), (preview, image.size)
+
+          object_ids = [row["object_id"] for row in manifest]
+          assert all(a != b for a, b in zip(object_ids, object_ids[1:]))
+
+          print(f"Verified {expected} build-only selections and 4:5 previews")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unified-selector-simulation
+          path: |
+            outputs/unified_selector/simulation_manifest.json
+            outputs/unified_selector/simulation_history.json
+            outputs/unified_selector/selections/*.json
+            outputs/unified_selector/previews/*.png
+          if-no-files-found: error
