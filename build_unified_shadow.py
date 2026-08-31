@@ -39,9 +39,6 @@ CATEGORY_HASHTAGS = {
 }
 BASE_HASHTAGS = ("#bookinspiration", "#dailywisdom", "#talksnwalks")
 
-# Use the same quote-first semantics as illustration matching. Legacy metadata is
-# only a fallback, so a leadership quote mislabeled Fitness cannot receive a
-# wellness caption or fitness hashtags.
 SEMANTIC_CATEGORY_PRIORITY = (
     (
         "Business",
@@ -84,9 +81,6 @@ SEMANTIC_CATEGORY_PRIORITY = (
     ),
 )
 
-# A short editorial bridge makes captions feel written for a person rather than
-# assembled from fields. These are reader-facing and never presented as words
-# from the cited author.
 CAPTION_NOTES = {
     "Relationships": (
         "Worth remembering in the conversations that matter.",
@@ -153,12 +147,22 @@ def hashtag_slug(text: str) -> str:
 def semantic_category(selection: dict[str, str]) -> str:
     quote_text = clean(selection.get("Quote")).casefold()
     semantic_topics = _semantic_matches(quote_text, SEMANTIC_TOPIC_KEYWORDS)
+
+    # Words such as "voice" and "language" can describe identity or inner life,
+    # not only communication. Require a stronger conversational signal before
+    # allowing Communication & Social Skills to drive a relationship caption.
+    strong_communication = bool(
+        re.search(r"\b(communication|conversation\w*|listen\w*|speak\w*|heard)\b", quote_text)
+        or "receives meaning" in quote_text
+        or "safe conversations" in quote_text
+    )
+    if not strong_communication:
+        semantic_topics.discard("Communication & Social Skills")
+
     for category, topics in SEMANTIC_CATEGORY_PRIORITY:
         if semantic_topics & topics:
             return category
 
-    # Abstract wording may not reveal enough semantic signal. In that case only,
-    # fall back to the audited canonical category already attached to the row.
     fallback = clean(selection.get("TopicCategory"))
     return fallback if fallback in CATEGORY_HASHTAGS else "Mindset"
 
