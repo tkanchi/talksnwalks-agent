@@ -33,7 +33,11 @@ jobs:
           python - <<'PY'
           import csv
           from pathlib import Path
-          for name in ('data/quotes_master_clean.csv', 'data/quotes_master_review.csv'):
+          for name in (
+              'data/quotes_master_clean.csv',
+              'data/quotes_master_review.csv',
+              'data/quotes_master_attention.csv',
+          ):
               path = Path(name)
               if not path.exists():
                   raise SystemExit(f'{name} was not generated')
@@ -46,12 +50,12 @@ jobs:
 
       - name: Commit audit outputs
         run: |
-          if [ -z "$(git status --porcelain -- data/quotes_master_clean.csv data/quotes_master_review.csv)" ]; then
+          if [ -z "$(git status --porcelain -- data/quotes_master_clean.csv data/quotes_master_review.csv data/quotes_master_attention.csv)" ]; then
             echo 'Phase 1.5 outputs are already up to date.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/quotes_master_clean.csv data/quotes_master_review.csv
+          git add data/quotes_master_clean.csv data/quotes_master_review.csv data/quotes_master_attention.csv
           git commit -m 'Build Phase 1.5 quote quality outputs'
           git push
