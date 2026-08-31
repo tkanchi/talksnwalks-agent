@@ -4,6 +4,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 from collections import Counter
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -31,77 +32,82 @@ MONTHS = {
 }
 WEEKDAYS = {"MON": 0, "TUE": 1, "WED": 2, "THU": 3, "FRI": 4, "SAT": 5, "SUN": 6}
 
-# Illustration matching is driven by the actual quote/support copy first. Topic
-# metadata remains a fallback because some legacy rows carry imperfect taxonomy.
+# Exact words/phrases from the main quote drive illustration meaning. A trailing
+# * means prefix match (for example priorit* matches priority/priorities). This
+# avoids accidental substring matches such as "read" inside "thread".
 SEMANTIC_TOPIC_KEYWORDS = {
     "Leadership": ("leadership", "leader", "leading", "directing", "responsibility"),
     "Self-Belief": ("confidence", "self-belief", "believe in yourself", "belief in yourself"),
-    "Authenticity & Identity": ("authentic", "identity", "pretend", "be yourself", "yourself", "belonging"),
-    "Friendship": ("friend", "friendship", "teamwork", "circle"),
-    "Family": ("family", "home", "parent", "mother", "father", "sibling"),
+    "Authenticity & Identity": ("authentic*", "identity", "pretend*", "be yourself", "yourself", "belonging"),
+    "Friendship": ("friend*", "friendship", "teamwork", "circle"),
+    "Family": ("family", "home", "parent*", "mother", "father", "sibling*"),
     "Career": ("career", "job", "workplace", "professional"),
-    "Entrepreneurship": ("business", "startup", "entrepreneur"),
-    "Strategy & Decision-Making": ("strategy", "decision", "choice", "priorit", "trade-off"),
-    "Execution": ("execute", "execution", "finish", "task", "interrupt", "productivity", "priority"),
-    "Discipline": ("discipline", "consistency", "routine", "practice", "habit", "deliberate"),
-    "Goals": ("goal", "dream", "vision", "ambition", "achievement"),
-    "Peace": ("peace", "calm", "quiet", "stillness"),
-    "Mental Health": ("mental health", "inner language", "self-talk", "trigger", "thought", "healing", "stress"),
-    "Rest & Recovery": ("rest", "sleep", "recover", "recovery", "self-care", "pause"),
-    "Health": ("health", "wellness", "hydrate"),
-    "Fitness": ("fitness", "workout", "gym", "training", "exercise"),
+    "Entrepreneurship": ("business", "startup", "entrepreneur*"),
+    "Strategy & Decision-Making": ("strategy", "decision*", "choice*", "priorit*", "trade-off*"),
+    "Execution": ("execute*", "execution", "finish*", "task*", "interrupt*", "productivity", "priority", "priorities"),
+    "Discipline": ("discipline", "consistent*", "consistency", "routine*", "practice*", "habit*", "deliberate*"),
+    "Goals": ("goal*", "dream*", "vision", "ambition", "achievement*"),
+    "Peace": ("peace", "calm", "quiet", "stillness", "steady"),
+    "Mental Health": ("mental health", "inner language", "self-talk", "trigger*", "thought*", "healing", "shame", "stress"),
+    "Rest & Recovery": ("rest", "sleep*", "recover*", "recovery", "self-care", "pause"),
+    "Health": ("health", "wellness", "hydrate*"),
+    "Fitness": ("fitness", "workout*", "gym", "training", "exercise*"),
     "Body Confidence": ("body confidence", "body respect", "physical space", "appearance", "self-love"),
-    "Reading & Books": ("book", "read", "library"),
-    "Study & Learning": ("study", "learn", "learning", "student", "school", "teacher", "education", "curiosity"),
-    "Digital Responsibility": ("digital", "screen", "phone", "technology", "online", "internet", "device"),
-    "Travel & Adventure": ("travel", "adventure", "journey", "trip"),
-    "Kindness": ("kind", "kindness", "compassion"),
+    "Reading & Books": ("book*", "read*", "library"),
+    "Study & Learning": ("study*", "learn*", "student*", "school", "teacher*", "education", "curiosity"),
+    "Digital Responsibility": ("digital", "screen*", "phone*", "technology", "online", "internet", "device*"),
+    "Travel & Adventure": ("travel*", "adventure*", "journey*", "trip*"),
+    "Kindness": ("kind", "kindness", "compassion*"),
     "Love": ("love", "romance", "self-love"),
-    "Relationships": ("relationship", "relationships", "partner"),
-    "Communication & Social Skills": ("communication", "listen", "conversation", "speak", "voice", "heard", "meaning"),
-    "Hope": ("hope", "optimis", "future"),
-    "Resilience": ("resilien", "setback", "comeback", "recover from", "mental toughness", "difficult things"),
-    "Courage": ("courage", "brave", "bold", "fear"),
-    "Purpose & Meaning": ("purpose", "meaning", "calling"),
+    "Relationships": ("relationship*", "partner*"),
+    "Communication & Social Skills": ("communication", "listen*", "conversation*", "speak*", "voice", "heard", "language", "meaning"),
+    "Hope": ("hope", "optimis*", "future", "possibility", "possibilities"),
+    "Resilience": ("resilien*", "setback*", "comeback*", "recover from", "mental toughness", "difficult things", "hard things"),
+    "Courage": ("courage", "brave*", "bold*", "fear*"),
+    "Purpose & Meaning": ("purpose", "meaningful", "meaning", "calling"),
     "Gratitude": ("gratitude", "grateful", "thankful", "thank you"),
-    "Money Mindset": ("money", "wealth", "financial", "income", "millionaire"),
+    "Money Mindset": ("money", "wealth", "financial", "income", "millionaire*"),
     "Integrity & Character": ("integrity", "values", "character", "responsibility"),
-    "Justice & Equality": ("justice", "equality", "equal", "inclusive", "vulnerable", "fairness"),
+    "Justice & Equality": ("justice", "equality", "equal*", "inclusive", "inclusion", "vulnerable", "fairness"),
     "Happiness": ("happiness", "joy"),
 }
 
-# Quote-language concepts are translated to tags already present in the object
-# registry. This gives literal clues (screen -> laptop, morning -> sunrise,
-# self-talk -> journal) more weight than a broad taxonomy label.
 SEMANTIC_TAG_KEYWORDS = {
-    "learning": ("learn", "student", "school", "teacher", "education", "study"),
-    "reading": ("read", "book", "library"),
-    "focus": ("focus", "attention", "interrupt", "concentrat", "deep work", "distraction"),
-    "time": ("time", "morning", "schedule", "deadline"),
+    "learning": ("learn*", "student*", "school", "teacher*", "education", "study*"),
+    "reading": ("read*", "book*", "library"),
+    "focus": ("focus*", "attention", "interrupt*", "concentrat*", "deep work", "distraction*"),
+    "time": ("time", "morning", "schedule*", "deadline*"),
     "new-day": ("morning", "new day", "start the day"),
-    "reflection": ("inner language", "self-talk", "reflect", "trigger", "thought", "notice yourself"),
+    "morning": ("morning", "start the day"),
+    "future": ("future", "vision", "possibility", "possibilities"),
+    "reflection": ("inner language", "self-talk", "reflect*", "trigger*", "thought*", "shame"),
     "writing": ("journal", "inner language", "self-talk"),
-    "challenge": ("challenge", "difficult", "hard thing", "setback", "toughness"),
-    "strength": ("strength", "mental toughness", "stronger"),
+    "challenge": ("challenge*", "difficult", "hard thing*", "setback*", "mental toughness"),
+    "toughness": ("mental toughness", "difficult things", "hard things"),
     "health": ("health", "wellness", "body respect", "self-care"),
-    "relationship": ("relationship", "communication", "conversation", "listen", "partner"),
-    "kindness": ("kind", "kindness", "compassion"),
+    "self-care": ("self-care", "care for yourself", "care for yourself"),
+    "relationship": ("relationship*", "communication", "conversation*", "listen*", "partner*"),
+    "communication": ("communication", "conversation*", "listen*", "voice", "language"),
+    "listening": ("listen*", "heard", "receives meaning"),
+    "kindness": ("kind", "kindness", "compassion*"),
     "love": ("love", "self-love", "romance"),
-    "family": ("family", "parent", "mother", "father", "home"),
+    "family": ("family", "parent*", "mother", "father", "home"),
     "freedom": ("freedom", "boundary", "boundaries", "control"),
-    "choice": ("choice", "decision", "boundary", "boundaries"),
-    "planning": ("plan", "planning", "priority", "priorities", "routine", "habit"),
-    "execution": ("execute", "execution", "finish", "task", "action", "productivity"),
-    "business": ("business", "career", "workplace", "entrepreneur"),
+    "choice": ("choice*", "decision*", "boundary", "boundaries"),
+    "planning": ("plan*", "priority", "priorities", "routine*", "habit*", "prepare*"),
+    "execution": ("execute*", "execution", "finish*", "task*", "action*", "productivity"),
+    "business": ("business", "career", "workplace", "entrepreneur*"),
     "leadership": ("leadership", "leader", "leading", "directing"),
     "responsibility": ("responsibility", "accountability", "integrity", "values"),
-    "goals": ("goal", "goals", "ambition", "achievement", "financial"),
-    "purpose": ("purpose", "meaning", "calling"),
+    "goals": ("goal*", "ambition", "achievement*", "financial"),
+    "purpose": ("purpose", "meaningful", "meaning", "calling"),
     "direction": ("direction", "path", "calling"),
-    "opportunity": ("opportunity", "new chapter", "possibility"),
-    "calm": ("calm", "peace", "quiet", "stillness"),
-    "rest": ("rest", "sleep", "recovery", "pause"),
-    "travel": ("travel", "journey", "adventure", "trip"),
+    "opportunity": ("opportunity", "new chapter", "possibility", "possibilities"),
+    "calm": ("calm", "peace", "quiet", "stillness", "steady"),
+    "rest": ("rest", "sleep*", "recovery", "pause"),
+    "travel": ("travel*", "journey*", "adventure*", "trip*"),
+    "access": ("access", "inclusive", "inclusion", "equal*", "vulnerable"),
+    "equality": ("equality", "equal*", "inclusive", "inclusion"),
 }
 
 
@@ -127,55 +133,56 @@ def stable_tiebreak(on_date: date, row: dict[str, str]) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
-def semantic_text(row: dict[str, str]) -> str:
-    return " ".join(
-        [clean(row.get("Quote")), clean(row.get("SupportingText"))]
-    ).casefold()
+def _needle_matches(text: str, needle: str) -> bool:
+    needle = clean(needle).casefold()
+    if not needle:
+        return False
+    if needle.endswith("*"):
+        stem = re.escape(needle[:-1])
+        return bool(re.search(rf"\b{stem}[\w'-]*", text))
+    if " " in needle or "-" in needle:
+        return needle in text
+    return bool(re.search(rf"\b{re.escape(needle)}\b", text))
 
 
-def semantic_topics(row: dict[str, str]) -> set[str]:
-    text = semantic_text(row)
+def _semantic_matches(text: str, mapping: dict[str, tuple[str, ...]]) -> set[str]:
     return {
-        topic
-        for topic, needles in SEMANTIC_TOPIC_KEYWORDS.items()
-        if any(needle in text for needle in needles)
-    }
-
-
-def semantic_tags(row: dict[str, str]) -> set[str]:
-    text = semantic_text(row)
-    return {
-        tag
-        for tag, needles in SEMANTIC_TAG_KEYWORDS.items()
-        if any(needle in text for needle in needles)
+        label
+        for label, needles in mapping.items()
+        if any(_needle_matches(text, needle) for needle in needles)
     }
 
 
 def illustration_semantic_score(obj: dict[str, str], quote: dict[str, str]) -> int:
-    topic = clean(quote.get("Topic"))
-    hints = semantic_topics(quote)
-    qtags = semantic_tags(quote)
+    quote_text = clean(quote.get("Quote")).casefold()
+    support_text = clean(quote.get("SupportingText")).casefold()
+    quote_topics = _semantic_matches(quote_text, SEMANTIC_TOPIC_KEYWORDS)
+    quote_tags = _semantic_matches(quote_text, SEMANTIC_TAG_KEYWORDS)
+
     primary = split_pipe(obj.get("PrimaryTopics", ""))
     secondary = split_pipe(obj.get("SecondaryTopics", ""))
-    otags = {tag.casefold() for tag in split_csv(obj.get("Tags", ""))}
+    object_tags = {tag.casefold() for tag in split_csv(obj.get("Tags", ""))}
 
     score = 0
-    if hints:
-        score += 240 * len(hints & primary)
-        score += 120 * len(hints & secondary)
-        # Canonical topic is only a supporting signal when the copy has already
-        # supplied clearer semantics.
-        if topic in primary:
-            score += 35
-        if topic in secondary:
-            score += 20
+    if quote_topics or quote_tags:
+        # The actual quote outranks imported taxonomy and generated support.
+        score += 300 * len(quote_topics & primary)
+        score += 160 * len(quote_topics & secondary)
+        score += 130 * len(quote_tags & object_tags)
     else:
+        # If the wording is too abstract to map, use support + canonical topic as
+        # a fallback rather than guessing from unrelated metadata.
+        support_topics = _semantic_matches(support_text, SEMANTIC_TOPIC_KEYWORDS)
+        support_tags = _semantic_matches(support_text, SEMANTIC_TAG_KEYWORDS)
+        topic = clean(quote.get("Topic"))
+        score += 120 * len(support_topics & primary)
+        score += 60 * len(support_topics & secondary)
+        score += 50 * len(support_tags & object_tags)
         if topic in primary:
-            score += 140
+            score += 100
         if topic in secondary:
-            score += 75
+            score += 50
 
-    score += 95 * len(qtags & otags)
     return score
 
 
@@ -400,7 +407,7 @@ def choose_illustration(
 
     entries = history_entries(history)
     object_counts = Counter(clean(entry.get("object_id")) for entry in entries[-30:])
-    recent_object_ids = [clean(entry.get("object_id")) for entry in entries[-5:]]
+    recent_object_ids = [clean(entry.get("object_id")) for entry in entries[-3:]]
     recent_tags: set[str] = set()
     for entry in entries[-3:]:
         recent_tags.update(entry.get("illustration_tags", []) or [])
@@ -411,10 +418,8 @@ def choose_illustration(
     }
     best_score = max(scores.values())
 
-    # Semantics first: variety is allowed only inside a reasonably relevant
-    # band. A recent-but-perfect object is preferable to an unrelated object.
     if best_score > 0:
-        floor = max(1, best_score - 160)
+        floor = max(best_score * 0.70, best_score - 100)
         pool = [obj for obj in approved if scores[clean(obj.get("ObjectID"))] >= floor]
     else:
         pool = list(approved)
@@ -422,10 +427,6 @@ def choose_illustration(
     non_recent = [obj for obj in pool if clean(obj.get("ObjectID")) not in recent_object_ids]
     if non_recent:
         pool = non_recent
-    elif len(pool) > 1 and recent_object_ids:
-        not_last = [obj for obj in pool if clean(obj.get("ObjectID")) != recent_object_ids[-1]]
-        if not_last:
-            pool = not_last
 
     def rank(obj: dict[str, str]) -> tuple:
         oid = clean(obj.get("ObjectID"))
@@ -433,8 +434,8 @@ def choose_illustration(
         tag_overlap = len(tags & recent_tags)
         return (
             object_counts[oid],
-            tag_overlap,
             -scores[oid],
+            tag_overlap,
             oid,
         )
 
