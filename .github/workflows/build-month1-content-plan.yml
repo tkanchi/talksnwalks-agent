@@ -53,7 +53,7 @@ jobs:
             exit 0
           fi
           git config user.name 'github-actions[bot]'
-          git config user.email '4189828+github-actions[bot]@users.noreply.github.com'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/content_plan_month_01.csv
           git commit -m 'Build Phase 3 month-one content plan'
           git push
