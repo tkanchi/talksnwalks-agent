@@ -1,4 +1,4 @@
-name: Build 4x5 feed previews
+name: Build 9x16 feed previews
 
 on:
   workflow_dispatch:
@@ -22,7 +22,7 @@ jobs:
           python-version: '3.12'
       - name: Install Pillow
         run: python -m pip install --upgrade pillow
-      - name: Build final single feed proof
+      - name: Build final single 9x16 proof
         env:
           PREVIEW_COUNT: '1'
         run: python build_feed_preview.py
@@ -34,8 +34,8 @@ jobs:
           files = sorted(Path('outputs/feed_preview').glob('*.png'))
           assert len(files) == 1, len(files)
           with Image.open(files[0]) as im:
-              assert im.size == (1080, 1350), (files[0], im.size)
-          print('Verified 1 proof at 1080x1350')
+              assert im.size == (1080, 1920), (files[0], im.size)
+          print('Verified 1 proof at 1080x1920')
           PY
       - uses: actions/upload-artifact@v4
         with:
