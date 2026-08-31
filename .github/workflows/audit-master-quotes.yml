@@ -1,0 +1,57 @@
+name: Audit master quote library
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'audit_master_quotes.py'
+      - 'quote_text_quality.py'
+      - 'data/quotes_master.csv'
+      - 'data/topics.csv'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run Phase 1.5 audit
+        run: python audit_master_quotes.py
+
+      - name: Verify audit outputs
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          for name in ('data/quotes_master_clean.csv', 'data/quotes_master_review.csv'):
+              path = Path(name)
+              if not path.exists():
+                  raise SystemExit(f'{name} was not generated')
+              with path.open(newline='', encoding='utf-8') as f:
+                  rows = list(csv.DictReader(f))
+              if not rows:
+                  raise SystemExit(f'{name} is empty')
+              print(f'Verified {name}: {len(rows)} rows')
+          PY
+
+      - name: Commit audit outputs
+        run: |
+          if [ -z "$(git status --porcelain -- data/quotes_master_clean.csv data/quotes_master_review.csv)" ]; then
+            echo 'Phase 1.5 outputs are already up to date.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/quotes_master_clean.csv data/quotes_master_review.csv
+          git commit -m 'Build Phase 1.5 quote quality outputs'
+          git push
