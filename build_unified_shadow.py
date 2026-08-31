@@ -10,6 +10,8 @@ from zoneinfo import ZoneInfo
 
 from build_feed_preview import compose
 from select_next_post import (
+    SEMANTIC_TOPIC_KEYWORDS,
+    _semantic_matches,
     append_history,
     build_selection,
     clean,
@@ -37,9 +39,54 @@ CATEGORY_HASHTAGS = {
 }
 BASE_HASHTAGS = ("#bookinspiration", "#dailywisdom", "#talksnwalks")
 
+# Use the same quote-first semantics as illustration matching. Legacy metadata is
+# only a fallback, so a leadership quote mislabeled Fitness cannot receive a
+# wellness caption or fitness hashtags.
+SEMANTIC_CATEGORY_PRIORITY = (
+    (
+        "Business",
+        {
+            "CEO Mindset", "Entrepreneurship", "Leadership", "Execution",
+            "Money Mindset", "Career", "Strategy & Decision-Making",
+        },
+    ),
+    (
+        "Wellness",
+        {"Fitness", "Health", "Mental Health", "Rest & Recovery", "Body Confidence"},
+    ),
+    (
+        "Relationships",
+        {"Friendship", "Best Friends", "Love", "Relationships", "Marriage", "Breakups", "Communication & Social Skills"},
+    ),
+    (
+        "Family",
+        {"Mother", "Father", "Sisters", "Brothers", "Siblings", "Family", "Parenting", "Childhood Nostalgia"},
+    ),
+    (
+        "Youth",
+        {"Study & Learning", "Kids Morals", "Teen Confidence", "Sports", "Digital Responsibility"},
+    ),
+    (
+        "Values",
+        {"Kindness", "Spirituality", "Integrity & Character", "Justice & Equality"},
+    ),
+    (
+        "Lifestyle",
+        {"Funny & Relatable", "Travel & Adventure", "Reading & Books", "Music & Dance", "Work-Life Balance"},
+    ),
+    (
+        "Mindset",
+        {
+            "Self-Belief", "Discipline", "Resilience", "Growth", "Peace",
+            "Gratitude", "Happiness", "Hope", "Goals", "Courage",
+            "Purpose & Meaning", "Authenticity & Identity",
+        },
+    ),
+)
+
 # A short editorial bridge makes captions feel written for a person rather than
-# assembled from fields. These are deliberately reader-facing and do not claim
-# to be words from the cited author.
+# assembled from fields. These are reader-facing and never presented as words
+# from the cited author.
 CAPTION_NOTES = {
     "Relationships": (
         "Worth remembering in the conversations that matter.",
@@ -103,6 +150,19 @@ def hashtag_slug(text: str) -> str:
     return f"#{slug}" if slug else ""
 
 
+def semantic_category(selection: dict[str, str]) -> str:
+    quote_text = clean(selection.get("Quote")).casefold()
+    semantic_topics = _semantic_matches(quote_text, SEMANTIC_TOPIC_KEYWORDS)
+    for category, topics in SEMANTIC_CATEGORY_PRIORITY:
+        if semantic_topics & topics:
+            return category
+
+    # Abstract wording may not reveal enough semantic signal. In that case only,
+    # fall back to the audited canonical category already attached to the row.
+    fallback = clean(selection.get("TopicCategory"))
+    return fallback if fallback in CATEGORY_HASHTAGS else "Mindset"
+
+
 def build_hashtags(selection: dict[str, str]) -> list[str]:
     tags: list[str] = []
 
@@ -112,7 +172,7 @@ def build_hashtags(selection: dict[str, str]) -> list[str]:
         if event_tag:
             tags.append(event_tag)
 
-    category = clean(selection.get("TopicCategory"))
+    category = semantic_category(selection)
     tags.extend(CATEGORY_HASHTAGS.get(category, ("#motivation", "#inspiration")))
     tags.extend(BASE_HASHTAGS)
 
@@ -125,7 +185,7 @@ def build_hashtags(selection: dict[str, str]) -> list[str]:
 
 
 def caption_note(selection: dict[str, str]) -> str:
-    category = clean(selection.get("TopicCategory"))
+    category = semantic_category(selection)
     options = CAPTION_NOTES.get(category, GENERIC_CAPTION_NOTES)
     quote_id = clean(selection.get("QuoteID"))
     digest = hashlib.sha256(quote_id.encode("utf-8")).digest()
@@ -194,6 +254,7 @@ def build_package(selection: dict[str, str], history: dict, index: int) -> dict:
             "published": False,
             "package_id": package_id,
             "image": image_path.relative_to(ROOT).as_posix(),
+            "caption_category": semantic_category(selection),
             "caption": caption,
             "hashtags": hashtags,
         }
@@ -209,6 +270,7 @@ def build_package(selection: dict[str, str], history: dict, index: int) -> dict:
             "mode": "shadow",
             "published": False,
             "package_id": package_id,
+            "caption_category": semantic_category(selection),
             "caption": caption,
             "hashtags": hashtags,
         }
