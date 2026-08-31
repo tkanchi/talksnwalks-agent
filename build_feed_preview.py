@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import math
+import os
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -15,36 +16,31 @@ CANVAS_W = 1080
 CANVAS_H = 1350
 HANDLE = '@talksnwalks101'
 
-# Locked feed-post palette from the approved proof.
-TEXT_PRIMARY = (24, 22, 20)       # quote + supporting text
-TEXT_SECONDARY = (110, 82, 66)    # source + divider + handle
+# Final feed-post visual reference approved in chat:
+# clean sans quote, soft cream/pastel gradient, brown attribution/divider/handle,
+# centered illustration near the bottom, generous whitespace.
+TEXT_PRIMARY = (24, 22, 20)
+TEXT_SECONDARY = (111, 72, 48)
 BACKGROUND_RGB = {
-    'vanilla': (255, 248, 231),
-    'seafoam': (232, 248, 241),
-    'powder': (234, 244, 252),
-    'blush': (252, 233, 237),
-    'lavender': (243, 234, 251),
-    'apricot': (255, 232, 209),
-    'ice': (240, 249, 253),
-    'mint': (233, 250, 239),
-    'petal': (251, 229, 238),
-    'sky': (231, 243, 252),
+    'vanilla': (255, 245, 226),
+    'seafoam': (235, 247, 240),
+    'powder': (236, 244, 250),
+    'blush': (251, 237, 237),
+    'lavender': (244, 237, 249),
+    'apricot': (255, 235, 215),
+    'ice': (242, 248, 251),
+    'mint': (238, 249, 241),
+    'petal': (250, 235, 242),
+    'sky': (234, 243, 250),
 }
-CENTER_LIGHT = (255, 252, 246)
+CENTER_LIGHT = (255, 253, 248)
 
 
-def find_font(size: int, serif: bool = True, italic: bool = False):
-    if serif:
-        candidates = [
-            '/usr/share/fonts/truetype/dejavu/DejaVuSerif-Italic.ttf' if italic else '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf',
-            '/usr/share/fonts/truetype/liberation2/LiberationSerif-Italic.ttf' if italic else '/usr/share/fonts/truetype/liberation2/LiberationSerif-Regular.ttf',
-        ]
-    else:
-        # Locked clean regular sans-serif direction from the approved proof.
-        candidates = [
-            '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
-            '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
-        ]
+def find_font(size: int, *, italic: bool = False):
+    candidates = [
+        '/usr/share/fonts/truetype/liberation2/LiberationSans-Italic.ttf' if italic else '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
+        '/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf' if italic else '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+    ]
     for path in candidates:
         try:
             return ImageFont.truetype(path, size)
@@ -73,18 +69,18 @@ def wrap_text(draw, text: str, font, max_width: int) -> str:
 
 def fit_wrapped(draw, text: str, *, max_width: int, max_height: int, max_size: int, min_size: int, spacing: int):
     for size in range(max_size, min_size - 1, -1):
-        font = find_font(size, serif=False)
+        font = find_font(size)
         wrapped = wrap_text(draw, text, font, max_width)
         box = draw.multiline_textbbox((0, 0), wrapped, font=font, spacing=spacing, align='center')
         if box[2] - box[0] <= max_width and box[3] - box[1] <= max_height:
             return wrapped, font, box[2] - box[0], box[3] - box[1]
-    font = find_font(min_size, serif=False)
+    font = find_font(min_size)
     wrapped = wrap_text(draw, text, font, max_width)
     box = draw.multiline_textbbox((0, 0), wrapped, font=font, spacing=spacing, align='center')
     return wrapped, font, box[2] - box[0], box[3] - box[1]
 
 
-def fit_art(path: Path, max_w: int = 150, max_h: int = 155) -> Image.Image:
+def fit_art(path: Path, max_w: int = 170, max_h: int = 200) -> Image.Image:
     art = Image.open(path).convert('RGBA')
     bbox = art.getchannel('A').getbbox()
     if bbox:
@@ -107,18 +103,16 @@ def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
 
 
 def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
-    """Soft pastel radial gradient with a warm light center, matching the approved proof."""
     image = Image.new('RGB', (CANVAS_W, CANVAS_H), edge_rgb)
     pixels = image.load()
     cx = CANVAS_W / 2
-    cy = CANVAS_H * 0.48
-    max_distance = math.hypot(CANVAS_W * 0.62, CANVAS_H * 0.62)
+    cy = CANVAS_H * 0.47
+    max_distance = math.hypot(CANVAS_W * 0.64, CANVAS_H * 0.64)
 
     for y in range(CANVAS_H):
         for x in range(CANVAS_W):
-            distance = math.hypot(x - cx, y - cy) / max_distance
-            distance = min(1.0, distance)
-            center_strength = 0.30 * (1.0 - distance) ** 1.7
+            distance = min(1.0, math.hypot(x - cx, y - cy) / max_distance)
+            center_strength = 0.38 * (1.0 - distance) ** 1.8
             pixels[x, y] = tuple(
                 round(edge_rgb[i] * (1.0 - center_strength) + CENTER_LIGHT[i] * center_strength)
                 for i in range(3)
@@ -127,10 +121,9 @@ def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
 
 
 def draw_bottom_divider(draw, y: int) -> None:
-    """Locked thin brown divider below the illustration and above the handle."""
-    half_line = 122
+    half_line = 126
     center_x = CANVAS_W // 2
-    draw.line((center_x - half_line, y, center_x + half_line, y), fill=TEXT_SECONDARY, width=1)
+    draw.line((center_x - half_line, y, center_x + half_line, y), fill=TEXT_SECONDARY, width=2)
 
 
 def compose(row: dict[str, str], output_path: Path) -> None:
@@ -148,44 +141,42 @@ def compose(row: dict[str, str], output_path: Path) -> None:
         raise FileNotFoundError(art_path)
 
     quote_wrapped, quote_font, _, quote_h = fit_wrapped(
-        draw, quote, max_width=850, max_height=440, max_size=60, min_size=38, spacing=10
+        draw, quote, max_width=820, max_height=420, max_size=56, min_size=36, spacing=12
     )
-    support_font = find_font(31, serif=False)
-    source_font = find_font(24, serif=False)
-    handle_font = find_font(22, serif=False)
+    support_font = find_font(30)
+    source_font = find_font(25)
+    handle_font = find_font(22)
 
     support_wrapped = wrap_text(draw, support, support_font, 790) if support else ''
     source_wrapped = ''
     if source_type == 'inspired_by' and book and author:
-        book_line = wrap_text(draw, f'— Inspired by Book: {book}', source_font, 820)
-        author_line = wrap_text(draw, f'by {author}', source_font, 820)
-        source_wrapped = f'{book_line}\n{author_line}'
+        source_wrapped = f'— Inspired by {book}\nby {author}'
 
     support_box = draw.multiline_textbbox((0, 0), support_wrapped, font=support_font, spacing=8, align='center') if support_wrapped else (0, 0, 0, 0)
-    source_box = draw.multiline_textbbox((0, 0), source_wrapped, font=source_font, spacing=6, align='center') if source_wrapped else (0, 0, 0, 0)
+    source_box = draw.multiline_textbbox((0, 0), source_wrapped, font=source_font, spacing=7, align='center') if source_wrapped else (0, 0, 0, 0)
     support_h = support_box[3] - support_box[1]
     source_h = source_box[3] - source_box[1]
 
     art = fit_art(art_path)
     handle_w, handle_h = text_size(draw, HANDLE, handle_font)
 
-    quote_gap_bottom = 42
-    support_gap_bottom = 34
-    source_gap_bottom = 30
-    art_gap_bottom = 22
-    divider_gap_bottom = 22
+    quote_gap_bottom = 46
+    support_gap_bottom = 44
+    source_gap_bottom = 24
+    art_gap_bottom = 24
+    divider_gap_bottom = 20
 
     content_height = (
         quote_h + quote_gap_bottom
         + support_h + (support_gap_bottom if support_h else 0)
         + source_h + (source_gap_bottom if source_h else 0)
         + art.height + art_gap_bottom
-        + 1 + divider_gap_bottom + handle_h
+        + 2 + divider_gap_bottom + handle_h
     )
 
-    y = max(80, int((CANVAS_H - content_height) / 2) - 4)
+    y = max(92, int((CANVAS_H - content_height) / 2) - 10)
 
-    y += draw_centered_multiline(draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=10)
+    y += draw_centered_multiline(draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=12)
     y += quote_gap_bottom
 
     if support_wrapped:
@@ -193,7 +184,7 @@ def compose(row: dict[str, str], output_path: Path) -> None:
         y += support_gap_bottom
 
     if source_wrapped:
-        y += draw_centered_multiline(draw, source_wrapped, y, source_font, TEXT_SECONDARY, spacing=6)
+        y += draw_centered_multiline(draw, source_wrapped, y, source_font, TEXT_SECONDARY, spacing=7)
         y += source_gap_bottom
 
     art_x = (CANVAS_W - art.width) // 2
@@ -210,12 +201,16 @@ def compose(row: dict[str, str], output_path: Path) -> None:
 
 
 def main() -> None:
+    count = max(1, int(os.getenv('PREVIEW_COUNT', '1')))
     with PLAN.open(newline='', encoding='utf-8') as handle:
-        rows = list(csv.DictReader(handle))[:8]
-    if len(rows) != 8:
-        raise RuntimeError(f'Expected at least 8 plan rows, found {len(rows)}')
+        rows = list(csv.DictReader(handle))[:count]
+    if len(rows) != count:
+        raise RuntimeError(f'Expected at least {count} plan rows, found {len(rows)}')
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    for old in OUTPUT_DIR.glob('*.png'):
+        old.unlink()
+
     for index, row in enumerate(rows, start=1):
         qid = (row.get('QuoteID') or f'post_{index:02d}').strip()
         output = OUTPUT_DIR / f'{index:02d}_{qid}.png'
