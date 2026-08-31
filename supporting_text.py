@@ -1,13 +1,13 @@
 """Deterministic supporting-text enrichment for the unified book library.
 
 The main quote remains the book-inspired idea. SupportingText is editorial context:
-short, non-attributed, and deliberately plain so it does not look like a second
-quotation from the author.
+short, non-attributed, and deliberately conversational so it reads like a human
+clarification rather than a second quotation from the author.
 
 Priority:
 1. Approved hand-written Month-1 support lines.
 2. Support already present in a source library.
-3. Deterministic editorial support based on the row's canonical theme/topic.
+3. Deterministic editorial support based on the row's existing theme/topic metadata.
 """
 
 from __future__ import annotations
@@ -24,43 +24,71 @@ APPROVED_SUPPORT_FILE = ROOT / "data" / "supporting_text_month_01.csv"
 WORD_RE = re.compile(r"\b[\w’'-]+\b")
 NORMALIZE_RE = re.compile(r"[^a-z0-9]+")
 
-# These lines intentionally read as editorial explanation rather than quotable
-# aphorisms. The focus phrase comes from the row's existing book/theme metadata.
-# The focus always appears as an object/complement rather than a grammatical
-# subject, which keeps compound phrases such as "happiness and habits" safe.
+# These deliberately avoid the old repetitive "The lesson / The book / This
+# perspective" voice. The focus phrase comes from metadata already attached to
+# the book-inspired row, so the supporting line clarifies rather than invents a
+# new standalone quote.
 TEMPLATES = (
-    "This idea makes {focus} practical in everyday choices.",
-    "The lesson connects {focus} with choices you can repeat.",
-    "In practice, small decisions give {focus} a visible place.",
-    "This perspective turns {focus} into something you can practice.",
-    "The takeaway is to bring {focus} into the next choice.",
-    "Real change grows from bringing {focus} into daily action.",
-    "This lesson keeps {focus} grounded in what you do.",
-    "Small actions give {focus} a place in real life.",
-    "The book treats {focus} as something strengthened through practice.",
-    "This idea links {focus} to choices made today.",
-    "The practical focus applies {focus} one choice at a time.",
-    "This takeaway brings {focus} back to everyday behavior.",
-    "The lesson gets clearer when you bring {focus} into decisions.",
-    "This perspective makes {focus} useful beyond the page.",
-    "Daily choices give {focus} room to become real.",
-    "The idea becomes practical when you apply {focus} to what follows.",
-    "This lesson turns {focus} from theory into repeatable action.",
-    "The book connects {focus} with actions that can be practiced.",
-    "This takeaway keeps {focus} close to the next decision.",
-    "In everyday life, deliberate choices strengthen {focus}.",
-    "The lesson places {focus} inside the choices you make.",
-    "This idea asks how to bring {focus} into daily action.",
-    "The practical takeaway applies {focus} through consistent action.",
-    "This perspective makes {focus} part of ordinary practice.",
-    "The book makes {focus} easier to apply through small choices.",
-    "This lesson shows {focus} through what you repeatedly choose.",
-    "The idea keeps {focus} connected to practical behavior.",
-    "Everyday decisions give {focus} a concrete place to grow.",
-    "This takeaway turns {focus} into something actionable today.",
-    "The lesson keeps {focus} close to choices you make.",
-    "This perspective connects {focus} with consistent everyday behavior.",
-    "The book brings {focus} into the rhythm of daily choices.",
+    "At heart, this is about {focus}.",
+    "In plain terms, this comes back to {focus}.",
+    "The practical thread here is {focus}.",
+    "What matters here is how {focus} shows up daily.",
+    "This is really a reminder about {focus}.",
+    "A useful way to read this is through {focus}.",
+    "The point lands on {focus} in everyday life.",
+    "Underneath the message is a focus on {focus}.",
+    "The everyday version of this is {focus}.",
+    "This comes down to {focus} in real life.",
+    "Think of this as a note about {focus}.",
+    "The core of it is {focus} in practice.",
+    "Read it as a reminder to notice {focus}.",
+    "The useful part is seeing {focus} in daily choices.",
+    "A simple way to hold this is {focus}.",
+    "In everyday life, this shows up as {focus}.",
+    "The thought here is grounded in {focus}.",
+    "This is a practical lens for thinking about {focus}.",
+    "At its simplest, this is about {focus}.",
+    "This is where {focus} becomes part of daily life.",
+    "A grounded reading of this is {focus}.",
+    "The thread running through this is {focus}.",
+    "This is one way to make sense of {focus}.",
+    "The message points back to {focus} in practice.",
+    "What stays with you is the focus on {focus}.",
+    "This is a quiet reminder to notice {focus}.",
+    "The useful question here is what {focus} looks like daily.",
+    "The message feels clearer when you name {focus}.",
+    "Keep the attention on {focus} in ordinary moments.",
+    "There is a practical focus here on {focus}.",
+    "A simple reading is to keep noticing {focus}.",
+    "The message makes more sense through {focus}.",
+    "The practical side of this is {focus}.",
+    "This is worth reading through the lens of {focus}.",
+    "The clearest thread here is {focus}.",
+    "The point is less abstract when you notice {focus}.",
+    "In practice, the message keeps returning to {focus}.",
+    "A useful place to start is with {focus}.",
+    "What this highlights most clearly is {focus}.",
+    "The real-world focus here is {focus}.",
+    "It helps to read this as a note on {focus}.",
+    "The message brings attention back to {focus}.",
+    "The simplest thread to follow here is {focus}.",
+    "The practical meaning sits close to {focus}.",
+    "This message is easier to apply through {focus}.",
+    "The point becomes clearer when you name {focus}.",
+    "A useful reading keeps {focus} in view.",
+    "The everyday meaning comes back to {focus}.",
+    "The message stays grounded when you focus on {focus}.",
+    "The core message keeps returning to {focus}.",
+    "A practical reading starts with {focus}.",
+    "The most useful thread here is {focus}.",
+    "In real life, the message points toward {focus}.",
+    "The message is easier to carry when framed as {focus}.",
+    "A simple way to frame this is {focus}.",
+    "The practical point here is {focus}.",
+    "The message keeps {focus} close to everyday life.",
+    "What this brings into focus is {focus}.",
+    "The clearest everyday thread is {focus}.",
+    "The point here is to keep noticing {focus}.",
 )
 
 
