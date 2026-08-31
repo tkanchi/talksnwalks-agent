@@ -14,8 +14,10 @@ OUTPUT_DIR = ROOT / 'outputs' / 'feed_preview'
 CANVAS_W = 1080
 CANVAS_H = 1350
 HANDLE = '@talksnwalks101'
-TEXT_PRIMARY = (78, 63, 54)
-TEXT_SECONDARY = (110, 92, 82)
+
+# Locked feed-post palette from the approved proof.
+TEXT_PRIMARY = (24, 22, 20)       # quote + supporting text
+TEXT_SECONDARY = (110, 82, 66)    # source + divider + handle
 BACKGROUND_RGB = {
     'vanilla': (255, 248, 231),
     'seafoam': (232, 248, 241),
@@ -38,9 +40,8 @@ def find_font(size: int, serif: bool = True, italic: bool = False):
             '/usr/share/fonts/truetype/liberation2/LiberationSerif-Italic.ttf' if italic else '/usr/share/fonts/truetype/liberation2/LiberationSerif-Regular.ttf',
         ]
     else:
-        # Approved clean, narrow sans-serif look for the final feed template.
+        # Locked clean regular sans-serif direction from the approved proof.
         candidates = [
-            '/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed.ttf',
             '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
             '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
         ]
@@ -106,7 +107,7 @@ def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
 
 
 def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
-    """Soft pastel radial gradient with a lighter center, matching the approved proof."""
+    """Soft pastel radial gradient with a warm light center, matching the approved proof."""
     image = Image.new('RGB', (CANVAS_W, CANVAS_H), edge_rgb)
     pixels = image.load()
     cx = CANVAS_W / 2
@@ -117,7 +118,6 @@ def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
         for x in range(CANVAS_W):
             distance = math.hypot(x - cx, y - cy) / max_distance
             distance = min(1.0, distance)
-            # Bright center, gently returning to the selected pastel at the edges.
             center_strength = 0.30 * (1.0 - distance) ** 1.7
             pixels[x, y] = tuple(
                 round(edge_rgb[i] * (1.0 - center_strength) + CENTER_LIGHT[i] * center_strength)
@@ -127,7 +127,7 @@ def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
 
 
 def draw_bottom_divider(draw, y: int) -> None:
-    """Approved simple divider under the illustration and above the handle."""
+    """Locked thin brown divider below the illustration and above the handle."""
     half_line = 122
     center_x = CANVAS_W // 2
     draw.line((center_x - half_line, y, center_x + half_line, y), fill=TEXT_SECONDARY, width=1)
@@ -140,17 +140,18 @@ def compose(row: dict[str, str], output_path: Path) -> None:
 
     quote = (row.get('Quote') or '').strip()
     support = (row.get('SupportingText') or '').strip()
+    # SourceLine already contains the approved exact label, e.g.
+    # "Inspired by Book: The Gifts of Imperfection — Brené Brown".
     source = (row.get('SourceLine') or '').strip()
     art_path = ILLUSTRATION_DIR / (row.get('Illustration') or '').strip()
     if not art_path.exists():
         raise FileNotFoundError(art_path)
 
-    # Approved main quote hierarchy: clean sans-serif, calm scale and generous whitespace.
     quote_wrapped, quote_font, _, quote_h = fit_wrapped(
         draw, quote, max_width=850, max_height=440, max_size=60, min_size=38, spacing=10
     )
     support_font = find_font(31, serif=False)
-    source_font = find_font(23, serif=False)
+    source_font = find_font(24, serif=False)
     handle_font = find_font(22, serif=False)
 
     support_wrapped = wrap_text(draw, support, support_font, 790) if support else ''
