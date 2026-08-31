@@ -9,7 +9,7 @@ from pathlib import Path
 from PIL import Image
 
 from build_feed_preview import CANVAS_H, CANVAS_W, compose
-from build_unified_shadow import build_caption, build_hashtags
+from build_unified_shadow import build_caption, build_hashtags, semantic_category
 from select_next_post import (
     append_history,
     build_selection,
@@ -36,6 +36,18 @@ ROBOTIC_SUPPORT_PREFIXES = (
 )
 MIN_UNIQUE_ILLUSTRATIONS = 20
 MAX_ILLUSTRATION_USES = 3
+
+# These were concrete contradictions found during the previous visual/content
+# audit. If they appear in the same seeded 30-post window, the corrected support
+# and semantic caption category must now agree with the actual quote wording.
+KNOWN_QA_EXPECTATIONS = {
+    'WEMP196': ('leadership', 'Business'),
+    'WEMP287': ('leadership', 'Business'),
+    'SG079': ('goals', 'Mindset'),
+    'WEMP364': ('body confidence', 'Wellness'),
+    'WEMP054': ('peace', 'Mindset'),
+    'SG358': ('resilience', 'Mindset'),
+}
 
 
 def reset_outputs() -> None:
@@ -70,6 +82,7 @@ def main() -> None:
     start = datetime.strptime(last_seed_date, '%Y-%m-%d').date() + timedelta(days=1)
 
     manifest: list[dict] = []
+    qa_checks: dict[str, dict] = {}
     for index in range(COUNT):
         on_date = start + timedelta(days=index)
         selection = build_selection(on_date, history)
@@ -84,11 +97,32 @@ def main() -> None:
             raise RuntimeError(f'Robotic SupportingText survived audit: {payload["quote_id"]}')
 
         hashtags = build_hashtags(selection)
+        caption_category = semantic_category(selection)
         caption = build_caption(selection, hashtags)
         if len(hashtags) != 5 or not caption:
             raise RuntimeError(f'Caption package failed: {payload["quote_id"]}')
+        payload['caption_category'] = caption_category
         payload['hashtags'] = hashtags
         payload['caption'] = caption
+
+        quote_id = payload['quote_id']
+        if quote_id in KNOWN_QA_EXPECTATIONS:
+            expected_focus, expected_category = KNOWN_QA_EXPECTATIONS[quote_id]
+            focus_ok = expected_focus in support
+            category_ok = caption_category == expected_category
+            qa_checks[quote_id] = {
+                'expected_focus': expected_focus,
+                'supporting_text': payload['supporting_text'],
+                'focus_ok': focus_ok,
+                'expected_caption_category': expected_category,
+                'caption_category': caption_category,
+                'category_ok': category_ok,
+            }
+            if not focus_ok or not category_ok:
+                raise RuntimeError(
+                    f'Semantic QA failed for {quote_id}: support={payload["supporting_text"]!r}, '
+                    f'caption_category={caption_category!r}'
+                )
 
         preview_path = PREVIEW_DIR / f'{index + 1:02d}_{on_date.isoformat()}_{payload["quote_id"]}.png'
         compose(selection, preview_path, index=len(seed_entries) + index)
@@ -108,6 +142,7 @@ def main() -> None:
     events = [row['event'] for row in manifest if row['event']]
     scores = [int(row.get('illustration_score', 0)) for row in manifest]
     captions = [row['caption'] for row in manifest]
+    caption_categories = [row['caption_category'] for row in manifest]
     illustration_counts = Counter(objects)
 
     if len(set(quote_ids)) != COUNT:
@@ -153,9 +188,11 @@ def main() -> None:
         'book_counts': dict(Counter(books).most_common()),
         'topic_counts': dict(Counter(topics).most_common()),
         'illustration_counts': dict(illustration_counts.most_common()),
+        'caption_category_counts': dict(Counter(caption_categories).most_common()),
         'audience_metadata_counts': dict(Counter(audiences).most_common()),
         'background_counts': dict(Counter(backgrounds).most_common()),
         'event_counts': dict(Counter(events).most_common()),
+        'known_semantic_qa_checks': qa_checks,
     }
 
     MANIFEST_FILE.write_text(json.dumps(manifest, indent=2), encoding='utf-8')
