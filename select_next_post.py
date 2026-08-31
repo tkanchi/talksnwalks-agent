@@ -21,7 +21,6 @@ ROOT = Path(__file__).resolve().parent
 QUOTES_FILE = ROOT / "data" / "quotes_master_clean.csv"
 OBJECTS_FILE = ROOT / "data" / "illustration_objects.csv"
 EVENTS_FILE = ROOT / "data" / "events.csv"
-SUPPORT_FILE = ROOT / "data" / "supporting_text_month_01.csv"
 
 DEFAULT_OUTPUT = ROOT / "outputs" / "unified_selector" / "next_post.json"
 DEFAULT_HISTORY = ROOT / "outputs" / "unified_selector" / "selection_history.json"
@@ -51,19 +50,6 @@ def load_csv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def load_support_map() -> dict[str, str]:
-    if not SUPPORT_FILE.exists():
-        return {}
-    with SUPPORT_FILE.open(newline="", encoding="utf-8") as handle:
-        return {
-            clean(row.get("QuoteID")): clean(row.get("SupportingText"))
-            for row in csv.DictReader(handle)
-            if clean(row.get("QCStatus")).lower() == "approved"
-            and clean(row.get("QuoteID"))
-            and clean(row.get("SupportingText"))
-        }
-
-
 def stable_tiebreak(on_date: date, row: dict[str, str]) -> str:
     payload = f"{on_date.isoformat()}|{clean(row.get('QuoteID'))}".encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
@@ -74,6 +60,7 @@ def is_book_eligible(row: dict[str, str]) -> bool:
         clean(row.get("QualityStatus")).lower() == "approved"
         and clean(row.get("SourceType")).lower() == "inspired_by"
         and bool(clean(row.get("Quote")))
+        and bool(clean(row.get("SupportingText")))
         and bool(clean(row.get("InspiredBy")))
         and bool(clean(row.get("Author")))
         and is_youth_safe(row)
@@ -213,7 +200,7 @@ def select_quote(
         if is_book_eligible(row) and clean(row.get("QuoteID")) not in used_ids
     ]
     if not candidates:
-        raise RuntimeError("No unused eligible book-inspired quotes remain")
+        raise RuntimeError("No unused eligible book-inspired quotes with SupportingText remain")
 
     topic_counts = Counter(clean(entry.get("topic")) for entry in entries)
     book_counts = Counter(clean(entry.get("book")) for entry in entries)
@@ -333,17 +320,10 @@ def build_selection(on_date: date, history: dict) -> dict:
     quotes = load_csv(QUOTES_FILE)
     objects = load_csv(OBJECTS_FILE)
     events = load_csv(EVENTS_FILE)
-    support_map = load_support_map()
 
     quote, event, reason = select_quote(on_date, quotes, events, history)
     quote = dict(quote)
-    if clean(quote.get("SupportingText")):
-        quote["SupportingTextSource"] = "master"
-    elif clean(support_map.get(clean(quote.get("QuoteID")))):
-        quote["SupportingText"] = support_map[clean(quote.get("QuoteID"))]
-        quote["SupportingTextSource"] = "approved_registry"
-    else:
-        quote["SupportingTextSource"] = "none"
+    quote["SupportingTextSource"] = "master"
 
     obj, illustration = choose_illustration(quote, objects, history)
     background = choose_background(history)
