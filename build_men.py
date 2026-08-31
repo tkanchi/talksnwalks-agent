@@ -5,7 +5,6 @@ from pathlib import Path
 import build_reel
 from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
-from engagement_card import apply_engagement_card
 from illustration_pool import apply_illustration_pool
 from watercolor_background_theme import apply_visual_theme
 from quote_library import build_curated_runtime_quote_file
@@ -50,7 +49,6 @@ if __name__ == "__main__":
         require_book_author=True,
     )
     _apply_visuals()
-    apply_engagement_card(build_reel)
     build_reel.main()
     apply_audio_to_build(
         build_reel.QUOTES_FILE,
