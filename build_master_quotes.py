@@ -12,6 +12,8 @@ import csv
 import re
 from pathlib import Path
 
+from supporting_text import enrich_supporting_text
+
 
 ROOT = Path(__file__).resolve().parent
 LIBRARY_DIR = ROOT / "data" / "library"
@@ -201,6 +203,11 @@ def build() -> tuple[int, int]:
                     }
                 )
 
+    # SupportingText is part of the unified publishing contract. Preserve the
+    # approved hand-written lines first, then source-provided lines, and fill all
+    # remaining book rows with deterministic editorial context.
+    master, support_stats = enrich_supporting_text(master)
+
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     with OUTPUT_FILE.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
@@ -209,6 +216,8 @@ def build() -> tuple[int, int]:
 
     print(f"Built {OUTPUT_FILE.relative_to(ROOT)} with {len(master)} book-inspired rows")
     print(f"Exact normalized duplicates flagged: {duplicate_count}")
+    print(f"SupportingText coverage: {len(master)}/{len(master)}")
+    print("SupportingText sources: " + ", ".join(f"{key}={value}" for key, value in sorted(support_stats.items())))
     return len(master), duplicate_count
 
 
