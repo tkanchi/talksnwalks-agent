@@ -34,6 +34,7 @@ HARD_FLAGS = {
     "unknown_topic",
     "missing_topic_category",
     "missing_book_attribution",
+    "non_book_source",
 }
 SEMANTIC_REVIEW_FLAGS = {
     "aggressive_tone",
@@ -110,6 +111,8 @@ def _flags(row: dict[str, str], topics: dict[str, str]) -> list[str]:
     elif topic in topics and category != topics[topic]:
         flags.append("topic_category_mismatch")
 
+    if source_type != "inspired_by":
+        flags.append("non_book_source")
     if source_type == "inspired_by" and (not book or not author):
         flags.append("missing_book_attribution")
     if not source_type:
