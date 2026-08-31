@@ -35,7 +35,19 @@ def stream_for_audience(audience: str) -> str:
     return "general"
 
 
+def is_book_based(row: dict[str, str]) -> bool:
+    """Only book-inspired rows with complete book attribution may be built."""
+    return (
+        normalize(row.get("SourceType", "")) == "inspired_by"
+        and bool((row.get("InspiredBy") or "").strip())
+        and bool((row.get("Author") or "").strip())
+    )
+
+
 def row_matches(row: dict[str, str], audience_filter: str | None) -> bool:
+    if not is_book_based(row):
+        return False
+
     if not audience_filter:
         return True
 
@@ -62,12 +74,14 @@ def main() -> None:
     rows = load_rows(audience_filter)
 
     if not rows:
-        raise RuntimeError(f"No rows found for audience={audience_filter!r}")
+        raise RuntimeError(
+            f"No book-inspired rows with complete attribution found for audience={audience_filter!r}"
+        )
 
     selected = rows[start_index - 1 : start_index - 1 + count]
     if len(selected) < count:
         raise RuntimeError(
-            f"Requested {count} rows from start index {start_index}, "
+            f"Requested {count} book-inspired rows from start index {start_index}, "
             f"only {len(selected)} available"
         )
 
@@ -81,10 +95,17 @@ def main() -> None:
     manifest: list[dict[str, str]] = []
 
     for row_index, row in enumerate(selected, start=start_index):
+        if not is_book_based(row):
+            raise RuntimeError(
+                f"Non-book row reached renderer unexpectedly: {row.get('QuoteID', '')}"
+            )
+
         audience = row.get("Audience", "All")
         stream = stream_for_audience(audience)
         quote_id = (row.get("QuoteID") or f"post_{row_index:03d}").strip()
         post_number = (row.get("PostNumber") or f"{row_index:03d}").strip()
+        book = (row.get("InspiredBy") or "").strip()
+        author = (row.get("Author") or "").strip()
 
         out_dir = OUTPUT_ROOT / stream
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -103,6 +124,8 @@ def main() -> None:
                 "topic_category": row.get("TopicCategory", ""),
                 "topic": row.get("Topic", ""),
                 "source_type": row.get("SourceType", ""),
+                "book": book,
+                "author": author,
                 "illustration": row.get("Illustration", ""),
                 "background": row.get("BackgroundFamily", ""),
             }
@@ -112,7 +135,7 @@ def main() -> None:
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
-    print(f"Built {len(manifest)} unified 4:5 preview posts")
+    print(f"Built {len(manifest)} unified book-inspired 4:5 preview posts")
     print(manifest_path)
 
 
