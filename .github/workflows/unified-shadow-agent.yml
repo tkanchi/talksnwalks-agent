@@ -1,0 +1,139 @@
+name: Unified shadow agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: "Optional YYYY-MM-DD start date; blank continues after shadow history"
+        required: false
+        default: ""
+      count:
+        description: "Number of consecutive shadow packages"
+        required: false
+        default: "10"
+  push:
+    branches: [main]
+    paths:
+      - 'build_unified_shadow.py'
+      - '.github/workflows/unified-shadow-agent.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: unified-shadow-history
+  cancel-in-progress: false
+
+jobs:
+  shadow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Pillow
+        run: python -m pip install --upgrade pillow
+
+      - name: Verify shadow-only safety boundary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          files = [
+              Path('build_unified_shadow.py'),
+              Path('.github/workflows/unified-shadow-agent.yml'),
+          ]
+          text = '\n'.join(path.read_text(encoding='utf-8') for path in files)
+          forbidden = (
+              'publish_' + 'instagram.py',
+              'graph.' + 'facebook.com',
+              'META_' + 'ACCESS_TOKEN',
+              'IG_' + 'USER_ID',
+          )
+          found = [needle for needle in forbidden if needle in text]
+          if found:
+              raise SystemExit(f'Shadow workflow contains publishing integration: {found}')
+          print('Verified shadow-only boundary: no Meta publishing integration')
+          PY
+
+      - name: Build unified shadow packages
+        env:
+          START_DATE: ${{ github.event.inputs.start_date }}
+          COUNT: ${{ github.event.inputs.count }}
+        run: |
+          args=(--count "${COUNT:-10}")
+          if [ -n "${START_DATE:-}" ]; then
+            args+=(--start-date "$START_DATE")
+          fi
+          python build_unified_shadow.py "${args[@]}"
+
+      - name: Verify complete post packages
+        env:
+          EXPECTED_COUNT: ${{ github.event.inputs.count }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from PIL import Image
+
+          root = Path('outputs/unified_shadow')
+          expected = int(os.getenv('EXPECTED_COUNT') or '10')
+          manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8'))
+          history = json.loads(Path('shadow_logs/unified/selection_history.json').read_text(encoding='utf-8'))
+
+          assert len(manifest) == expected, len(manifest)
+          assert history.get('mode') == 'shadow'
+          assert len(history.get('selections', [])) >= expected
+          assert len({row['quote_id'] for row in history['selections']}) == len(history['selections'])
+
+          for row in manifest:
+              assert row['mode'] == 'shadow'
+              assert row['published'] is False
+              assert row['source_type'] == 'inspired_by'
+              assert row['supporting_text']
+              assert row['supporting_text_source'] == 'master'
+              assert row['book'] and row['author']
+              assert row['caption']
+              assert len(row['hashtags']) == 5
+              assert all(tag.startswith('#') for tag in row['hashtags'])
+
+              package_dir = root / 'packages' / row['package_id']
+              image_path = package_dir / 'post.png'
+              caption_path = package_dir / 'caption.txt'
+              package_path = package_dir / 'package.json'
+              assert image_path.exists(), image_path
+              assert caption_path.exists(), caption_path
+              assert package_path.exists(), package_path
+              with Image.open(image_path) as image:
+                  assert image.size == (1080, 1350), (image_path, image.size)
+
+          object_ids = [row['object_id'] for row in manifest]
+          assert all(a != b for a, b in zip(object_ids, object_ids[1:]))
+          print(f'Verified {expected} complete shadow packages; published=false')
+          PY
+
+      - name: Persist shadow selection history
+        run: |
+          if [ -z "$(git status --porcelain -- shadow_logs/unified/selection_history.json)" ]; then
+            echo 'Shadow history is unchanged.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add shadow_logs/unified/selection_history.json
+          git commit -m 'Advance unified shadow selection history'
+          git push
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unified-shadow-packages
+          path: |
+            outputs/unified_shadow/manifest.json
+            outputs/unified_shadow/packages/**
+          if-no-files-found: error
