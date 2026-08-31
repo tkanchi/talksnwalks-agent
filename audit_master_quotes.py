@@ -6,8 +6,8 @@ Produces additive outputs and does not alter live production inputs:
 - data/quotes_master_attention.csv: only rows excluded or still needing review.
 
 High-confidence copy edits come from quote_text_quality.py. Human-reviewed false
-positives are explicitly approved here so words such as 'control' or 'weakness'
-do not cause healthy content to be rejected mechanically.
+positives are explicitly approved only for book-inspired rows; non-book sources
+are not eligible for manual approval or publishing.
 """
 
 from __future__ import annotations
@@ -45,16 +45,11 @@ SEMANTIC_REVIEW_FLAGS = {
     "topic_category_mismatch",
 }
 
-# Individually reviewed Phase 1.5 rows whose flagged wording is appropriate in
-# context. These are not blanket exceptions: only these exact QuoteIDs bypass a
-# semantic flag, and hard data-quality failures still exclude them.
+# Individually reviewed book-inspired rows whose flagged wording is appropriate
+# in context. Hard data-quality failures still exclude them.
 MANUAL_APPROVE_IDS = {
-    "CH035", "CH038", "CH082",
-    "MEN006", "MEN021", "MEN024",
     "SG104", "SG172", "SG176", "SG279", "SG365",
-    "UC082",
     "WEMP043", "WEMP080", "WEMP092", "WEMP110", "WEMP145", "WEMP160", "WEMP188",
-    "WOM008", "WOM028", "WOM162", "WOM236", "WOM332",
 }
 
 GENDER_TERMS = re.compile(
