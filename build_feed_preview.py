@@ -13,27 +13,18 @@ ILLUSTRATION_DIR = ROOT / 'illustrations' / 'objects' / 'core'
 OUTPUT_DIR = ROOT / 'outputs' / 'feed_preview'
 
 CANVAS_W = 1080
-CANVAS_H = 1920
-LAYOUT_H = 1350
+CANVAS_H = 1350
 HANDLE = '@talksnwalks101'
 
-# Locked 9:16 portrait-post proof direction from the approved reference:
-# - preserve the approved 4:5 typography/layout geometry exactly
-# - add only extra vertical canvas above and below that 4:5 layout box
+# Locked 4:5 feed-post proof direction from the approved reference:
 # - clean regular sans-serif quote
 # - visible warm cream vignette/gradient
+# - generous margins and vertical breathing room
 # - readable supporting line
 # - brown attribution, divider and handle
 # - illustration centered above the divider
 TEXT_PRIMARY = (23, 22, 20)
 BROWN = (118, 76, 48)
-
-# Consistent vertical rhythm between the main content blocks.
-GAP_QUOTE_TO_SUPPORT = 58
-GAP_SUPPORT_TO_SOURCE = 58
-GAP_SOURCE_TO_ART = 58
-GAP_ART_TO_DIVIDER = 34
-GAP_DIVIDER_TO_HANDLE = 22
 
 # The center stays very light while the perimeter carries a visible warm pastel tint.
 BACKGROUND_RGB = {
@@ -53,7 +44,15 @@ CENTER_LIGHT = (255, 252, 246)
 
 
 def resolve_background(family: str | None, index: int) -> tuple[int, int, int]:
-    """Look up the requested background color, tolerating case/whitespace."""
+    """Look up the requested background color, tolerating case/whitespace.
+
+    Previously this fell back to the same 'vanilla' default for ANY unmatched
+    value (wrong casing, extra spaces, blank cell, typo) — which made every
+    export look identical regardless of what the CSV said. Now an unmatched
+    value rotates through the palette by post index instead of collapsing
+    everything onto one color, so backgrounds stay varied even if the plan
+    data is messy.
+    """
     key = (family or '').strip().lower()
     if key in BACKGROUND_RGB:
         return BACKGROUND_RGB[key]
@@ -126,22 +125,6 @@ def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
     return box[3] - box[1]
 
 
-def measure_multiline_height(draw, text, font, spacing=10):
-    if not text:
-        return 0
-    box = draw.multiline_textbbox((0, 0), text, font=font, spacing=spacing, align='center')
-    return box[3] - box[1]
-
-
-def measure_attribution_height(draw, book: str, author: str, size: int = 25) -> int:
-    regular = find_font(size)
-    italic = find_font(size, italic=True)
-    _, prefix_h = text_size(draw, '— Inspired by ', regular)
-    _, book_h = text_size(draw, book, italic)
-    _, author_h = text_size(draw, f'by {author}', regular)
-    return max(prefix_h, book_h) + 8 + author_h
-
-
 def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
     """Soft luminous gradient with a near-white center and warm pastel perimeter."""
     image = Image.new('RGB', (CANVAS_W, CANVAS_H), edge_rgb)
@@ -157,6 +140,7 @@ def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
         for x in range(CANVAS_W):
             dx = (x - cx) / radius_x
             distance = min(1.0, math.sqrt(dx * dx + dy * dy))
+            # Strong center lift, with a gentle warm falloff toward all edges.
             center_mix = 0.94 * (1.0 - distance) ** 1.55
             pixels[x, y] = tuple(
                 round(edge_rgb[i] * (1.0 - center_mix) + CENTER_LIGHT[i] * center_mix)
@@ -221,44 +205,30 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
 
     support_wrapped = wrap_text(draw, support, support_font, 760) if support else ''
     art = fit_art(art_path)
-    handle_w, handle_h = text_size(draw, HANDLE, handle_font)
+    handle_w, _ = text_size(draw, HANDLE, handle_font)
 
-    quote_h = measure_multiline_height(draw, quote_wrapped, quote_font, spacing=14)
-    support_h = measure_multiline_height(draw, support_wrapped, support_font, spacing=9) if support_wrapped else 0
-    has_source = source_type == 'inspired_by' and book and author
-    source_h = measure_attribution_height(draw, book, author, size=25) if has_source else 0
-
-    total_h = quote_h
-    if support_wrapped:
-        total_h += GAP_QUOTE_TO_SUPPORT + support_h
-    if has_source:
-        total_h += GAP_SUPPORT_TO_SOURCE + source_h
-    total_h += GAP_SOURCE_TO_ART + art.height
-    total_h += GAP_ART_TO_DIVIDER + 2
-    total_h += GAP_DIVIDER_TO_HANDLE + handle_h
-
-    # Keep the exact approved 4:5 layout geometry and place that 1350px layout
-    # box inside the taller 1920px canvas. Only the outer canvas grows.
-    layout_offset_y = (CANVAS_H - LAYOUT_H) // 2
-    y = layout_offset_y + max(40, (LAYOUT_H - total_h) // 2)
+    # Match the approved reference proportions: generous top margin and stable
+    # horizontal margins, without compressing the lower visual group upward.
+    y = 150
     y += draw_centered_multiline(draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=14)
+    y += 50
 
     if support_wrapped:
-        y += GAP_QUOTE_TO_SUPPORT
         y += draw_centered_multiline(draw, support_wrapped, y, support_font, TEXT_PRIMARY, spacing=9)
+        y += 46
 
-    if has_source:
-        y += GAP_SUPPORT_TO_SOURCE
+    if source_type == 'inspired_by' and book and author:
         y += draw_attribution(draw, book, author, y, size=25)
 
-    art_y = y + GAP_SOURCE_TO_ART
+    # Anchor the illustration independently so attribution length cannot squeeze it.
+    art_y = max(y + 30, 825)
     art_x = (CANVAS_W - art.width) // 2
     canvas.paste(art, (art_x, art_y), art)
 
-    divider_y = art_y + art.height + GAP_ART_TO_DIVIDER
+    divider_y = min(max(1115, art_y + art.height + 30), 1182)
     draw_bottom_divider(draw, divider_y)
 
-    handle_y = divider_y + GAP_DIVIDER_TO_HANDLE
+    handle_y = divider_y + 22
     draw.text(
         ((CANVAS_W - handle_w) / 2, handle_y),
         HANDLE,
