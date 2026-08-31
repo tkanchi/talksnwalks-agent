@@ -1,8 +1,7 @@
 name: Men Instagram Reel
 
 on:
-  schedule:
-    - cron: "47 12 * * *" # 18:17 IST
+  # Scheduled publishing disabled during unified shadow migration.
   workflow_dispatch:
     inputs:
       day:
