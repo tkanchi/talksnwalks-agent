@@ -1,0 +1,67 @@
+name: Stress unified shadow agent
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'analyze_shadow_stress.py'
+      - '.github/workflows/stress-unified-shadow.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  stress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Pillow
+        run: python -m pip install --upgrade pillow
+
+      - name: Protect active shadow history
+        run: cp shadow_logs/unified/selection_history_active.json /tmp/unified_shadow_stress_history.json
+
+      - name: Build 30-post non-persistent shadow simulation
+        run: python build_unified_shadow.py --count 30 --history /tmp/unified_shadow_stress_history.json
+
+      - name: Analyze repetition and variety
+        run: |
+          python analyze_shadow_stress.py \
+            --manifest outputs/unified_shadow/manifest.json \
+            --json outputs/unified_shadow/stress_report.json \
+            --markdown outputs/unified_shadow/stress_report.md
+
+      - name: Verify active history was not changed
+        run: git diff --exit-code -- shadow_logs/unified/selection_history_active.json
+
+      - name: Verify build-only safety
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          manifest = json.loads(Path('outputs/unified_shadow/manifest.json').read_text(encoding='utf-8'))
+          assert len(manifest) == 30
+          assert all(row.get('published') is False for row in manifest)
+          workflow = Path('.github/workflows/stress-unified-shadow.yml').read_text(encoding='utf-8')
+          forbidden = ('publish_' + 'instagram.py', 'graph.' + 'facebook.com', 'META_' + 'ACCESS_TOKEN', 'IG_' + 'USER_ID')
+          found = [token for token in forbidden if token in workflow]
+          if found:
+              raise SystemExit(f'Stress workflow contains publishing integration: {found}')
+          print('Verified: 30 build-only packages, active history unchanged, published=false')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unified-shadow-stress-30
+          path: |
+            outputs/unified_shadow/manifest.json
+            outputs/unified_shadow/stress_report.json
+            outputs/unified_shadow/stress_report.md
+            outputs/unified_shadow/packages/**
+          if-no-files-found: error
