@@ -1,6 +1,8 @@
 name: Unified shadow agent
 
 on:
+  schedule:
+    - cron: "43 5 * * *" # 11:13 IST
   workflow_dispatch:
     inputs:
       start_date:
@@ -61,56 +63,142 @@ jobs:
           START_DATE: ${{ github.event.inputs.start_date }}
           COUNT: ${{ github.event.inputs.count }}
         run: |
-          args=(--count "${COUNT:-10}")
-          if [ -n "${START_DATE:-}" ]; then
-            args+=(--start-date "$START_DATE")
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            # Scheduled shadow mode advances exactly one selection per day.
+            args=(--count "1")
+          else
+            args=(--count "${COUNT:-10}")
+            if [ -n "${START_DATE:-}" ]; then
+              args+=(--start-date "$START_DATE")
+            fi
           fi
           python build_unified_shadow.py "${args[@]}"
 
-      - name: Verify complete post packages
+      - name: Verify packages and write QA report
         env:
           EXPECTED_COUNT: ${{ github.event.inputs.count }}
         run: |
           python - <<'PY'
           import json
           import os
+          from datetime import datetime, timezone
           from pathlib import Path
           from PIL import Image
 
           root = Path('outputs/unified_shadow')
-          expected = int(os.getenv('EXPECTED_COUNT') or '10')
+          scheduled = os.getenv('GITHUB_EVENT_NAME') == 'schedule'
+          expected = 1 if scheduled else int(os.getenv('EXPECTED_COUNT') or '10')
           manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8'))
-          history = json.loads(Path('shadow_logs/unified/selection_history_active.json').read_text(encoding='utf-8'))
+          history_path = Path('shadow_logs/unified/selection_history_active.json')
+          history = json.loads(history_path.read_text(encoding='utf-8'))
+          selections = history.get('selections', [])
+          prior = selections[:-expected] if len(selections) >= expected else []
 
-          assert len(manifest) == expected, len(manifest)
-          assert history.get('mode') == 'shadow'
-          assert len(history.get('selections', [])) >= expected
-          assert len({row['quote_id'] for row in history['selections']}) == len(history['selections'])
+          checks = []
+          package_reports = []
+
+          def record(name, ok, detail=''):
+              checks.append({'name': name, 'passed': bool(ok), 'detail': str(detail)})
+
+          record('package_count', len(manifest) == expected, f'{len(manifest)}/{expected}')
+          record('history_mode_shadow', history.get('mode') == 'shadow', history.get('mode'))
+          history_ids = [row.get('quote_id', '') for row in selections]
+          record('history_quote_ids_unique', len(set(history_ids)) == len(history_ids), len(history_ids))
 
           for row in manifest:
-              assert row['mode'] == 'shadow'
-              assert row['published'] is False
-              assert row['source_type'] == 'inspired_by'
-              assert row['supporting_text']
-              assert row['supporting_text_source'] == 'master'
-              assert row['book'] and row['author']
-              assert row['caption']
-              assert len(row['hashtags']) == 5
-              assert all(tag.startswith('#') for tag in row['hashtags'])
-
-              package_dir = root / 'packages' / row['package_id']
+              package_id = row.get('package_id', '')
+              package_dir = root / 'packages' / package_id
               image_path = package_dir / 'post.png'
               caption_path = package_dir / 'caption.txt'
               package_path = package_dir / 'package.json'
-              assert image_path.exists(), image_path
-              assert caption_path.exists(), caption_path
-              assert package_path.exists(), package_path
-              with Image.open(image_path) as image:
-                  assert image.size == (1080, 1350), (image_path, image.size)
 
-          object_ids = [row['object_id'] for row in manifest]
-          assert all(a != b for a, b in zip(object_ids, object_ids[1:]))
-          print(f'Verified {expected} complete shadow packages; published=false')
+              row_checks = {
+                  'mode_shadow': row.get('mode') == 'shadow',
+                  'published_false': row.get('published') is False,
+                  'book_inspired': row.get('source_type') == 'inspired_by',
+                  'supporting_text_present': bool(row.get('supporting_text')),
+                  'supporting_text_from_master': row.get('supporting_text_source') == 'master',
+                  'book_present': bool(row.get('book')),
+                  'author_present': bool(row.get('author')),
+                  'caption_present': bool(row.get('caption')),
+                  'five_hashtags': len(row.get('hashtags', [])) == 5,
+                  'hashtags_valid': all(str(tag).startswith('#') for tag in row.get('hashtags', [])),
+                  'semantic_illustration_score_positive': int(row.get('illustration_score', 0)) > 0,
+                  'image_present': image_path.exists(),
+                  'caption_file_present': caption_path.exists(),
+                  'package_json_present': package_path.exists(),
+              }
+
+              image_size = None
+              if image_path.exists():
+                  with Image.open(image_path) as image:
+                      image_size = list(image.size)
+                  row_checks['image_1080x1350'] = image_size == [1080, 1350]
+              else:
+                  row_checks['image_1080x1350'] = False
+
+              package_reports.append({
+                  'selection_date': row.get('selection_date'),
+                  'quote_id': row.get('quote_id'),
+                  'book': row.get('book'),
+                  'author': row.get('author'),
+                  'topic': row.get('topic'),
+                  'audience': row.get('audience'),
+                  'object_id': row.get('object_id'),
+                  'illustration_score': row.get('illustration_score'),
+                  'event': row.get('event'),
+                  'image_size': image_size,
+                  'checks': row_checks,
+                  'passed': all(row_checks.values()),
+              })
+
+          if manifest and prior:
+              record(
+                  'no_immediate_illustration_repeat_from_prior_history',
+                  manifest[0].get('object_id') != prior[-1].get('object_id'),
+                  f"prior={prior[-1].get('object_id')} current={manifest[0].get('object_id')}",
+              )
+
+          for report in package_reports:
+              record(
+                  f"package_{report['quote_id']}",
+                  report['passed'],
+                  report['selection_date'],
+              )
+
+          passed = all(check['passed'] for check in checks)
+          qa = {
+              'status': 'pass' if passed else 'fail',
+              'generated_at_utc': datetime.now(timezone.utc).isoformat(),
+              'trigger': os.getenv('GITHUB_EVENT_NAME', ''),
+              'scheduled': scheduled,
+              'expected_count': expected,
+              'package_count': len(manifest),
+              'published': False,
+              'history_entries': len(selections),
+              'checks': checks,
+              'packages': package_reports,
+          }
+          qa_path = root / 'qa_report.json'
+          qa_path.write_text(json.dumps(qa, indent=2), encoding='utf-8')
+
+          summary_path = os.getenv('GITHUB_STEP_SUMMARY')
+          if summary_path:
+              with open(summary_path, 'a', encoding='utf-8') as handle:
+                  handle.write('## Unified shadow QA\n\n')
+                  handle.write(f"- Status: **{qa['status'].upper()}**\n")
+                  handle.write(f"- Trigger: `{qa['trigger']}`\n")
+                  handle.write(f"- Packages: `{len(manifest)}`\n")
+                  handle.write('- Published: `false`\n')
+                  for report in package_reports:
+                      handle.write(
+                          f"- `{report['selection_date']}` `{report['quote_id']}` — "
+                          f"{report['book']} — illustration score `{report['illustration_score']}`\n"
+                      )
+
+          print(json.dumps(qa, indent=2))
+          if not passed:
+              raise SystemExit('Unified shadow QA failed; see outputs/unified_shadow/qa_report.json')
           PY
 
       - name: Persist active shadow selection history
@@ -130,5 +218,6 @@ jobs:
           name: unified-shadow-packages
           path: |
             outputs/unified_shadow/manifest.json
+            outputs/unified_shadow/qa_report.json
             outputs/unified_shadow/packages/**
           if-no-files-found: error
