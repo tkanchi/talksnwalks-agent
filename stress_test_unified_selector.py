@@ -34,6 +34,8 @@ ROBOTIC_SUPPORT_PREFIXES = (
     'this perspective ', 'the book ', 'the lesson ', 'the takeaway ',
     'this takeaway ', 'the idea ',
 )
+MIN_UNIQUE_ILLUSTRATIONS = 20
+MAX_ILLUSTRATION_USES = 3
 
 
 def reset_outputs() -> None:
@@ -106,6 +108,7 @@ def main() -> None:
     events = [row['event'] for row in manifest if row['event']]
     scores = [int(row.get('illustration_score', 0)) for row in manifest]
     captions = [row['caption'] for row in manifest]
+    illustration_counts = Counter(objects)
 
     if len(set(quote_ids)) != COUNT:
         raise RuntimeError('Duplicate QuoteIDs in stress window')
@@ -115,6 +118,14 @@ def main() -> None:
         raise RuntimeError('Immediate illustration repeat in stress window')
     if len(set(captions)) != COUNT:
         raise RuntimeError('Duplicate captions in stress window')
+    if len(illustration_counts) < MIN_UNIQUE_ILLUSTRATIONS:
+        raise RuntimeError(
+            f'Illustration variety too low: {len(illustration_counts)} < {MIN_UNIQUE_ILLUSTRATIONS}'
+        )
+    if max(illustration_counts.values()) > MAX_ILLUSTRATION_USES:
+        raise RuntimeError(
+            f'Illustration reused too often: {max(illustration_counts.values())} > {MAX_ILLUSTRATION_USES}'
+        )
 
     report = {
         'seed_entries': len(seed_entries),
@@ -124,7 +135,8 @@ def main() -> None:
         'unique_quote_ids': len(set(quote_ids)),
         'unique_books': len(set(books)),
         'unique_topics': len(set(topics)),
-        'unique_illustrations': len(set(objects)),
+        'unique_illustrations': len(illustration_counts),
+        'max_illustration_uses': max(illustration_counts.values()),
         'unique_backgrounds': len(set(backgrounds)),
         'unique_captions': len(set(captions)),
         'occasion_posts': len(events),
@@ -140,7 +152,7 @@ def main() -> None:
         'max_consecutive_same_illustration': max_run(objects),
         'book_counts': dict(Counter(books).most_common()),
         'topic_counts': dict(Counter(topics).most_common()),
-        'illustration_counts': dict(Counter(objects).most_common()),
+        'illustration_counts': dict(illustration_counts.most_common()),
         'audience_metadata_counts': dict(Counter(audiences).most_common()),
         'background_counts': dict(Counter(backgrounds).most_common()),
         'event_counts': dict(Counter(events).most_common()),
