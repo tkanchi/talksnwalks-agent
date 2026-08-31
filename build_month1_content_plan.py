@@ -9,9 +9,7 @@ QUOTES = ROOT / 'data' / 'quotes_master_clean.csv'
 OBJECTS = ROOT / 'data' / 'illustration_objects.csv'
 OUTPUT = ROOT / 'data' / 'content_plan_month_01.csv'
 
-# Current approved book-only pool has general and women-specific material.
-# Men/youth book libraries will be added separately before restoring those quotas.
-TARGET = 50
+TARGET = 70
 BACKGROUND_FAMILIES = [
     'vanilla', 'seafoam', 'powder', 'blush', 'lavender',
     'apricot', 'ice', 'mint', 'petal', 'sky',
@@ -19,6 +17,8 @@ BACKGROUND_FAMILIES = [
 AUDIENCE_QUOTAS = {
     'all': 40,
     'women': 10,
+    'men': 10,
+    'youth': 10,
 }
 
 SEMANTIC_TOPIC_KEYWORDS = {
@@ -132,7 +132,7 @@ def choose_quotes(rows: list[dict[str, str]]) -> list[dict[str, str]]:
     buckets = defaultdict(list)
     for row in selected:
         buckets[audience_bucket(row.get('Audience', ''))].append(row)
-    order = ['all', 'women', 'all']
+    order = ['all', 'women', 'all', 'men', 'all', 'youth', 'all']
     mixed: list[dict[str, str]] = []
     while len(mixed) < TARGET:
         progressed = False
