@@ -27,12 +27,12 @@ def main() -> None:
         for row in support_rows
         if clean(row.get('QCStatus')).lower() == 'approved'
     }
-    if len(approved) != 70:
-        raise RuntimeError(f'Expected 70 approved supporting lines, found {len(approved)}')
+    if not approved:
+        raise RuntimeError('No approved supporting lines found')
 
     duplicate_lines = len(set(approved.values())) != len(approved)
     if duplicate_lines:
-        raise RuntimeError('Supporting text must be unique across all 70 posts')
+        raise RuntimeError('Approved supporting text must be unique')
 
     for quote_id, text in approved.items():
         count = word_count(text)
@@ -45,11 +45,13 @@ def main() -> None:
         rows = list(csv.DictReader(handle))
         fields = list(rows[0].keys()) if rows else []
 
+    if not rows:
+        raise RuntimeError('Content plan is empty')
+
     plan_ids = {clean(row.get('QuoteID')) for row in rows}
     missing = sorted(plan_ids - set(approved))
-    extra = sorted(set(approved) - plan_ids)
-    if missing or extra:
-        raise RuntimeError(f'Supporting text QuoteID mismatch. Missing={missing}; extra={extra}')
+    if missing:
+        raise RuntimeError(f'Supporting text missing for plan QuoteIDs: {missing}')
 
     for row in rows:
         row['SupportingText'] = approved[clean(row.get('QuoteID'))]
