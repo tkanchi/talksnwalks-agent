@@ -1,0 +1,65 @@
+name: Stress test unified selector
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'stress_test_unified_selector.py'
+      - '.github/workflows/stress-test-unified-selector.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Pillow
+        run: python -m pip install --upgrade pillow
+
+      - name: Run 30-post long-horizon stress test
+        run: python stress_test_unified_selector.py
+
+      - name: Verify stress outputs
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from PIL import Image
+
+          root = Path('outputs/unified_stress')
+          report = json.loads((root / 'report.json').read_text(encoding='utf-8'))
+          manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8'))
+
+          assert report['stress_count'] == 30
+          assert report['unique_quote_ids'] == 30
+          assert report['max_consecutive_same_illustration'] == 1
+          assert len(manifest) == 30
+          assert all(row['source_type'] == 'inspired_by' for row in manifest)
+          assert all(row['supporting_text'] and row['book'] and row['author'] for row in manifest)
+          assert all(row['supporting_text_source'] == 'master' for row in manifest)
+
+          previews = sorted((root / 'previews').glob('*.png'))
+          assert len(previews) == 30
+          for path in previews:
+              with Image.open(path) as image:
+                  assert image.size == (1080, 1350), (path, image.size)
+
+          print('Verified 30 stress selections; build-only; no publishing')
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unified-selector-stress-30
+          path: |
+            outputs/unified_stress/report.json
+            outputs/unified_stress/manifest.json
+            outputs/unified_stress/previews/**
+          if-no-files-found: error
