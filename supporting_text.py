@@ -1,13 +1,13 @@
 """Deterministic supporting-text enrichment for the unified book library.
 
 The main quote remains the book-inspired idea. SupportingText is editorial context:
-short, non-attributed, and deliberately conversational so it reads like a human
-clarification rather than a second quotation from the author.
+short, non-attributed, and conversational so it reads like a human clarification
+rather than a second quotation from the author.
 
 Priority:
 1. Approved hand-written Month-1 support lines.
 2. Support already present in a source library.
-3. Deterministic editorial support based on the row's existing theme/topic metadata.
+3. Deterministic editorial support based on canonical topic first, then legacy theme.
 """
 
 from __future__ import annotations
@@ -24,71 +24,73 @@ APPROVED_SUPPORT_FILE = ROOT / "data" / "supporting_text_month_01.csv"
 WORD_RE = re.compile(r"\b[\w’'-]+\b")
 NORMALIZE_RE = re.compile(r"[^a-z0-9]+")
 
-# These deliberately avoid the old repetitive "The lesson / The book / This
-# perspective" voice. The focus phrase comes from metadata already attached to
-# the book-inspired row, so the supporting line clarifies rather than invents a
-# new standalone quote.
+# {focus} is always used as an object/complement. That avoids subject-verb
+# agreement problems with compound phrases while keeping the voice natural.
 TEMPLATES = (
     "At heart, this is about {focus}.",
     "In plain terms, this comes back to {focus}.",
-    "The practical thread here is {focus}.",
-    "What matters here is how {focus} shows up daily.",
+    "The practical thread here points back to {focus}.",
+    "What matters here is keeping {focus} in view.",
     "This is really a reminder about {focus}.",
-    "A useful way to read this is through {focus}.",
+    "A useful way to read this keeps {focus} in mind.",
     "The point lands on {focus} in everyday life.",
     "Underneath the message is a focus on {focus}.",
-    "The everyday version of this is {focus}.",
+    "The everyday takeaway comes back to {focus}.",
     "This comes down to {focus} in real life.",
     "Think of this as a note about {focus}.",
-    "The core of it is {focus} in practice.",
+    "The core is keeping {focus} in view.",
     "Read it as a reminder to notice {focus}.",
-    "The useful part is seeing {focus} in daily choices.",
-    "A simple way to hold this is {focus}.",
-    "In everyday life, this shows up as {focus}.",
-    "The thought here is grounded in {focus}.",
-    "This is a practical lens for thinking about {focus}.",
+    "The useful part is keeping {focus} close to daily choices.",
+    "A simple way to hold this is to remember {focus}.",
+    "In everyday life, this keeps the focus on {focus}.",
+    "The thought here stays grounded in {focus}.",
+    "This offers a practical lens for thinking about {focus}.",
     "At its simplest, this is about {focus}.",
-    "This is where {focus} becomes part of daily life.",
-    "A grounded reading of this is {focus}.",
-    "The thread running through this is {focus}.",
+    "This keeps {focus} connected to daily life.",
+    "A grounded reading keeps the focus on {focus}.",
+    "The thread running through this points back to {focus}.",
     "This is one way to make sense of {focus}.",
     "The message points back to {focus} in practice.",
     "What stays with you is the focus on {focus}.",
     "This is a quiet reminder to notice {focus}.",
-    "The useful question here is what {focus} looks like daily.",
-    "The message feels clearer when you name {focus}.",
+    "A useful question is how to make room for {focus}.",
+    "The message gets clearer when you name {focus}.",
     "Keep the attention on {focus} in ordinary moments.",
     "There is a practical focus here on {focus}.",
     "A simple reading is to keep noticing {focus}.",
-    "The message makes more sense through {focus}.",
-    "The practical side of this is {focus}.",
-    "This is worth reading through the lens of {focus}.",
-    "The clearest thread here is {focus}.",
-    "The point is less abstract when you notice {focus}.",
+    "The message makes more sense with {focus} in mind.",
+    "The practical side is keeping {focus} in view.",
+    "This is worth reading with {focus} in mind.",
+    "The clearest thread here points toward {focus}.",
+    "The point feels less abstract when you notice {focus}.",
     "In practice, the message keeps returning to {focus}.",
-    "A useful place to start is with {focus}.",
-    "What this highlights most clearly is {focus}.",
-    "The real-world focus here is {focus}.",
+    "A useful place to start is by noticing {focus}.",
+    "What this highlights most clearly is the role of {focus}.",
+    "The real-world focus here stays on {focus}.",
     "It helps to read this as a note on {focus}.",
     "The message brings attention back to {focus}.",
-    "The simplest thread to follow here is {focus}.",
-    "The practical meaning sits close to {focus}.",
-    "This message is easier to apply through {focus}.",
-    "The point becomes clearer when you name {focus}.",
+    "The simplest thread to follow points toward {focus}.",
+    "The practical meaning stays close to {focus}.",
+    "This message feels easier to apply with {focus} in view.",
+    "The point gets clearer when you name {focus}.",
     "A useful reading keeps {focus} in view.",
     "The everyday meaning comes back to {focus}.",
-    "The message stays grounded when you focus on {focus}.",
+    "The message stays grounded when you keep {focus} in mind.",
     "The core message keeps returning to {focus}.",
-    "A practical reading starts with {focus}.",
-    "The most useful thread here is {focus}.",
+    "A practical reading starts by noticing {focus}.",
+    "The most useful thread here points back to {focus}.",
     "In real life, the message points toward {focus}.",
-    "The message is easier to carry when framed as {focus}.",
-    "A simple way to frame this is {focus}.",
-    "The practical point here is {focus}.",
+    "The message is easier to carry with {focus} in mind.",
+    "A simple way to frame this keeps the focus on {focus}.",
+    "The practical point here keeps the focus on {focus}.",
     "The message keeps {focus} close to everyday life.",
-    "What this brings into focus is {focus}.",
-    "The clearest everyday thread is {focus}.",
+    "What this brings into focus is the importance of {focus}.",
+    "The clearest everyday thread points back to {focus}.",
     "The point here is to keep noticing {focus}.",
+    "A useful takeaway is to keep {focus} in sight.",
+    "This lands more clearly when you think about {focus}.",
+    "The everyday value comes from paying attention to {focus}.",
+    "A practical way to carry this is to remember {focus}.",
 )
 
 
@@ -117,21 +119,26 @@ def load_approved_overrides(path: Path = APPROVED_SUPPORT_FILE) -> dict[str, str
         }
 
 
-def focus_phrase(row: dict[str, str]) -> str:
-    candidates = (
-        clean(row.get("OriginalTheme")),
-        clean(row.get("Topic")),
-        clean(row.get("TopicCategory")),
-    )
-    for raw in candidates:
-        if not raw:
-            continue
-        phrase = raw.replace(" & ", " and ")
-        phrase = re.sub(r"\s*\|\s*", " and ", phrase)
-        phrase = re.sub(r"\s+", " ", phrase).strip(" -")
-        if 1 <= word_count(phrase) <= 4:
-            return phrase.casefold()
-    return "the core idea"
+def focus_phrase(value: str) -> str:
+    phrase = clean(value).replace(" & ", " and ")
+    phrase = re.sub(r"\s*\|\s*", " and ", phrase)
+    phrase = re.sub(r"\s+", " ", phrase).strip(" -")
+    if 1 <= word_count(phrase) <= 4:
+        return phrase.casefold()
+    return ""
+
+
+def focus_options(row: dict[str, str]) -> list[str]:
+    # Canonical Topic is cleaner and more reader-friendly than many imported
+    # legacy theme strings. Legacy theme remains a fallback for uniqueness.
+    options: list[str] = []
+    for key in ("Topic", "OriginalTheme", "TopicCategory"):
+        focus = focus_phrase(row.get(key, ""))
+        if focus and focus not in options:
+            options.append(focus)
+    if "the core idea" not in options:
+        options.append("the core idea")
+    return options
 
 
 def _candidate_order(quote_id: str) -> list[int]:
@@ -141,16 +148,8 @@ def _candidate_order(quote_id: str) -> list[int]:
 
 
 def generated_support(row: dict[str, str], used: set[str]) -> str:
-    focus_options = []
-    for key in ("OriginalTheme", "Topic", "TopicCategory"):
-        probe = dict(row)
-        probe["OriginalTheme"] = clean(row.get(key))
-        focus = focus_phrase(probe)
-        if focus not in focus_options:
-            focus_options.append(focus)
-
     quote_norm = normalize(clean(row.get("Quote")))
-    for focus in focus_options:
+    for focus in focus_options(row):
         for template_index in _candidate_order(clean(row.get("QuoteID"))):
             candidate = TEMPLATES[template_index].format(focus=focus)
             count = word_count(candidate)
