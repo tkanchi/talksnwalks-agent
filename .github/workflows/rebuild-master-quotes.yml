@@ -5,9 +5,12 @@ on:
     branches: [main]
     paths:
       - 'build_master_quotes.py'
+      - 'supporting_text.py'
+      - 'data/supporting_text_month_01.csv'
       - 'data/library/*.csv'
       - 'data/topics.csv'
       - 'data/theme_mappings.csv'
+      - '.github/workflows/rebuild-master-quotes.yml'
   workflow_dispatch:
 
 permissions:
@@ -32,7 +35,15 @@ jobs:
         run: |
           python - <<'PY'
           import csv
+          import re
           from pathlib import Path
+
+          def norm(text):
+              return re.sub(r'[^a-z0-9]+', '', (text or '').casefold())
+
+          def words(text):
+              return len(re.findall(r"\b[\w’'-]+\b", text or ''))
+
           path = Path('data/quotes_master.csv')
           if not path.exists():
               raise SystemExit('data/quotes_master.csv was not generated')
@@ -40,11 +51,26 @@ jobs:
               rows = list(csv.DictReader(f))
           if not rows:
               raise SystemExit('master quote library is empty')
-          required = {'QuoteID','Quote','Audience','TopicCategory','Topic','Theme','SourceType','InspiredBy','Author','AttributionNote','OriginalTheme','SourceURL','SourceFile','DuplicateOf'}
+
+          required = {
+              'QuoteID','Quote','SupportingText','Audience','TopicCategory','Topic','Theme',
+              'SourceType','InspiredBy','Author','AttributionNote','OriginalTheme',
+              'SourceURL','SourceFile','DuplicateOf'
+          }
           missing = required - set(rows[0])
           if missing:
               raise SystemExit(f'missing columns: {sorted(missing)}')
-          print(f'Verified {len(rows)} master quote rows')
+
+          if not all((row.get('SupportingText') or '').strip() for row in rows):
+              raise SystemExit('one or more master rows are missing SupportingText')
+          counts = [words(row.get('SupportingText', '')) for row in rows]
+          if min(counts) < 6 or max(counts) > 14:
+              raise SystemExit(f'SupportingText word counts outside 6-14: {min(counts)}-{max(counts)}')
+          normalized = [norm(row.get('SupportingText', '')) for row in rows]
+          if len(set(normalized)) != len(rows):
+              raise SystemExit('SupportingText must be unique across the master library')
+
+          print(f'Verified {len(rows)} master rows with unique SupportingText ({min(counts)}-{max(counts)} words)')
           PY
 
       - name: Commit generated master library
