@@ -1,0 +1,31 @@
+ObjectID,Object,FileStem,PrimaryTopics,SecondaryTopics,Tags,PreferredPlacements,StyleStatus
+OBJ001,Sprout,sprout,"Growth|Resilience|Hope","Kids Morals|Parenting","growth,sprout,renewal,beginning","bottom_left|bottom_right",approved
+OBJ002,Staircase,staircase,"Discipline|Goals|Growth","Career|Execution","steps,progress,discipline,goals","bottom_left|bottom_right",approved
+OBJ003,Compass,compass,"Self-Belief|Purpose & Meaning|Strategy & Decision-Making","Travel & Adventure|Father","direction,choice,purpose,travel","bottom_left|bottom_center|bottom_right",approved
+OBJ004,Mountain,mountain,"Resilience|Courage|Goals","Sports|Travel & Adventure","mountain,challenge,resilience,courage","bottom_left|bottom_right",approved
+OBJ005,Open Door,open_door,"Hope|Growth|Courage","Career|Breakups","door,opportunity,new-chapter,change","bottom_left|bottom_right",approved
+OBJ006,Open Book,open_book,"Reading & Books|Study & Learning","Growth|Purpose & Meaning","book,reading,learning,wisdom","bottom_center|bottom_left",approved
+OBJ007,Book Stack,book_stack,"Reading & Books|Study & Learning","Career|Childhood Nostalgia","books,reading,study,learning","bottom_left|bottom_right",approved
+OBJ008,Journal,journal,"Growth|Mental Health|Authenticity & Identity","Goals|Gratitude","journal,reflection,writing,identity","bottom_left|bottom_right",approved
+OBJ009,Reading Glasses,reading_glasses,"Reading & Books|Study & Learning","Career|Work-Life Balance","glasses,reading,learning,focus","bottom_left|bottom_right",approved
+OBJ010,Crescent Moon,crescent_moon,"Peace|Rest & Recovery|Mental Health","Spirituality|Work-Life Balance","moon,rest,calm,night,peace","bottom_right|bottom_left",approved
+OBJ011,Candle,candle,"Peace|Spirituality|Mental Health","Gratitude|Love","candle,light,calm,reflection,hope","bottom_center|bottom_right",approved
+OBJ012,Coffee Mug,coffee_mug,"Funny & Relatable|Gratitude|Work-Life Balance","Friendship|Reading & Books","coffee,mug,pause,lifestyle,friendship","bottom_left|bottom_right",approved
+OBJ013,Leaf Branch,leaf_branch,"Peace|Mental Health|Health","Gratitude|Spirituality","leaf,nature,calm,wellness,renewal","bottom_left|bottom_right",approved
+OBJ014,Waves,waves,"Peace|Mental Health|Rest & Recovery","Travel & Adventure|Resilience","waves,calm,flow,rest,nature","bottom_center|bottom_right",approved
+OBJ015,Sunrise,sunrise,"Hope|Gratitude|Growth","Travel & Adventure|Happiness","sunrise,hope,new-day,gratitude,journey","bottom_center|bottom_right",approved
+OBJ016,Suitcase,suitcase,"Travel & Adventure|Courage","Growth|Career","travel,suitcase,adventure,new-chapter","bottom_left|bottom_right",approved
+OBJ017,Paper Plane,paper_plane,"Hope|Courage|Goals","Childhood Nostalgia|Travel & Adventure","paper-plane,dreams,beginning,freedom","bottom_left|bottom_right",approved
+OBJ018,Telescope,telescope,"Goals|Purpose & Meaning|Hope","Study & Learning|Strategy & Decision-Making","telescope,vision,future,dreams,purpose","bottom_left|bottom_right",approved
+OBJ019,Key,key,"Self-Belief|Courage|Authenticity & Identity","Love|Career","key,access,choice,freedom,identity","bottom_left|bottom_right",approved
+OBJ020,Checklist,checklist,"Discipline|Execution|Goals","Career|Digital Responsibility","checklist,action,discipline,planning,execution","bottom_left|bottom_right",approved
+OBJ021,Clock,clock,"Discipline|Work-Life Balance|Execution","Rest & Recovery|Career","clock,time,discipline,balance,focus","bottom_left|bottom_right",approved
+OBJ022,Chess Knight,chess_knight,"Strategy & Decision-Making|CEO Mindset|Leadership","Entrepreneurship|Execution","chess,strategy,leadership,decision","bottom_left|bottom_right",approved
+OBJ023,Laptop,laptop,"Career|Entrepreneurship|Execution","CEO Mindset|Study & Learning","laptop,work,business,learning,execution","bottom_left|bottom_right",approved
+OBJ024,Target,target,"Goals|Execution|Discipline","Sports|Career","target,goals,focus,execution,aim","bottom_left|bottom_right",approved
+OBJ025,Sneaker,sneaker,"Fitness|Health|Sports","Teen Confidence|Discipline","sneaker,fitness,movement,sports,health","bottom_left|bottom_right",approved
+OBJ026,Dumbbell,dumbbell,"Fitness|Health|Discipline","Sports|Body Confidence","dumbbell,strength,fitness,training","bottom_left|bottom_right",approved
+OBJ027,Water Bottle,water_bottle,"Health|Fitness|Rest & Recovery","Sports|Body Confidence","water,health,fitness,recovery","bottom_left|bottom_right",approved
+OBJ028,Bicycle,bicycle,"Childhood Nostalgia|Health|Travel & Adventure","Sports|Happiness","bicycle,childhood,movement,adventure","bottom_left|bottom_right",approved
+OBJ029,Heart Outline,heart_outline,"Love|Kindness|Relationships","Friendship|Family|Marriage","heart,love,kindness,relationship,family","bottom_center|bottom_right",approved
+OBJ030,Home,home,"Family|Parenting|Childhood Nostalgia","Mother|Father|Siblings|Marriage","home,family,belonging,parenting,childhood","bottom_center|bottom_right",approved
