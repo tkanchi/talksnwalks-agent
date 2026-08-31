@@ -7,8 +7,8 @@ Produces additive outputs and does not alter live production inputs:
 
 High-confidence copy edits come from quote_text_quality.py. Human-reviewed false
 positives are explicitly approved only for book-inspired rows; non-book sources
-are not eligible for manual approval or publishing. SupportingText completeness
-and length are also hard publishing-eligibility requirements.
+are not eligible for manual approval or publishing. SupportingText completeness,
+length, and basic editorial-naturalness are hard publishing requirements.
 """
 
 from __future__ import annotations
@@ -38,6 +38,7 @@ HARD_FLAGS = {
     "non_book_source",
     "missing_supporting_text",
     "invalid_supporting_text_length",
+    "robotic_supporting_text",
 }
 SEMANTIC_REVIEW_FLAGS = {
     "aggressive_tone",
@@ -48,8 +49,6 @@ SEMANTIC_REVIEW_FLAGS = {
     "topic_category_mismatch",
 }
 
-# Individually reviewed book-inspired rows whose flagged wording is appropriate
-# in context. Hard data-quality failures still exclude them.
 MANUAL_APPROVE_IDS = {
     "SG104", "SG172", "SG176", "SG279", "SG365",
     "WEMP043", "WEMP080", "WEMP092", "WEMP110", "WEMP145", "WEMP160", "WEMP188",
@@ -67,6 +66,14 @@ NEGATIVE_COMMAND = re.compile(r"^(do not|don't|don’t|never)\b", re.IGNORECASE)
 GENDER_CONTEXT_TOPICS = {
     "Mother", "Father", "Sisters", "Brothers", "Marriage", "Parenting", "Family"
 }
+ROBOTIC_SUPPORT_PREFIXES = (
+    "this perspective ",
+    "the book ",
+    "the lesson ",
+    "the takeaway ",
+    "this takeaway ",
+    "the idea ",
+)
 
 
 def _clean(value: object) -> str:
@@ -105,6 +112,8 @@ def _flags(row: dict[str, str], topics: dict[str, str]) -> list[str]:
         flags.append("missing_supporting_text")
     elif not 6 <= _word_count(support) <= 14:
         flags.append("invalid_supporting_text_length")
+    elif support.casefold().startswith(ROBOTIC_SUPPORT_PREFIXES):
+        flags.append("robotic_supporting_text")
     if _clean(row.get("DuplicateOf")):
         flags.append("duplicate")
     if not topic or topic not in topics:
@@ -182,8 +191,6 @@ def audit() -> tuple[int, int, int, Counter[str]]:
         quote_id = row.get("QuoteID", "")
         candidate_quote = polish_quote_text(QUOTE_CORRECTIONS.get(quote_id, row.get("Quote", "")))
 
-        # Audit the corrected candidate wording so a high-confidence rewrite can
-        # actually resolve the issue that prompted the edit.
         audit_row = {**row, "Quote": candidate_quote}
         flags = _flags(audit_row, topics)
         status = _status(quote_id, flags)
