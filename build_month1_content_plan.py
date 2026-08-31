@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import csv
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 QUOTES = ROOT / 'data' / 'quotes_master_clean.csv'
 OBJECTS = ROOT / 'data' / 'illustration_objects.csv'
+SUPPORT = ROOT / 'data' / 'supporting_text_month_01.csv'
 OUTPUT = ROOT / 'data' / 'content_plan_month_01.csv'
 
 TARGET = 70
@@ -14,12 +15,22 @@ BACKGROUND_FAMILIES = [
     'vanilla', 'seafoam', 'powder', 'blush', 'lavender',
     'apricot', 'ice', 'mint', 'petal', 'sky',
 ]
-AUDIENCE_QUOTAS = {
-    'all': 40,
-    'women': 10,
-    'men': 10,
-    'youth': 10,
+
+# Audience is metadata, not a selection quota. Kids/Teens metadata is used only
+# to apply stricter age-appropriate eligibility rules before selection.
+YOUTH_AUDIENCE_VALUES = {'Kids', 'Teens'}
+YOUTH_SAFE_TOPICS = {
+    'Authenticity & Identity', 'Childhood Nostalgia', 'Communication & Social Skills',
+    'Courage', 'Digital Responsibility', 'Family', 'Friendship', 'Goals', 'Gratitude',
+    'Growth', 'Happiness', 'Health', 'Hope', 'Integrity & Character', 'Justice & Equality',
+    'Kindness', 'Kids Morals', 'Music & Dance', 'Peace', 'Purpose & Meaning',
+    'Reading & Books', 'Resilience', 'Self-Belief', 'Spirituality', 'Sports',
+    'Study & Learning',
 }
+YOUTH_BLOCKED_PHRASES = (
+    'adult sexual', 'sexual', 'porn', 'alcohol', 'gambling', 'revenge', 'dominate',
+    'body shame', 'weight loss', 'crash diet', 'savage',
+)
 
 SEMANTIC_TOPIC_KEYWORDS = {
     'Leadership': ('leadership', 'leader', 'lead '),
@@ -64,15 +75,21 @@ def split_tags(v: str) -> set[str]:
     return {x.strip().lower() for x in clean(v).split(',') if x.strip()}
 
 
-def audience_bucket(audience: str) -> str:
-    vals = split_pipe(audience)
-    if vals and vals <= {'Kids', 'Teens'}:
-        return 'youth'
-    if vals == {'Women'}:
-        return 'women'
-    if vals == {'Men'}:
-        return 'men'
-    return 'all'
+def targets_youth(row: dict[str, str]) -> bool:
+    return bool(split_pipe(row.get('Audience', '')) & YOUTH_AUDIENCE_VALUES)
+
+
+def is_youth_safe(row: dict[str, str]) -> bool:
+    if not targets_youth(row):
+        return True
+    if clean(row.get('Topic')) not in YOUTH_SAFE_TOPICS:
+        return False
+    text = ' '.join([
+        clean(row.get('Quote')),
+        clean(row.get('SupportingText')),
+        clean(row.get('Topic')),
+    ]).lower()
+    return not any(phrase in text for phrase in YOUTH_BLOCKED_PHRASES)
 
 
 def is_book_based(row: dict[str, str]) -> bool:
@@ -83,71 +100,55 @@ def is_book_based(row: dict[str, str]) -> bool:
     )
 
 
-def source_score(row: dict[str, str]) -> int:
-    score = 100 if is_book_based(row) else 0
-    if audience_bucket(row.get('Audience', '')) == 'all':
-        score += 12
-    if clean(row.get('SupportingText')):
-        score += 2
-    return score
+def approved_month1_ids() -> set[str]:
+    with SUPPORT.open(newline='', encoding='utf-8') as handle:
+        return {
+            clean(row.get('QuoteID'))
+            for row in csv.DictReader(handle)
+            if clean(row.get('QCStatus')).lower() == 'approved' and clean(row.get('QuoteID'))
+        }
 
 
 def choose_quotes(rows: list[dict[str, str]]) -> list[dict[str, str]]:
-    grouped: dict[str, list[dict[str, str]]] = defaultdict(list)
-    for row in rows:
-        grouped[audience_bucket(row.get('Audience', ''))].append(row)
+    approved_ids = approved_month1_ids()
+    remaining = [
+        row for row in rows
+        if clean(row.get('QuoteID')) in approved_ids and is_book_based(row) and is_youth_safe(row)
+    ]
+    if len(remaining) < TARGET:
+        raise RuntimeError(
+            f'Need {TARGET} approved book-inspired youth-safe Month-1 candidates, got {len(remaining)}'
+        )
 
-    for bucket in grouped:
-        grouped[bucket].sort(key=lambda r: (-source_score(r), clean(r.get('Topic')), clean(r.get('QuoteID'))))
-
+    # Global deterministic selection. Audience never affects rank or quota.
+    # Prefer topic and book variety, and avoid placing the same book back-to-back.
     selected: list[dict[str, str]] = []
     topic_counts: Counter[str] = Counter()
+    book_counts: Counter[str] = Counter()
+    recent_books: list[str] = []
 
-    for bucket, quota in AUDIENCE_QUOTAS.items():
-        candidates = grouped.get(bucket, [])
-        picked_ids: set[str] = set()
+    while remaining and len(selected) < TARGET:
+        row = min(
+            remaining,
+            key=lambda r: (
+                topic_counts[clean(r.get('Topic'))],
+                book_counts[clean(r.get('InspiredBy'))],
+                clean(r.get('InspiredBy')) in recent_books[-2:],
+                clean(r.get('Topic')),
+                clean(r.get('QuoteID')),
+            ),
+        )
+        remaining.remove(row)
+        selected.append(row)
+        topic = clean(row.get('Topic'))
+        book = clean(row.get('InspiredBy'))
+        topic_counts[topic] += 1
+        book_counts[book] += 1
+        recent_books.append(book)
 
-        for row in candidates:
-            if len(picked_ids) >= quota:
-                break
-            topic = clean(row.get('Topic'))
-            if topic_counts[topic] >= 4:
-                continue
-            qid = clean(row.get('QuoteID'))
-            selected.append(row)
-            picked_ids.add(qid)
-            topic_counts[topic] += 1
-
-        if len(picked_ids) < quota:
-            for row in candidates:
-                if len(picked_ids) >= quota:
-                    break
-                qid = clean(row.get('QuoteID'))
-                if qid in picked_ids:
-                    continue
-                selected.append(row)
-                picked_ids.add(qid)
-                topic_counts[clean(row.get('Topic'))] += 1
-
-    buckets = defaultdict(list)
-    for row in selected:
-        buckets[audience_bucket(row.get('Audience', ''))].append(row)
-    order = ['all', 'women', 'all', 'men', 'all', 'youth', 'all']
-    mixed: list[dict[str, str]] = []
-    while len(mixed) < TARGET:
-        progressed = False
-        for bucket in order:
-            if buckets[bucket]:
-                mixed.append(buckets[bucket].pop(0))
-                progressed = True
-                if len(mixed) == TARGET:
-                    break
-        if not progressed:
-            break
-
-    if len(mixed) != TARGET:
-        raise RuntimeError(f'Expected {TARGET} selected book-inspired quotes, got {len(mixed)}')
-    return mixed
+    if len(selected) != TARGET:
+        raise RuntimeError(f'Expected {TARGET} selected book-inspired quotes, got {len(selected)}')
+    return selected
 
 
 def filename_for_stem(stem: str) -> str:
@@ -279,8 +280,10 @@ def main() -> None:
         writer.writerows(rows)
 
     print(f'Built {len(rows)} mapped book-inspired posts -> {OUTPUT}')
-    print('Audience mix:', dict(Counter(audience_bucket(r['Audience']) for r in rows)))
+    print('Audience metadata:', dict(Counter(clean(r['Audience']) or 'All' for r in rows)))
+    print('Youth-safe rows:', sum(1 for r in rows if targets_youth(r) and is_youth_safe(r)))
     print('Unique topics:', len({r['Topic'] for r in rows}))
+    print('Unique books:', len({r['InspiredBy'] for r in rows}))
     print('Unique illustrations:', len({r['Illustration'] for r in rows}))
     print('Book-inspired:', sum(1 for r in rows if r['SourceLine']))
 
