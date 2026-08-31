@@ -7,7 +7,8 @@ Produces additive outputs and does not alter live production inputs:
 
 High-confidence copy edits come from quote_text_quality.py. Human-reviewed false
 positives are explicitly approved only for book-inspired rows; non-book sources
-are not eligible for manual approval or publishing.
+are not eligible for manual approval or publishing. SupportingText completeness
+and length are also hard publishing-eligibility requirements.
 """
 
 from __future__ import annotations
