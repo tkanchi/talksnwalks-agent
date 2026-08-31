@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 from collections import Counter
 from datetime import date, datetime, timedelta
@@ -20,6 +21,7 @@ ROOT = Path(__file__).resolve().parent
 QUOTES_FILE = ROOT / "data" / "quotes_master_clean.csv"
 OBJECTS_FILE = ROOT / "data" / "illustration_objects.csv"
 EVENTS_FILE = ROOT / "data" / "events.csv"
+SUPPORT_FILE = ROOT / "data" / "supporting_text_month_01.csv"
 
 DEFAULT_OUTPUT = ROOT / "outputs" / "unified_selector" / "next_post.json"
 DEFAULT_HISTORY = ROOT / "outputs" / "unified_selector" / "selection_history.json"
@@ -49,12 +51,29 @@ def load_csv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
+def load_support_map() -> dict[str, str]:
+    if not SUPPORT_FILE.exists():
+        return {}
+    with SUPPORT_FILE.open(newline="", encoding="utf-8") as handle:
+        return {
+            clean(row.get("QuoteID")): clean(row.get("SupportingText"))
+            for row in csv.DictReader(handle)
+            if clean(row.get("QCStatus")).lower() == "approved"
+            and clean(row.get("QuoteID"))
+            and clean(row.get("SupportingText"))
+        }
+
+
+def stable_tiebreak(on_date: date, row: dict[str, str]) -> str:
+    payload = f"{on_date.isoformat()}|{clean(row.get('QuoteID'))}".encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
 def is_book_eligible(row: dict[str, str]) -> bool:
     return (
         clean(row.get("QualityStatus")).lower() == "approved"
         and clean(row.get("SourceType")).lower() == "inspired_by"
         and bool(clean(row.get("Quote")))
-        and bool(clean(row.get("SupportingText")))
         and bool(clean(row.get("InspiredBy")))
         and bool(clean(row.get("Author")))
         and is_youth_safe(row)
@@ -93,7 +112,8 @@ def resolve_event_date(rule: str, year: int) -> date | None:
             raise ValueError(f"Unsupported NTH_WEEKDAY rule: {rule}")
         return nth_weekday(year, month, weekday, int(nth_raw))
 
-    # LOOKUP dates are intentionally unresolved. Never guess lunar/religious dates.
+    # Variable lunar/religious dates are never guessed. They remain inactive until
+    # a trusted annual date is resolved elsewhere in the data layer.
     if rule.startswith("LOOKUP:"):
         return None
 
@@ -125,12 +145,6 @@ def active_events(on_date: date, events: Iterable[dict[str, str]]) -> list[dict[
     )
 
 
-def event_topics(event: dict[str, str]) -> set[str]:
-    topics = {clean(event.get("PrimaryTopic"))}
-    topics.update(split_csv(event.get("SecondaryTopics", "")))
-    return {topic for topic in topics if topic}
-
-
 def event_audience_score(row: dict[str, str], event: dict[str, str]) -> int:
     quote_audiences = split_pipe(row.get("Audience", "")) or {"All"}
     event_audiences = split_pipe(event.get("Audiences", "")) or {"All"}
@@ -145,7 +159,6 @@ def event_audience_score(row: dict[str, str], event: dict[str, str]) -> int:
     adult_tokens = {"Adults", "Women", "Men"}
     if "Adults" in event_audiences and quote_audiences & adult_tokens:
         return 2
-
     return 0
 
 
@@ -229,7 +242,7 @@ def select_quote(
                     clean(item[0].get("InspiredBy")) in recent_books[-2:],
                     topic_counts[clean(item[0].get("Topic"))],
                     book_counts[clean(item[0].get("InspiredBy"))],
-                    clean(item[0].get("QuoteID")),
+                    stable_tiebreak(on_date, item[0]),
                 ),
             )
             reason = (
@@ -246,7 +259,7 @@ def select_quote(
             topic_counts[clean(candidate.get("Topic"))],
             book_counts[clean(candidate.get("InspiredBy"))],
             clean(candidate.get("Topic")),
-            clean(candidate.get("QuoteID")),
+            stable_tiebreak(on_date, candidate),
         ),
     )
     return row, None, "evergreen: topic/book variety with unused QuoteID"
@@ -278,8 +291,7 @@ def choose_illustration(
         return (-adjusted, object_counts[oid], oid)
 
     chosen = min(approved, key=rank)
-    filename = filename_for_stem(chosen.get("FileStem", ""))
-    return chosen, filename
+    return chosen, filename_for_stem(chosen.get("FileStem", ""))
 
 
 def choose_background(history: dict) -> str:
@@ -306,8 +318,18 @@ def build_selection(on_date: date, history: dict) -> dict:
     quotes = load_csv(QUOTES_FILE)
     objects = load_csv(OBJECTS_FILE)
     events = load_csv(EVENTS_FILE)
+    support_map = load_support_map()
 
     quote, event, reason = select_quote(on_date, quotes, events, history)
+    quote = dict(quote)
+    if clean(quote.get("SupportingText")):
+        quote["SupportingTextSource"] = "master"
+    elif clean(support_map.get(clean(quote.get("QuoteID")))):
+        quote["SupportingText"] = support_map[clean(quote.get("QuoteID"))]
+        quote["SupportingTextSource"] = "approved_registry"
+    else:
+        quote["SupportingTextSource"] = "none"
+
     obj, illustration = choose_illustration(quote, objects, history)
     background = choose_background(history)
     placement = choose_placement(obj, history)
@@ -363,6 +385,7 @@ def output_payload(selection: dict[str, str]) -> dict:
         "quote_id": clean(selection.get("QuoteID")),
         "quote": clean(selection.get("Quote")),
         "supporting_text": clean(selection.get("SupportingText")),
+        "supporting_text_source": clean(selection.get("SupportingTextSource")),
         "audience": clean(selection.get("Audience")),
         "topic_category": clean(selection.get("TopicCategory")),
         "topic": clean(selection.get("Topic")),
