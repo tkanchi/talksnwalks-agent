@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'analyze_shadow_stress.py'
+      - 'data/illustration_objects.csv'
       - '.github/workflows/stress-unified-shadow.yml'
 
 permissions:
