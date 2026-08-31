@@ -9,6 +9,7 @@ from pathlib import Path
 from PIL import Image
 
 from build_feed_preview import CANVAS_H, CANVAS_W, compose
+from build_unified_shadow import build_caption, build_hashtags
 from select_next_post import (
     append_history,
     build_selection,
@@ -29,6 +30,10 @@ MANIFEST_FILE = OUTPUT_ROOT / 'manifest.json'
 REPORT_FILE = OUTPUT_ROOT / 'report.json'
 STRESS_HISTORY_FILE = OUTPUT_ROOT / 'stress_history.json'
 COUNT = 30
+ROBOTIC_SUPPORT_PREFIXES = (
+    'this perspective ', 'the book ', 'the lesson ', 'the takeaway ',
+    'this takeaway ', 'the idea ',
+)
 
 
 def reset_outputs() -> None:
@@ -72,6 +77,17 @@ def main() -> None:
         if payload['audience'] in {'Kids', 'Teens', 'Kids|Teens'} and not safe_for_youth_context(selection):
             raise RuntimeError(f'Youth safety failed: {payload["quote_id"]}')
 
+        support = payload['supporting_text'].casefold()
+        if support.startswith(ROBOTIC_SUPPORT_PREFIXES):
+            raise RuntimeError(f'Robotic SupportingText survived audit: {payload["quote_id"]}')
+
+        hashtags = build_hashtags(selection)
+        caption = build_caption(selection, hashtags)
+        if len(hashtags) != 5 or not caption:
+            raise RuntimeError(f'Caption package failed: {payload["quote_id"]}')
+        payload['hashtags'] = hashtags
+        payload['caption'] = caption
+
         preview_path = PREVIEW_DIR / f'{index + 1:02d}_{on_date.isoformat()}_{payload["quote_id"]}.png'
         compose(selection, preview_path, index=len(seed_entries) + index)
         with Image.open(preview_path) as image:
@@ -88,6 +104,8 @@ def main() -> None:
     backgrounds = [row['background'] for row in manifest]
     audiences = [row['audience'] for row in manifest]
     events = [row['event'] for row in manifest if row['event']]
+    scores = [int(row.get('illustration_score', 0)) for row in manifest]
+    captions = [row['caption'] for row in manifest]
 
     if len(set(quote_ids)) != COUNT:
         raise RuntimeError('Duplicate QuoteIDs in stress window')
@@ -95,6 +113,8 @@ def main() -> None:
         raise RuntimeError('Stress window reused a seeded QuoteID')
     if any(a == b for a, b in zip(objects, objects[1:])):
         raise RuntimeError('Immediate illustration repeat in stress window')
+    if len(set(captions)) != COUNT:
+        raise RuntimeError('Duplicate captions in stress window')
 
     report = {
         'seed_entries': len(seed_entries),
@@ -106,7 +126,15 @@ def main() -> None:
         'unique_topics': len(set(topics)),
         'unique_illustrations': len(set(objects)),
         'unique_backgrounds': len(set(backgrounds)),
+        'unique_captions': len(set(captions)),
         'occasion_posts': len(events),
+        'illustration_score_min': min(scores),
+        'illustration_score_average': round(sum(scores) / len(scores), 1),
+        'zero_semantic_illustrations': sum(score <= 0 for score in scores),
+        'robotic_support_lines': sum(
+            row['supporting_text'].casefold().startswith(ROBOTIC_SUPPORT_PREFIXES)
+            for row in manifest
+        ),
         'max_consecutive_same_book': max_run(books),
         'max_consecutive_same_topic': max_run(topics),
         'max_consecutive_same_illustration': max_run(objects),
