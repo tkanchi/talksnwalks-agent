@@ -21,6 +21,36 @@ AUDIENCE_QUOTAS = {
     'youth': 10,
 }
 
+SEMANTIC_TOPIC_KEYWORDS = {
+    'Leadership': ('leadership', 'leader', 'lead '),
+    'Self-Belief': ('confidence', 'believe in yourself', 'self-belief'),
+    'Authenticity & Identity': ('authentic', 'identity', 'pretend', 'be yourself', 'yourself', 'self-knowledge'),
+    'Friendship': ('friend', 'friendship', 'circle'),
+    'Brothers': ('brother', 'brothers'),
+    'Mother': ('mother', ' mom ', "mom's"),
+    'Father': ('father', ' dad ', "dad's"),
+    'Family': ('family', 'home'),
+    'Career': ('career', 'job', 'workplace'),
+    'Entrepreneurship': ('business', 'startup', 'entrepreneur'),
+    'Strategy & Decision-Making': ('strategy', 'decision', 'choice', 'priorit'),
+    'Discipline': ('discipline', 'consistency', 'routine', 'practice', 'habit'),
+    'Goals': ('goal', 'dream', 'vision'),
+    'Peace': ('peace', 'calm', 'quiet'),
+    'Rest & Recovery': ('rest', 'sleep', 'recover'),
+    'Health': ('health', 'wellness', 'hydrate'),
+    'Fitness': ('fitness', 'workout', 'gym', 'training', 'body'),
+    'Reading & Books': ('book', 'read', 'library'),
+    'Study & Learning': ('study', 'learn', 'homework', 'curiosity'),
+    'Travel & Adventure': ('travel', 'adventure', 'journey', 'trip'),
+    'Kindness': ('kind', 'kindness', 'compassion'),
+    'Love': ('love', 'romance', 'relationship'),
+    'Hope': ('hope', 'optimis'),
+    'Resilience': ('resilien', 'setback', 'comeback', 'recover from'),
+    'Courage': ('courage', 'brave', 'bold', 'fear'),
+    'Purpose & Meaning': ('purpose', 'meaning', 'calling'),
+    'Gratitude': ('gratitude', 'grateful', 'thankful', 'thank you'),
+}
+
 
 def clean(v: object) -> str:
     return str(v or '').strip()
@@ -75,7 +105,6 @@ def choose_quotes(rows: list[dict[str, str]]) -> list[dict[str, str]]:
         candidates = grouped.get(bucket, [])
         picked_ids: set[str] = set()
 
-        # First pass: broad topic variety.
         for row in candidates:
             if len(picked_ids) >= quota:
                 break
@@ -87,7 +116,6 @@ def choose_quotes(rows: list[dict[str, str]]) -> list[dict[str, str]]:
             picked_ids.add(qid)
             topic_counts[topic] += 1
 
-        # Second pass: fill quota without duplicating QuoteIDs.
         if len(picked_ids) < quota:
             for row in candidates:
                 if len(picked_ids) >= quota:
@@ -99,7 +127,6 @@ def choose_quotes(rows: list[dict[str, str]]) -> list[dict[str, str]]:
                 picked_ids.add(qid)
                 topic_counts[clean(row.get('Topic'))] += 1
 
-    # Keep the final sequence mixed by audience instead of four blocks.
     buckets = defaultdict(list)
     for row in selected:
         buckets[audience_bucket(row.get('Audience', ''))].append(row)
@@ -128,17 +155,43 @@ def filename_for_stem(stem: str) -> str:
     return f'{stem}_01.png'
 
 
+def semantic_topics(quote: dict[str, str]) -> set[str]:
+    text = ' ' + ' '.join([
+        clean(quote.get('Quote')),
+        clean(quote.get('SupportingText')),
+        clean(quote.get('Theme')),
+        clean(quote.get('OriginalTheme')),
+    ]).lower() + ' '
+    found = set()
+    for topic, needles in SEMANTIC_TOPIC_KEYWORDS.items():
+        if any(needle in text for needle in needles):
+            found.add(topic)
+    return found
+
+
 def object_score(obj: dict[str, str], quote: dict[str, str]) -> int:
     topic = clean(quote.get('Topic'))
+    hints = semantic_topics(quote)
     qtags = split_tags(quote.get('IllustrationTags', ''))
     primary = split_pipe(obj.get('PrimaryTopics', ''))
     secondary = split_pipe(obj.get('SecondaryTopics', ''))
     otags = split_tags(obj.get('Tags', ''))
     score = 0
-    if topic in primary:
-        score += 100
-    if topic in secondary:
-        score += 55
+
+    # Strong quote semantics override stale legacy taxonomy for the visual match.
+    if hints:
+        score += 170 * len(hints & primary)
+        score += 90 * len(hints & secondary)
+        if topic in primary:
+            score += 25
+        if topic in secondary:
+            score += 15
+    else:
+        if topic in primary:
+            score += 100
+        if topic in secondary:
+            score += 55
+
     score += 8 * len(qtags & otags)
     return score
 
@@ -188,8 +241,8 @@ def main() -> None:
 
     fields = [
         'PostNumber', 'QuoteID', 'Quote', 'SupportingText', 'Audience', 'TopicCategory', 'Topic',
-        'SourceType', 'InspiredBy', 'Author', 'SourceLine', 'ObjectID', 'Illustration', 'Placement',
-        'BackgroundFamily', 'Occasion', 'PlanStatus'
+        'SemanticHints', 'SourceType', 'InspiredBy', 'Author', 'SourceLine', 'ObjectID', 'Illustration',
+        'Placement', 'BackgroundFamily', 'Occasion', 'PlanStatus'
     ]
     rows = []
     for idx, (quote, obj, placement) in enumerate(mapped, start=1):
@@ -204,6 +257,7 @@ def main() -> None:
             'Audience': clean(quote.get('Audience')),
             'TopicCategory': clean(quote.get('TopicCategory')),
             'Topic': clean(quote.get('Topic')),
+            'SemanticHints': '|'.join(sorted(semantic_topics(quote))),
             'SourceType': clean(quote.get('SourceType')),
             'InspiredBy': clean(quote.get('InspiredBy')),
             'Author': clean(quote.get('Author')),
