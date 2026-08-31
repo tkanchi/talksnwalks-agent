@@ -11,6 +11,14 @@ on:
         description: "Number of consecutive post selections to simulate"
         required: false
         default: "10"
+  push:
+    paths:
+      - 'select_next_post.py'
+      - 'simulate_unified_selector.py'
+      - 'data/quotes_master_clean.csv'
+      - 'data/illustration_objects.csv'
+      - 'data/events.csv'
+      - '.github/workflows/simulate-unified-selector.yml'
 
 permissions:
   contents: read
@@ -33,11 +41,10 @@ jobs:
           START_DATE: ${{ github.event.inputs.start_date }}
           COUNT: ${{ github.event.inputs.count }}
         run: |
-          args=(--count "${COUNT:-10}")
-          if [ -n "${START_DATE:-}" ]; then
-            args+=(--start-date "$START_DATE")
+          if [ -z "${START_DATE:-}" ]; then
+            START_DATE="$(date -u -d '+1 day' +%F)"
           fi
-          python simulate_unified_selector.py "${args[@]}"
+          python simulate_unified_selector.py --start-date "$START_DATE" --count "${COUNT:-10}"
 
       - name: Verify simulation artifact
         env:
