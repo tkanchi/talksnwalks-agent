@@ -35,6 +35,8 @@ HARD_FLAGS = {
     "missing_topic_category",
     "missing_book_attribution",
     "non_book_source",
+    "missing_supporting_text",
+    "invalid_supporting_text_length",
 }
 SEMANTIC_REVIEW_FLAGS = {
     "aggressive_tone",
@@ -87,6 +89,7 @@ def _flags(row: dict[str, str], topics: dict[str, str]) -> list[str]:
     flags: list[str] = []
     quote = _clean(row.get("Quote"))
     quote_id = _clean(row.get("QuoteID"))
+    support = _clean(row.get("SupportingText"))
     topic = _clean(row.get("Topic"))
     category = _clean(row.get("TopicCategory"))
     source_type = _clean(row.get("SourceType"))
@@ -97,6 +100,10 @@ def _flags(row: dict[str, str], topics: dict[str, str]) -> list[str]:
         flags.append("missing_quote")
     if not quote_id:
         flags.append("missing_quote_id")
+    if not support:
+        flags.append("missing_supporting_text")
+    elif not 6 <= _word_count(support) <= 14:
+        flags.append("invalid_supporting_text_length")
     if _clean(row.get("DuplicateOf")):
         flags.append("duplicate")
     if not topic or topic not in topics:
