@@ -1,0 +1,27 @@
+name: Rename object core folder
+
+on:
+  push:
+    paths:
+      - '.github/workflows/rename-object-core-folder.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Rename core_30 to core
+        run: |
+          set -euo pipefail
+          test -d illustrations/objects/core_30
+          test ! -e illustrations/objects/core
+          git mv illustrations/objects/core_30 illustrations/objects/core
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Rename illustration core folder'
+          git push
