@@ -1,9 +1,9 @@
-"""Build one lossless master quote library from all current source libraries.
+"""Build the unified publishing master from book-inspired source material only.
 
-This is Phase 1 of the unified Talk N Walks content model. It is deliberately
-additive: production builders continue to use their existing source files until
-the unified selector has been tested and approved. The generated CSV is the
-single consolidated data source for the next migration phase.
+Historical source files remain intact for provenance and published-history safety,
+but the generated master library contains only rows explicitly marked
+``SourceType=inspired_by``. The audit step separately rejects incomplete book
+attribution before a row reaches the clean publishing library.
 """
 
 from __future__ import annotations
@@ -158,6 +158,11 @@ def build() -> tuple[int, int]:
                 if source_library == "children" and "QuoteID" not in row:
                     row = _legacy_children_row(row, index)
 
+                # Hard publishing-library rule: no original, legacy, adapted,
+                # traditional, direct, or unattributed material enters master.
+                if _clean(row.get("SourceType")).lower() != "inspired_by":
+                    continue
+
                 quote_id = row.get("QuoteID") or f"{path.stem.upper()}-{index:04d}"
                 topic = _canonical_topic(row, source_library, topics, mappings)
                 topic_meta = topics.get(topic, {})
@@ -202,7 +207,7 @@ def build() -> tuple[int, int]:
         writer.writeheader()
         writer.writerows(master)
 
-    print(f"Built {OUTPUT_FILE.relative_to(ROOT)} with {len(master)} rows")
+    print(f"Built {OUTPUT_FILE.relative_to(ROOT)} with {len(master)} book-inspired rows")
     print(f"Exact normalized duplicates flagged: {duplicate_count}")
     return len(master), duplicate_count
 
