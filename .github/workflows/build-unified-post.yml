@@ -1,0 +1,73 @@
+name: Build unified post previews
+
+on:
+  workflow_dispatch:
+    inputs:
+      audience:
+        description: "Optional audience filter: women, men, kids, teens, children, general, all"
+        required: false
+        default: ""
+      count:
+        description: "How many posts to build"
+        required: false
+        default: "8"
+      start_index:
+        description: "1-based start index within the filtered plan"
+        required: false
+        default: "1"
+  push:
+    branches:
+      - main
+    paths:
+      - 'build_unified_post.py'
+      - '.github/workflows/build-unified-post.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Pillow
+        run: python -m pip install --upgrade pillow
+      - name: Build unified previews
+        env:
+          AUDIENCE: ${{ github.event.inputs.audience || '' }}
+          COUNT: ${{ github.event.inputs.count || '8' }}
+          START_INDEX: ${{ github.event.inputs.start_index || '1' }}
+        run: python build_unified_post.py
+      - name: Verify unified preview outputs
+        env:
+          COUNT: ${{ github.event.inputs.count || '8' }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from PIL import Image
+
+          expected = int(os.environ['COUNT'])
+          root = Path('outputs/unified_preview')
+          files = sorted(root.rglob('*.png'))
+          assert len(files) == expected, (len(files), expected)
+
+          for path in files:
+              with Image.open(path) as im:
+                  assert im.size == (1080, 1350), (path, im.size)
+
+          manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8'))
+          assert len(manifest) == expected, (len(manifest), expected)
+          print(f'Verified {expected} unified previews at 1080x1350')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unified-post-previews
+          path: |
+            outputs/unified_preview/**/*.png
+            outputs/unified_preview/manifest.json
+          if-no-files-found: error
