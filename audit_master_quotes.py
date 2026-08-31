@@ -1,8 +1,9 @@
 """Phase 1.5 quality audit for the unified Talk N Walks quote library.
 
-Produces two additive outputs and does not alter live production inputs:
+Produces additive outputs and does not alter live production inputs:
 - data/quotes_master_clean.csv: safe candidate rows for the future unified selector.
 - data/quotes_master_review.csv: every master row with deterministic quality flags.
+- data/quotes_master_attention.csv: only rows needing review or exclusion decisions.
 
 The audit is intentionally conservative. Subjective issues are flagged for review,
 not silently rewritten or deleted. Existing high-confidence corrections from
@@ -26,6 +27,7 @@ MASTER_FILE = ROOT / "data" / "quotes_master.csv"
 TOPICS_FILE = ROOT / "data" / "topics.csv"
 CLEAN_FILE = ROOT / "data" / "quotes_master_clean.csv"
 REVIEW_FILE = ROOT / "data" / "quotes_master_review.csv"
+ATTENTION_FILE = ROOT / "data" / "quotes_master_attention.csv"
 
 HARD_FLAGS = {
     "duplicate",
@@ -36,26 +38,14 @@ HARD_FLAGS = {
     "missing_book_attribution",
 }
 
-REVIEW_FLAGS = {
-    "very_short",
-    "very_long",
-    "gender_coded",
-    "aggressive_tone",
-    "negative_command_opener",
-    "legacy_unattributed",
-    "missing_source_type",
-}
-
 GENDER_TERMS = re.compile(
     r"\b(man|men|male|woman|women|female|boy|boys|girl|girls|husband|wife|son|daughter)\b",
     re.IGNORECASE,
 )
-
 AGGRESSIVE_TERMS = re.compile(
     r"\b(revenge|dangerous|destroy|crush|dominate|enemy|enemies|weakness|villain|control|punish|punishment)\b",
     re.IGNORECASE,
 )
-
 NEGATIVE_COMMAND = re.compile(r"^(do not|don't|don’t|never)\b", re.IGNORECASE)
 
 # Topics where gender/family terms can be essential rather than accidental.
@@ -148,6 +138,7 @@ def audit() -> tuple[int, int, int, Counter[str]]:
     clean_fields = list(rows[0].keys()) + ["QualityStatus"]
 
     reviewed: list[dict[str, str]] = []
+    attention: list[dict[str, str]] = []
     clean_rows: list[dict[str, str]] = []
     flag_counts: Counter[str] = Counter()
     statuses: Counter[str] = Counter()
@@ -161,19 +152,18 @@ def audit() -> tuple[int, int, int, Counter[str]]:
 
         quote_id = row.get("QuoteID", "")
         candidate_quote = polish_quote_text(QUOTE_CORRECTIONS.get(quote_id, row.get("Quote", "")))
-
-        reviewed.append(
-            {
-                **row,
-                "CandidateQuote": candidate_quote,
-                "WordCount": str(_word_count(candidate_quote)),
-                "QualityStatus": status,
-                "ReviewFlags": "|".join(flags),
-            }
-        )
+        reviewed_row = {
+            **row,
+            "CandidateQuote": candidate_quote,
+            "WordCount": str(_word_count(candidate_quote)),
+            "QualityStatus": status,
+            "ReviewFlags": "|".join(flags),
+        }
+        reviewed.append(reviewed_row)
+        if status != "approved":
+            attention.append(reviewed_row)
 
         # The clean candidate is deliberately strict: only deterministic passes.
-        # Review rows remain in quotes_master_review.csv until explicitly approved.
         if status == "approved":
             clean_rows.append({**row, "Quote": candidate_quote, "QualityStatus": "approved"})
 
@@ -181,6 +171,11 @@ def audit() -> tuple[int, int, int, Counter[str]]:
         writer = csv.DictWriter(f, fieldnames=review_fields)
         writer.writeheader()
         writer.writerows(reviewed)
+
+    with ATTENTION_FILE.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=review_fields)
+        writer.writeheader()
+        writer.writerows(attention)
 
     with CLEAN_FILE.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=clean_fields)
@@ -191,6 +186,7 @@ def audit() -> tuple[int, int, int, Counter[str]]:
     print(f"Approved candidate rows: {statuses['approved']}")
     print(f"Review-required rows: {statuses['review']}")
     print(f"Excluded rows: {statuses['exclude']}")
+    print(f"Attention rows: {len(attention)}")
     print("Flag counts:")
     for flag, count in sorted(flag_counts.items()):
         print(f"  {flag}: {count}")
