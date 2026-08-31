@@ -6,6 +6,8 @@ on:
     paths:
       - 'build_master_quotes.py'
       - 'supporting_text.py'
+      - 'audit_master_quotes.py'
+      - 'quote_text_quality.py'
       - 'data/supporting_text_month_01.csv'
       - 'data/library/*.csv'
       - 'data/topics.csv'
@@ -73,14 +75,48 @@ jobs:
           print(f'Verified {len(rows)} master rows with unique SupportingText ({min(counts)}-{max(counts)} words)')
           PY
 
-      - name: Commit generated master library
+      # Audit in the same workflow because commits made with GITHUB_TOKEN do not
+      # reliably trigger a second workflow. This keeps master and clean selector
+      # inputs atomic and prevents stale SupportingText from reaching selection.
+      - name: Audit rebuilt master library
+        run: python audit_master_quotes.py
+
+      - name: Verify audited selector pool
         run: |
-          if [ -z "$(git status --porcelain -- data/quotes_master.csv)" ]; then
-            echo 'Master library is already up to date.'
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+
+          clean = Path('data/quotes_master_clean.csv')
+          attention = Path('data/quotes_master_attention.csv')
+          review = Path('data/quotes_master_review.csv')
+          for path in (clean, attention, review):
+              if not path.exists():
+                  raise SystemExit(f'{path} was not generated')
+
+          with clean.open(newline='', encoding='utf-8') as f:
+              rows = list(csv.DictReader(f))
+          if not rows:
+              raise SystemExit('clean selector pool is empty')
+          if not all((row.get('SupportingText') or '').strip() for row in rows):
+              raise SystemExit('clean selector pool contains blank SupportingText')
+          if not all((row.get('SourceType') or '').strip().lower() == 'inspired_by' for row in rows):
+              raise SystemExit('clean selector pool contains non-book content')
+          if not all((row.get('InspiredBy') or '').strip() and (row.get('Author') or '').strip() for row in rows):
+              raise SystemExit('clean selector pool contains incomplete book attribution')
+
+          print(f'Verified synchronized clean selector pool: {len(rows)} rows')
+          PY
+
+      - name: Commit generated master and audit outputs
+        run: |
+          paths='data/quotes_master.csv data/quotes_master_clean.csv data/quotes_master_review.csv data/quotes_master_attention.csv'
+          if [ -z "$(git status --porcelain -- $paths)" ]; then
+            echo 'Master and audit outputs are already up to date.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/quotes_master.csv
-          git commit -m 'Build unified master quote library'
+          git add $paths
+          git commit -m 'Build unified master and audited quote library'
           git push
