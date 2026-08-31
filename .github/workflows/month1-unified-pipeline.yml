@@ -13,6 +13,13 @@ on:
         required: true
         default: false
         type: boolean
+  push:
+    paths:
+      - 'build_month1_pipeline.py'
+      - 'build_feed_preview.py'
+      - 'data/content_plan_month_01.csv'
+      - 'illustrations/objects/core/**'
+      - '.github/workflows/month1-unified-pipeline.yml'
 
 permissions:
   contents: write
@@ -34,13 +41,19 @@ jobs:
       - name: Resolve run mode
         shell: bash
         run: |
-          echo "POST_NUMBER=${{ inputs.post_number }}" >> "$GITHUB_ENV"
-          if [ "${{ inputs.publish }}" = "true" ]; then
-            echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
-            echo "Manual unified run: publishing enabled."
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "POST_NUMBER=${{ inputs.post_number }}" >> "$GITHUB_ENV"
+            if [ "${{ inputs.publish }}" = "true" ]; then
+              echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+              echo "Manual unified run: publishing enabled."
+            else
+              echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
+              echo "Manual unified run: build-only."
+            fi
           else
+            echo "POST_NUMBER=1" >> "$GITHUB_ENV"
             echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
-            echo "Manual unified run: build-only."
+            echo "Push validation: Post 1 build-only."
           fi
 
       - name: Set up Python
@@ -63,7 +76,7 @@ jobs:
 
       - name: Build finalized feed card and Reel
         env:
-          REQUIRE_REAL_AUDIO: ${{ inputs.publish }}
+          REQUIRE_REAL_AUDIO: ${{ github.event_name == 'workflow_dispatch' && inputs.publish || false }}
         run: python build_month1_pipeline.py
 
       - name: Verify build outputs
