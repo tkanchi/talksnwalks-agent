@@ -140,9 +140,9 @@ def compose(row: dict[str, str], output_path: Path) -> None:
 
     quote = (row.get('Quote') or '').strip()
     support = (row.get('SupportingText') or '').strip()
-    # SourceLine already contains the approved exact label, e.g.
-    # "Inspired by Book: The Gifts of Imperfection — Brené Brown".
-    source = (row.get('SourceLine') or '').strip()
+    source_type = (row.get('SourceType') or '').strip().lower()
+    book = (row.get('InspiredBy') or '').strip()
+    author = (row.get('Author') or '').strip()
     art_path = ILLUSTRATION_DIR / (row.get('Illustration') or '').strip()
     if not art_path.exists():
         raise FileNotFoundError(art_path)
@@ -155,7 +155,12 @@ def compose(row: dict[str, str], output_path: Path) -> None:
     handle_font = find_font(22, serif=False)
 
     support_wrapped = wrap_text(draw, support, support_font, 790) if support else ''
-    source_wrapped = wrap_text(draw, source, source_font, 820) if source else ''
+    source_wrapped = ''
+    if source_type == 'inspired_by' and book and author:
+        book_line = wrap_text(draw, f'— Inspired by Book: {book}', source_font, 820)
+        author_line = wrap_text(draw, f'by {author}', source_font, 820)
+        source_wrapped = f'{book_line}\n{author_line}'
+
     support_box = draw.multiline_textbbox((0, 0), support_wrapped, font=support_font, spacing=8, align='center') if support_wrapped else (0, 0, 0, 0)
     source_box = draw.multiline_textbbox((0, 0), source_wrapped, font=source_font, spacing=6, align='center') if source_wrapped else (0, 0, 0, 0)
     support_h = support_box[3] - support_box[1]
