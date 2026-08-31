@@ -7,6 +7,8 @@ Produces two additive outputs and does not alter live production inputs:
 The audit is intentionally conservative. Subjective issues are flagged for review,
 not silently rewritten or deleted. Existing high-confidence corrections from
 quote_text_quality.py are applied to the clean candidate copy only.
+
+Run directly or via the Phase 1.5 GitHub Actions audit workflow.
 """
 
 from __future__ import annotations
