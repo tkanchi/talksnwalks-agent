@@ -5,8 +5,11 @@ on:
   push:
     paths:
       - 'build_month1_content_plan.py'
+      - 'apply_supporting_text_month1.py'
       - 'data/quotes_master_clean.csv'
       - 'data/illustration_objects.csv'
+      - 'data/supporting_text_month_01.csv'
+      - '.github/workflows/build-month1-content-plan.yml'
 
 permissions:
   contents: write
@@ -23,6 +26,8 @@ jobs:
           python-version: '3.12'
       - name: Build Phase 3 content plan
         run: python build_month1_content_plan.py
+      - name: Apply Phase 3.5 supporting text
+        run: python apply_supporting_text_month1.py
       - name: Verify content plan
         run: |
           python - <<'PY'
@@ -33,7 +38,11 @@ jobs:
           assert len(rows) == 70, len(rows)
           assert len({r['QuoteID'] for r in rows}) == 70
           assert all(r['Illustration'] and r['Placement'] for r in rows)
-          print('Verified 70 unique mapped posts')
+          assert all(r['SupportingText'] for r in rows)
+          assert len({r['SupportingText'] for r in rows}) == 70
+          counts = [len(r['SupportingText'].replace('—', ' ').split()) for r in rows]
+          assert min(counts) >= 6 and max(counts) <= 14, (min(counts), max(counts))
+          print(f'Verified 70 unique mapped posts with supporting text ({min(counts)}-{max(counts)} words)')
           PY
       - name: Commit content plan
         run: |
