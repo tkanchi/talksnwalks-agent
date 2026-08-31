@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import math
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -27,6 +28,7 @@ BACKGROUND_RGB = {
     'petal': (251, 229, 238),
     'sky': (231, 243, 252),
 }
+CENTER_LIGHT = (255, 252, 246)
 
 
 def find_font(size: int, serif: bool = True, italic: bool = False):
@@ -36,11 +38,11 @@ def find_font(size: int, serif: bool = True, italic: bool = False):
             '/usr/share/fonts/truetype/liberation2/LiberationSerif-Italic.ttf' if italic else '/usr/share/fonts/truetype/liberation2/LiberationSerif-Regular.ttf',
         ]
     else:
-        # The approved template uses a clean, slightly condensed sans-serif face.
+        # Approved clean, narrow sans-serif look for the final feed template.
         candidates = [
             '/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed.ttf',
-            '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
             '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
+            '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
         ]
     for path in candidates:
         try:
@@ -103,20 +105,37 @@ def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
     return box[3] - box[1]
 
 
-def draw_divider(draw, y: int) -> None:
-    """Approved thin divider with a small centered diamond."""
+def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
+    """Soft pastel radial gradient with a lighter center, matching the approved proof."""
+    image = Image.new('RGB', (CANVAS_W, CANVAS_H), edge_rgb)
+    pixels = image.load()
+    cx = CANVAS_W / 2
+    cy = CANVAS_H * 0.48
+    max_distance = math.hypot(CANVAS_W * 0.62, CANVAS_H * 0.62)
+
+    for y in range(CANVAS_H):
+        for x in range(CANVAS_W):
+            distance = math.hypot(x - cx, y - cy) / max_distance
+            distance = min(1.0, distance)
+            # Bright center, gently returning to the selected pastel at the edges.
+            center_strength = 0.30 * (1.0 - distance) ** 1.7
+            pixels[x, y] = tuple(
+                round(edge_rgb[i] * (1.0 - center_strength) + CENTER_LIGHT[i] * center_strength)
+                for i in range(3)
+            )
+    return image
+
+
+def draw_bottom_divider(draw, y: int) -> None:
+    """Approved simple divider under the illustration and above the handle."""
+    half_line = 122
     center_x = CANVAS_W // 2
-    inner_gap = 18
-    half_line = 86
-    draw.line((center_x - half_line, y, center_x - inner_gap, y), fill=TEXT_SECONDARY, width=1)
-    draw.line((center_x + inner_gap, y, center_x + half_line, y), fill=TEXT_SECONDARY, width=1)
-    diamond = [(center_x, y - 5), (center_x + 5, y), (center_x, y + 5), (center_x - 5, y)]
-    draw.polygon(diamond, fill=TEXT_SECONDARY)
+    draw.line((center_x - half_line, y, center_x + half_line, y), fill=TEXT_SECONDARY, width=1)
 
 
 def compose(row: dict[str, str], output_path: Path) -> None:
     bg = BACKGROUND_RGB.get((row.get('BackgroundFamily') or '').strip(), BACKGROUND_RGB['vanilla'])
-    canvas = Image.new('RGB', (CANVAS_W, CANVAS_H), bg)
+    canvas = build_background(bg)
     draw = ImageDraw.Draw(canvas)
 
     quote = (row.get('Quote') or '').strip()
@@ -126,13 +145,12 @@ def compose(row: dict[str, str], output_path: Path) -> None:
     if not art_path.exists():
         raise FileNotFoundError(art_path)
 
-    # Finalized main quote: clean condensed sans-serif, reduced scale, generous space.
+    # Approved main quote hierarchy: clean sans-serif, calm scale and generous whitespace.
     quote_wrapped, quote_font, _, quote_h = fit_wrapped(
         draw, quote, max_width=850, max_height=440, max_size=60, min_size=38, spacing=10
     )
-    # Final review: supporting line and source line each increased by one point.
     support_font = find_font(31, serif=False)
-    source_font = find_font(21, serif=False)
+    source_font = find_font(23, serif=False)
     handle_font = find_font(22, serif=False)
 
     support_wrapped = wrap_text(draw, support, support_font, 790) if support else ''
@@ -145,27 +163,24 @@ def compose(row: dict[str, str], output_path: Path) -> None:
     art = fit_art(art_path)
     handle_w, handle_h = text_size(draw, HANDLE, handle_font)
 
-    divider_gap_top = 28
-    divider_h = 10
-    divider_gap_bottom = 28
-    support_gap_bottom = 30
+    quote_gap_bottom = 42
+    support_gap_bottom = 34
     source_gap_bottom = 30
-    art_gap_bottom = 18
+    art_gap_bottom = 22
+    divider_gap_bottom = 22
 
     content_height = (
-        quote_h + divider_gap_top + divider_h + divider_gap_bottom
+        quote_h + quote_gap_bottom
         + support_h + (support_gap_bottom if support_h else 0)
         + source_h + (source_gap_bottom if source_h else 0)
-        + art.height + art_gap_bottom + handle_h
+        + art.height + art_gap_bottom
+        + 1 + divider_gap_bottom + handle_h
     )
 
-    # Keep the composition calm and centered with generous outer margins.
-    y = max(85, int((CANVAS_H - content_height) / 2) - 8)
+    y = max(80, int((CANVAS_H - content_height) / 2) - 4)
 
     y += draw_centered_multiline(draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=10)
-    y += divider_gap_top
-    draw_divider(draw, int(y + divider_h / 2))
-    y += divider_h + divider_gap_bottom
+    y += quote_gap_bottom
 
     if support_wrapped:
         y += draw_centered_multiline(draw, support_wrapped, y, support_font, TEXT_PRIMARY, spacing=8)
@@ -178,6 +193,9 @@ def compose(row: dict[str, str], output_path: Path) -> None:
     art_x = (CANVAS_W - art.width) // 2
     canvas.paste(art, (art_x, int(y)), art)
     y += art.height + art_gap_bottom
+
+    draw_bottom_divider(draw, int(y))
+    y += divider_gap_bottom
 
     draw.text(((CANVAS_W - handle_w) / 2, y), HANDLE, font=handle_font, fill=TEXT_SECONDARY)
 
