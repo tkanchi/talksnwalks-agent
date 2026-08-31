@@ -26,6 +26,13 @@ HANDLE = '@talksnwalks101'
 TEXT_PRIMARY = (23, 22, 20)
 BROWN = (118, 76, 48)
 
+# Consistent vertical rhythm between the main content blocks.
+GAP_QUOTE_TO_SUPPORT = 58
+GAP_SUPPORT_TO_SOURCE = 58
+GAP_SOURCE_TO_ART = 58
+GAP_ART_TO_DIVIDER = 34
+GAP_DIVIDER_TO_HANDLE = 22
+
 # The center stays very light while the perimeter carries a visible warm pastel tint.
 BACKGROUND_RGB = {
     'vanilla': (248, 220, 183),
@@ -207,28 +214,27 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
     art = fit_art(art_path)
     handle_w, _ = text_size(draw, HANDLE, handle_font)
 
-    # Match the approved reference proportions: generous top margin and stable
-    # horizontal margins, without compressing the lower visual group upward.
+    # Keep the approved top position while using one consistent rhythm below it.
     y = 150
     y += draw_centered_multiline(draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=14)
-    y += 50
 
     if support_wrapped:
+        y += GAP_QUOTE_TO_SUPPORT
         y += draw_centered_multiline(draw, support_wrapped, y, support_font, TEXT_PRIMARY, spacing=9)
-        y += 46
 
     if source_type == 'inspired_by' and book and author:
+        y += GAP_SUPPORT_TO_SOURCE
         y += draw_attribution(draw, book, author, y, size=25)
 
-    # Anchor the illustration independently so attribution length cannot squeeze it.
-    art_y = max(y + 30, 825)
+    # Keep source-to-art spacing consistent instead of forcing art to y >= 825.
+    art_y = y + GAP_SOURCE_TO_ART
     art_x = (CANVAS_W - art.width) // 2
     canvas.paste(art, (art_x, art_y), art)
 
-    divider_y = min(max(1115, art_y + art.height + 30), 1182)
+    divider_y = min(art_y + art.height + GAP_ART_TO_DIVIDER, 1182)
     draw_bottom_divider(draw, divider_y)
 
-    handle_y = divider_y + 22
+    handle_y = divider_y + GAP_DIVIDER_TO_HANDLE
     draw.text(
         ((CANVAS_W - handle_w) / 2, handle_y),
         HANDLE,
