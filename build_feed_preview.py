@@ -14,12 +14,14 @@ OUTPUT_DIR = ROOT / 'outputs' / 'feed_preview'
 
 CANVAS_W = 1080
 CANVAS_H = 1920
+LAYOUT_H = 1350
 HANDLE = '@talksnwalks101'
 
 # Locked 9:16 portrait-post proof direction from the approved reference:
+# - preserve the approved 4:5 typography/layout geometry exactly
+# - add only extra vertical canvas above and below that 4:5 layout box
 # - clean regular sans-serif quote
 # - visible warm cream vignette/gradient
-# - generous margins and vertical breathing room
 # - readable supporting line
 # - brown attribution, divider and handle
 # - illustration centered above the divider
@@ -235,9 +237,10 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
     total_h += GAP_ART_TO_DIVIDER + 2
     total_h += GAP_DIVIDER_TO_HANDLE + handle_h
 
-    # Center the complete quote/support/source/art/divider/handle stack as one unit.
-    # On the taller 9:16 canvas this preserves the approved spacing without stretching.
-    y = max(40, (CANVAS_H - total_h) // 2)
+    # Keep the exact approved 4:5 layout geometry and place that 1350px layout
+    # box inside the taller 1920px canvas. Only the outer canvas grows.
+    layout_offset_y = (CANVAS_H - LAYOUT_H) // 2
+    y = layout_offset_y + max(40, (LAYOUT_H - total_h) // 2)
     y += draw_centered_multiline(draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=14)
 
     if support_wrapped:
