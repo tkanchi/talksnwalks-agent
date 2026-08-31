@@ -33,7 +33,7 @@ jobs:
           python - <<'PY'
           import csv
           from pathlib import Path
-          from build_month1_content_plan import TARGET
+          from build_month1_content_plan import TARGET, is_youth_safe
           p = Path('data/content_plan_month_01.csv')
           rows = list(csv.DictReader(p.open(newline='', encoding='utf-8')))
           assert len(rows) == TARGET, len(rows)
@@ -42,9 +42,10 @@ jobs:
           assert all(r['SupportingText'] for r in rows)
           assert len({r['SupportingText'] for r in rows}) == TARGET
           assert all(r['SourceType'] == 'inspired_by' and r['InspiredBy'] and r['Author'] for r in rows)
+          assert all(is_youth_safe(r) for r in rows)
           counts = [len(r['SupportingText'].replace('—', ' ').split()) for r in rows]
           assert min(counts) >= 6 and max(counts) <= 14, (min(counts), max(counts))
-          print(f'Verified {TARGET} unique book-inspired mapped posts with supporting text ({min(counts)}-{max(counts)} words)')
+          print(f'Verified {TARGET} unique book-inspired mapped posts with youth safety and supporting text ({min(counts)}-{max(counts)} words)')
           PY
       - name: Commit content plan
         run: |
