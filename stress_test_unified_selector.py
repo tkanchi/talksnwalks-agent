@@ -37,15 +37,15 @@ ROBOTIC_SUPPORT_PREFIXES = (
 MIN_UNIQUE_ILLUSTRATIONS = 20
 MAX_ILLUSTRATION_USES = 3
 
-# These were concrete contradictions found during the previous visual/content
-# audit. If they appear in the same seeded 30-post window, the corrected support
-# and semantic caption category must now agree with the actual quote wording.
+# Concrete contradictions found during the previous visual/content audit. A
+# None focus means the row has an approved human-written support line; preserve
+# that wording and validate only the semantic caption category.
 KNOWN_QA_EXPECTATIONS = {
     'WEMP196': ('leadership', 'Business'),
     'WEMP287': ('leadership', 'Business'),
     'SG079': ('goals', 'Mindset'),
     'WEMP364': ('body confidence', 'Wellness'),
-    'WEMP054': ('peace', 'Mindset'),
+    'WEMP054': (None, 'Mindset'),
     'SG358': ('resilience', 'Mindset'),
 }
 
@@ -108,7 +108,7 @@ def main() -> None:
         quote_id = payload['quote_id']
         if quote_id in KNOWN_QA_EXPECTATIONS:
             expected_focus, expected_category = KNOWN_QA_EXPECTATIONS[quote_id]
-            focus_ok = expected_focus in support
+            focus_ok = expected_focus is None or expected_focus in support
             category_ok = caption_category == expected_category
             qa_checks[quote_id] = {
                 'expected_focus': expected_focus,
