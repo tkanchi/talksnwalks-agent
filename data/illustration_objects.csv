@@ -29,3 +29,19 @@ OBJ027,Water Bottle,water_bottle,"Health|Fitness|Rest & Recovery","Sports|Body C
 OBJ028,Bicycle,bicycle,"Childhood Nostalgia|Health|Travel & Adventure","Sports|Happiness","bicycle,childhood,movement,adventure","bottom_left|bottom_right",approved
 OBJ029,Heart Outline,heart_outline,"Love|Kindness|Relationships","Friendship|Family|Marriage","heart,love,kindness,relationship,family","bottom_center|bottom_right",approved
 OBJ030,Home,home,"Family|Parenting|Childhood Nostalgia","Mother|Father|Siblings|Marriage","home,family,belonging,parenting,childhood","bottom_center|bottom_right",approved
+OBJ031,Chess King,chess_king,"Leadership|CEO Mindset","Strategy & Decision-Making|Integrity & Character","chess,king,leadership,responsibility","bottom_left|bottom_right",approved
+OBJ032,Chess Queen,chess_queen,"Leadership|Self-Belief","Strategy & Decision-Making|CEO Mindset","chess,queen,confidence,leadership","bottom_left|bottom_right",approved
+OBJ033,Chess Rook,chess_rook,"Strategy & Decision-Making|Execution","Discipline|Leadership","chess,rook,strategy,structure,execution","bottom_left|bottom_right",approved
+OBJ034,Chess Bishop,chess_bishop,"Strategy & Decision-Making|Purpose & Meaning","Leadership|Spirituality","chess,bishop,strategy,purpose,reflection","bottom_left|bottom_right",approved
+OBJ035,Chess Knight Alt,chess_knight_02,"Strategy & Decision-Making|Courage","Leadership|Execution","chess,knight,courage,strategy","bottom_left|bottom_right",approved
+OBJ036,Chess Pawn,chess_pawn,"Growth|Discipline","Execution|Goals","chess,pawn,progress,discipline,small-steps","bottom_left|bottom_right",approved
+OBJ037,Wildflower Sprig,wildflower_sprig,"Gratitude|Happiness","Peace|Kindness|Growth","flower,wildflower,gratitude,joy,nature","bottom_left|bottom_right",approved
+OBJ038,Tulip,tulip,"Love|Happiness","Gratitude|Hope","flower,tulip,love,hope,nature","bottom_left|bottom_right",approved
+OBJ039,Daisy,daisy,"Happiness|Kindness","Gratitude|Childhood Nostalgia","flower,daisy,joy,kindness,nature","bottom_left|bottom_right",approved
+OBJ040,Rosebud,rosebud,"Love|Relationships","Hope|Growth","flower,rosebud,love,growth,nature","bottom_left|bottom_right",approved
+OBJ041,Botanical Sprig,botanical_sprig,"Peace|Gratitude","Mental Health|Spirituality","botanical,leaf,calm,gratitude,nature","bottom_left|bottom_right",approved
+OBJ042,Eucalyptus,eucalyptus,"Peace|Mental Health","Rest & Recovery|Health","eucalyptus,leaf,calm,wellness,nature","bottom_left|bottom_right",approved
+OBJ043,Monstera Leaf,monstera_leaf,"Lifestyle|Peace","Health|Travel & Adventure","monstera,leaf,lifestyle,nature,calm","bottom_left|bottom_right",approved
+OBJ044,Fern,fern,"Growth|Peace","Resilience|Spirituality","fern,growth,nature,calm,resilience","bottom_left|bottom_right",approved
+OBJ045,Potted Plant,potted_plant,"Growth|Health","Work-Life Balance|Gratitude","plant,pot,growth,wellness,home","bottom_left|bottom_right",approved
+OBJ046,Potted Plant Alt,potted_plant_02,"Growth|Work-Life Balance","Health|Family","plant,pot,growth,home,balance","bottom_left|bottom_right",approved
