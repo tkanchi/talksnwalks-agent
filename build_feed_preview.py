@@ -13,10 +13,10 @@ ILLUSTRATION_DIR = ROOT / 'illustrations' / 'objects' / 'core'
 OUTPUT_DIR = ROOT / 'outputs' / 'feed_preview'
 
 CANVAS_W = 1080
-CANVAS_H = 1350
+CANVAS_H = 1920
 HANDLE = '@talksnwalks101'
 
-# Locked 4:5 feed-post proof direction from the approved reference:
+# Locked 9:16 portrait-post proof direction from the approved reference:
 # - clean regular sans-serif quote
 # - visible warm cream vignette/gradient
 # - generous margins and vertical breathing room
@@ -236,6 +236,7 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
     total_h += GAP_DIVIDER_TO_HANDLE + handle_h
 
     # Center the complete quote/support/source/art/divider/handle stack as one unit.
+    # On the taller 9:16 canvas this preserves the approved spacing without stretching.
     y = max(40, (CANVAS_H - total_h) // 2)
     y += draw_centered_multiline(draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=14)
 
