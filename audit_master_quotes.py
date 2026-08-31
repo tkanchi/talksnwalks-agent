@@ -153,6 +153,16 @@ def audit() -> tuple[int, int, int, Counter[str]]:
     if not rows:
         raise RuntimeError("Master quote library is empty")
 
+    non_book_ids = [
+        _clean(row.get("QuoteID")) or "<missing QuoteID>"
+        for row in rows
+        if _clean(row.get("SourceType")).lower() != "inspired_by"
+    ]
+    if non_book_ids:
+        raise RuntimeError(
+            "Publishing master contains non-book content: " + ", ".join(non_book_ids[:10])
+        )
+
     review_fields = list(rows[0].keys()) + [
         "CandidateQuote", "WordCount", "QualityStatus", "ReviewFlags"
     ]
