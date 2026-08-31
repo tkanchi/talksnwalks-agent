@@ -49,7 +49,7 @@ jobs:
 
       - name: Commit generated master library
         run: |
-          if git diff --quiet -- data/quotes_master.csv; then
+          if [ -z "$(git status --porcelain -- data/quotes_master.csv)" ]; then
             echo 'Master library is already up to date.'
             exit 0
           fi
