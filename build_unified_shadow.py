@@ -19,7 +19,7 @@ from select_next_post import (
 )
 
 ROOT = Path(__file__).resolve().parent
-HISTORY_FILE = ROOT / "shadow_logs" / "unified" / "selection_history.json"
+HISTORY_FILE = ROOT / "shadow_logs" / "unified" / "selection_history_active.json"
 OUTPUT_DIR = ROOT / "outputs" / "unified_shadow"
 TZ = ZoneInfo("Asia/Kolkata")
 HANDLE = "@talksnwalks101"
