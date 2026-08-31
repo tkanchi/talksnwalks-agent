@@ -49,7 +49,7 @@ SEMANTIC_REVIEW_FLAGS = {
 # semantic flag, and hard data-quality failures still exclude them.
 MANUAL_APPROVE_IDS = {
     "CH035", "CH038", "CH082",
-    "MEN021", "MEN024",
+    "MEN006", "MEN021", "MEN024",
     "SG104", "SG172", "SG176", "SG279", "SG365",
     "UC082",
     "WEMP043", "WEMP080", "WEMP092", "WEMP110", "WEMP145", "WEMP160", "WEMP188",
