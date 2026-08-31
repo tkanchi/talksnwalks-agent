@@ -2,7 +2,8 @@
 
 This is Phase 1 of the unified Talk N Walks content model. It is deliberately
 additive: production builders continue to use their existing source files until
-the unified selector has been tested and approved.
+the unified selector has been tested and approved. The generated CSV is the
+single consolidated data source for the next migration phase.
 """
 
 from __future__ import annotations
