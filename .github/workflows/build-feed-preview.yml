@@ -22,7 +22,9 @@ jobs:
           python-version: '3.12'
       - name: Install Pillow
         run: python -m pip install --upgrade pillow
-      - name: Build first 8 feed previews
+      - name: Build final single feed proof
+        env:
+          PREVIEW_COUNT: '1'
         run: python build_feed_preview.py
       - name: Verify preview dimensions
         run: |
@@ -30,14 +32,13 @@ jobs:
           from pathlib import Path
           from PIL import Image
           files = sorted(Path('outputs/feed_preview').glob('*.png'))
-          assert len(files) == 8, len(files)
-          for path in files:
-              with Image.open(path) as im:
-                  assert im.size == (1080, 1350), (path, im.size)
-          print('Verified 8 previews at 1080x1350')
+          assert len(files) == 1, len(files)
+          with Image.open(files[0]) as im:
+              assert im.size == (1080, 1350), (files[0], im.size)
+          print('Verified 1 proof at 1080x1350')
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: feed-preview-first-8
+          name: feed-preview-final-proof
           path: outputs/feed_preview/*.png
           if-no-files-found: error
