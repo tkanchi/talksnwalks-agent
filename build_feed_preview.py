@@ -36,7 +36,9 @@ def find_font(size: int, serif: bool = True, italic: bool = False):
             '/usr/share/fonts/truetype/liberation2/LiberationSerif-Italic.ttf' if italic else '/usr/share/fonts/truetype/liberation2/LiberationSerif-Regular.ttf',
         ]
     else:
+        # The approved template uses a clean, slightly condensed sans-serif face.
         candidates = [
+            '/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed.ttf',
             '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
             '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
         ]
@@ -68,12 +70,12 @@ def wrap_text(draw, text: str, font, max_width: int) -> str:
 
 def fit_wrapped(draw, text: str, *, max_width: int, max_height: int, max_size: int, min_size: int, spacing: int):
     for size in range(max_size, min_size - 1, -1):
-        font = find_font(size, serif=True)
+        font = find_font(size, serif=False)
         wrapped = wrap_text(draw, text, font, max_width)
         box = draw.multiline_textbbox((0, 0), wrapped, font=font, spacing=spacing, align='center')
         if box[2] - box[0] <= max_width and box[3] - box[1] <= max_height:
             return wrapped, font, box[2] - box[0], box[3] - box[1]
-    font = find_font(min_size, serif=True)
+    font = find_font(min_size, serif=False)
     wrapped = wrap_text(draw, text, font, max_width)
     box = draw.multiline_textbbox((0, 0), wrapped, font=font, spacing=spacing, align='center')
     return wrapped, font, box[2] - box[0], box[3] - box[1]
@@ -101,6 +103,17 @@ def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
     return box[3] - box[1]
 
 
+def draw_divider(draw, y: int) -> None:
+    """Approved thin divider with a small centered diamond."""
+    center_x = CANVAS_W // 2
+    inner_gap = 18
+    half_line = 86
+    draw.line((center_x - half_line, y, center_x - inner_gap, y), fill=TEXT_SECONDARY, width=1)
+    draw.line((center_x + inner_gap, y, center_x + half_line, y), fill=TEXT_SECONDARY, width=1)
+    diamond = [(center_x, y - 5), (center_x + 5, y), (center_x, y + 5), (center_x - 5, y)]
+    draw.polygon(diamond, fill=TEXT_SECONDARY)
+
+
 def compose(row: dict[str, str], output_path: Path) -> None:
     bg = BACKGROUND_RGB.get((row.get('BackgroundFamily') or '').strip(), BACKGROUND_RGB['vanilla'])
     canvas = Image.new('RGB', (CANVAS_W, CANVAS_H), bg)
@@ -113,15 +126,17 @@ def compose(row: dict[str, str], output_path: Path) -> None:
     if not art_path.exists():
         raise FileNotFoundError(art_path)
 
+    # Finalized main quote: clean condensed sans-serif, reduced scale, generous space.
     quote_wrapped, quote_font, _, quote_h = fit_wrapped(
-        draw, quote, max_width=900, max_height=550, max_size=72, min_size=44, spacing=12
+        draw, quote, max_width=850, max_height=440, max_size=60, min_size=38, spacing=10
     )
-    support_font = find_font(30, serif=True)
-    source_font = find_font(20, serif=True)
+    # Final review: supporting line and source line each increased by one point.
+    support_font = find_font(31, serif=False)
+    source_font = find_font(21, serif=False)
     handle_font = find_font(22, serif=False)
 
-    support_wrapped = wrap_text(draw, support, support_font, 770) if support else ''
-    source_wrapped = wrap_text(draw, source, source_font, 790) if source else ''
+    support_wrapped = wrap_text(draw, support, support_font, 790) if support else ''
+    source_wrapped = wrap_text(draw, source, source_font, 820) if source else ''
     support_box = draw.multiline_textbbox((0, 0), support_wrapped, font=support_font, spacing=8, align='center') if support_wrapped else (0, 0, 0, 0)
     source_box = draw.multiline_textbbox((0, 0), source_wrapped, font=source_font, spacing=6, align='center') if source_wrapped else (0, 0, 0, 0)
     support_h = support_box[3] - support_box[1]
@@ -130,11 +145,11 @@ def compose(row: dict[str, str], output_path: Path) -> None:
     art = fit_art(art_path)
     handle_w, handle_h = text_size(draw, HANDLE, handle_font)
 
-    divider_gap_top = 30
-    divider_h = 2
-    divider_gap_bottom = 26
-    support_gap_bottom = 26
-    source_gap_bottom = 26
+    divider_gap_top = 28
+    divider_h = 10
+    divider_gap_bottom = 28
+    support_gap_bottom = 30
+    source_gap_bottom = 30
     art_gap_bottom = 18
 
     content_height = (
@@ -144,14 +159,12 @@ def compose(row: dict[str, str], output_path: Path) -> None:
         + art.height + art_gap_bottom + handle_h
     )
 
-    # Bias upward slightly but keep generous margins.
-    y = max(80, int((CANVAS_H - content_height) / 2) - 15)
+    # Keep the composition calm and centered with generous outer margins.
+    y = max(85, int((CANVAS_H - content_height) / 2) - 8)
 
-    y += draw_centered_multiline(draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=12)
+    y += draw_centered_multiline(draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=10)
     y += divider_gap_top
-    line_w = 120
-    line_y = y
-    draw.line(((CANVAS_W - line_w) / 2, line_y, (CANVAS_W + line_w) / 2, line_y), fill=TEXT_SECONDARY, width=1)
+    draw_divider(draw, int(y + divider_h / 2))
     y += divider_h + divider_gap_bottom
 
     if support_wrapped:
