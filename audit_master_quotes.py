@@ -39,6 +39,17 @@ HARD_FLAGS = {
     "missing_book_attribution",
 }
 
+# Informational signals such as gender-coded wording and a negative-command
+# opener are useful for later selector variety, but are not quality failures.
+SEMANTIC_REVIEW_FLAGS = {
+    "aggressive_tone",
+    "very_short",
+    "very_long",
+    "legacy_unattributed",
+    "missing_source_type",
+    "topic_category_mismatch",
+}
+
 GENDER_TERMS = re.compile(
     r"\b(man|men|male|woman|women|female|boy|boys|girl|girls|husband|wife|son|daughter)\b",
     re.IGNORECASE,
@@ -121,7 +132,7 @@ def _flags(row: dict[str, str], topics: dict[str, str]) -> list[str]:
 def _status(flags: list[str]) -> str:
     if any(flag in HARD_FLAGS for flag in flags):
         return "exclude"
-    if flags:
+    if any(flag in SEMANTIC_REVIEW_FLAGS for flag in flags):
         return "review"
     return "approved"
 
@@ -164,7 +175,6 @@ def audit() -> tuple[int, int, int, Counter[str]]:
         if status != "approved":
             attention.append(reviewed_row)
 
-        # The clean candidate is deliberately strict: only deterministic passes.
         if status == "approved":
             clean_rows.append({**row, "Quote": candidate_quote, "QualityStatus": "approved"})
 
