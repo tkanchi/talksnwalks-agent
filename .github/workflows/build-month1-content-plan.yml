@@ -1,0 +1,48 @@
+name: Build month-one content plan
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'build_month1_content_plan.py'
+      - 'data/quotes_master_clean.csv'
+      - 'data/illustration_objects.csv'
+
+permissions:
+  contents: write
+
+jobs:
+  build-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build Phase 3 content plan
+        run: python build_month1_content_plan.py
+      - name: Verify content plan
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          p = Path('data/content_plan_month_01.csv')
+          rows = list(csv.DictReader(p.open(newline='', encoding='utf-8')))
+          assert len(rows) == 70, len(rows)
+          assert len({r['QuoteID'] for r in rows}) == 70
+          assert all(r['Illustration'] and r['Placement'] for r in rows)
+          print('Verified 70 unique mapped posts')
+          PY
+      - name: Commit content plan
+        run: |
+          if [ -z "$(git status --porcelain -- data/content_plan_month_01.csv)" ]; then
+            echo 'Content plan already up to date.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/content_plan_month_01.csv
+          git commit -m 'Build Phase 3 month-one content plan'
+          git push
