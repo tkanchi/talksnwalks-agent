@@ -156,11 +156,11 @@ def filename_for_stem(stem: str) -> str:
 
 
 def semantic_topics(quote: dict[str, str]) -> set[str]:
+    # Use only the actual copy shown to the audience. Legacy Theme fields can be
+    # stale and must not override clear quote semantics for illustration choice.
     text = ' ' + ' '.join([
         clean(quote.get('Quote')),
         clean(quote.get('SupportingText')),
-        clean(quote.get('Theme')),
-        clean(quote.get('OriginalTheme')),
     ]).lower() + ' '
     found = set()
     for topic, needles in SEMANTIC_TOPIC_KEYWORDS.items():
@@ -178,7 +178,6 @@ def object_score(obj: dict[str, str], quote: dict[str, str]) -> int:
     otags = split_tags(obj.get('Tags', ''))
     score = 0
 
-    # Strong quote semantics override stale legacy taxonomy for the visual match.
     if hints:
         score += 170 * len(hints & primary)
         score += 90 * len(hints & secondary)
