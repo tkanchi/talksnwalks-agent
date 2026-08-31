@@ -8,7 +8,8 @@ Produces additive outputs and does not alter live production inputs:
 High-confidence copy edits come from quote_text_quality.py. Human-reviewed false
 positives are explicitly approved only for book-inspired rows; non-book sources
 are not eligible for manual approval or publishing. SupportingText completeness,
-length, and basic editorial-naturalness are hard publishing requirements.
+length, editorial-naturalness, and corpus-level voice diversity are hard
+publishing requirements.
 """
 
 from __future__ import annotations
@@ -74,6 +75,8 @@ ROBOTIC_SUPPORT_PREFIXES = (
     "this takeaway ",
     "the idea ",
 )
+SUPPORT_LEAD_WORDS = 4
+MAX_SUPPORT_LEAD_REPEAT = 30
 
 
 def _clean(value: object) -> str:
@@ -91,6 +94,11 @@ def _load_topics() -> dict[str, str]:
 
 def _word_count(text: str) -> int:
     return len(re.findall(r"\b[\w’'-]+\b", text))
+
+
+def _support_lead(text: str) -> str:
+    words = re.findall(r"\b[\w’'-]+\b", _clean(text).casefold())
+    return " ".join(words[:SUPPORT_LEAD_WORDS])
 
 
 def _flags(row: dict[str, str], topics: dict[str, str]) -> list[str]:
@@ -175,6 +183,18 @@ def audit() -> tuple[int, int, int, Counter[str]]:
             "Publishing master contains non-book content: " + ", ".join(non_book_ids[:10])
         )
 
+    support_leads = Counter(
+        _support_lead(row.get("SupportingText", ""))
+        for row in rows
+        if _clean(row.get("SupportingText"))
+    )
+    if support_leads:
+        lead, count = support_leads.most_common(1)[0]
+        if count > MAX_SUPPORT_LEAD_REPEAT:
+            raise RuntimeError(
+                f"SupportingText voice is too repetitive: '{lead}' appears {count} times"
+            )
+
     review_fields = list(rows[0].keys()) + [
         "CandidateQuote", "WordCount", "QualityStatus", "ReviewFlags"
     ]
@@ -231,6 +251,9 @@ def audit() -> tuple[int, int, int, Counter[str]]:
     print(f"Review-required rows: {statuses['review']}")
     print(f"Excluded rows: {statuses['exclude']}")
     print(f"Attention rows: {len(attention)}")
+    if support_leads:
+        lead, count = support_leads.most_common(1)[0]
+        print(f"Most common SupportingText {SUPPORT_LEAD_WORDS}-word lead: {count} ({lead})")
     print("Flag counts:")
     for flag, count in sorted(flag_counts.items()):
         print(f"  {flag}: {count}")
