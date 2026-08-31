@@ -1,0 +1,60 @@
+name: Rebuild master quote library
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'build_master_quotes.py'
+      - 'data/library/*.csv'
+      - 'data/topics.csv'
+      - 'data/theme_mappings.csv'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build unified master quote library
+        run: python build_master_quotes.py
+
+      - name: Verify master library
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          path = Path('data/quotes_master.csv')
+          if not path.exists():
+              raise SystemExit('data/quotes_master.csv was not generated')
+          with path.open(newline='', encoding='utf-8') as f:
+              rows = list(csv.DictReader(f))
+          if not rows:
+              raise SystemExit('master quote library is empty')
+          required = {'QuoteID','Quote','Audience','TopicCategory','Topic','Theme','SourceType','InspiredBy','Author','AttributionNote','OriginalTheme','SourceURL','SourceFile','DuplicateOf'}
+          missing = required - set(rows[0])
+          if missing:
+              raise SystemExit(f'missing columns: {sorted(missing)}')
+          print(f'Verified {len(rows)} master quote rows')
+          PY
+
+      - name: Commit generated master library
+        run: |
+          if git diff --quiet -- data/quotes_master.csv; then
+            echo 'Master library is already up to date.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/quotes_master.csv
+          git commit -m 'Build unified master quote library'
+          git push
