@@ -4,18 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       start_date:
-        description: "Optional YYYY-MM-DD start date; blank continues after shadow history"
+        description: "Optional YYYY-MM-DD start date; blank continues after active shadow history"
         required: false
         default: ""
       count:
         description: "Number of consecutive shadow packages"
         required: false
         default: "10"
-  push:
-    branches: [main]
-    paths:
-      - 'build_unified_shadow.py'
-      - '.github/workflows/unified-shadow-agent.yml'
 
 permissions:
   contents: write
@@ -85,7 +80,7 @@ jobs:
           root = Path('outputs/unified_shadow')
           expected = int(os.getenv('EXPECTED_COUNT') or '10')
           manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8'))
-          history = json.loads(Path('shadow_logs/unified/selection_history.json').read_text(encoding='utf-8'))
+          history = json.loads(Path('shadow_logs/unified/selection_history_active.json').read_text(encoding='utf-8'))
 
           assert len(manifest) == expected, len(manifest)
           assert history.get('mode') == 'shadow'
@@ -118,16 +113,16 @@ jobs:
           print(f'Verified {expected} complete shadow packages; published=false')
           PY
 
-      - name: Persist shadow selection history
+      - name: Persist active shadow selection history
         run: |
-          if [ -z "$(git status --porcelain -- shadow_logs/unified/selection_history.json)" ]; then
-            echo 'Shadow history is unchanged.'
+          if [ -z "$(git status --porcelain -- shadow_logs/unified/selection_history_active.json)" ]; then
+            echo 'Active shadow history is unchanged.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add shadow_logs/unified/selection_history.json
-          git commit -m 'Advance unified shadow selection history'
+          git add shadow_logs/unified/selection_history_active.json
+          git commit -m 'Advance active unified shadow history'
           git push
 
       - uses: actions/upload-artifact@v4
