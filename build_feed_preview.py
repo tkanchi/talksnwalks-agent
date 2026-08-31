@@ -16,30 +16,30 @@ CANVAS_W = 1080
 CANVAS_H = 1350
 HANDLE = '@talksnwalks101'
 
-# Final approved 4:5 feed-post direction:
-# - clean regular sans-serif main quote
-# - visible warm cream radial/vignette gradient
+# Locked 4:5 feed-post proof direction from the approved reference:
+# - clean regular sans-serif quote
+# - visible warm cream vignette/gradient
+# - generous margins and vertical breathing room
 # - readable supporting line
-# - brown source line, divider and handle
-# - illustration centered near the bottom
-TEXT_PRIMARY = (24, 22, 20)
-TEXT_SECONDARY = (118, 74, 45)
+# - brown attribution, divider and handle
+# - illustration centered above the divider
+TEXT_PRIMARY = (23, 22, 20)
+BROWN = (118, 76, 48)
 
-# Very light edge tints. The center is intentionally near-white so every family
-# keeps the same luminous gradient look as the approved cream reference.
+# The center stays very light while the perimeter carries a visible warm pastel tint.
 BACKGROUND_RGB = {
-    'vanilla': (254, 221, 181),
-    'seafoam': (220, 241, 228),
-    'powder': (220, 235, 249),
-    'blush': (248, 220, 224),
-    'lavender': (233, 221, 247),
-    'apricot': (253, 218, 186),
-    'ice': (230, 243, 250),
-    'mint': (226, 246, 233),
-    'petal': (247, 220, 235),
-    'sky': (219, 236, 249),
+    'vanilla': (248, 220, 183),
+    'seafoam': (216, 238, 224),
+    'powder': (217, 233, 247),
+    'blush': (247, 218, 222),
+    'lavender': (232, 220, 246),
+    'apricot': (250, 215, 183),
+    'ice': (228, 241, 249),
+    'mint': (223, 243, 231),
+    'petal': (246, 219, 233),
+    'sky': (217, 234, 248),
 }
-CENTER_LIGHT = (255, 251, 244)
+CENTER_LIGHT = (255, 252, 246)
 
 
 def find_font(size: int, *, italic: bool = False):
@@ -86,7 +86,7 @@ def fit_wrapped(draw, text: str, *, max_width: int, max_height: int, max_size: i
     return wrapped, font, box[2] - box[0], box[3] - box[1]
 
 
-def fit_art(path: Path, max_w: int = 210, max_h: int = 245) -> Image.Image:
+def fit_art(path: Path, max_w: int = 225, max_h: int = 260) -> Image.Image:
     art = Image.open(path).convert('RGBA')
     bbox = art.getchannel('A').getbbox()
     if bbox:
@@ -109,34 +109,53 @@ def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
 
 
 def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
-    """Visible premium vignette: near-white center and warm pastel perimeter."""
+    """Soft luminous gradient with a near-white center and warm pastel perimeter."""
     image = Image.new('RGB', (CANVAS_W, CANVAS_H), edge_rgb)
     pixels = image.load()
 
     cx = CANVAS_W / 2
-    cy = CANVAS_H * 0.47
-    radius_x = CANVAS_W * 0.57
-    radius_y = CANVAS_H * 0.64
+    cy = CANVAS_H * 0.44
+    radius_x = CANVAS_W * 0.62
+    radius_y = CANVAS_H * 0.72
 
     for y in range(CANVAS_H):
         dy = (y - cy) / radius_y
         for x in range(CANVAS_W):
             dx = (x - cx) / radius_x
             distance = min(1.0, math.sqrt(dx * dx + dy * dy))
-            light_mix = 0.96 * (1.0 - distance) ** 1.30
+            # Strong center lift, with a gentle warm falloff toward all edges.
+            center_mix = 0.94 * (1.0 - distance) ** 1.55
             pixels[x, y] = tuple(
-                round(edge_rgb[i] * (1.0 - light_mix) + CENTER_LIGHT[i] * light_mix)
+                round(edge_rgb[i] * (1.0 - center_mix) + CENTER_LIGHT[i] * center_mix)
                 for i in range(3)
             )
     return image
 
 
+def draw_attribution(draw, book: str, author: str, y: int, size: int = 25) -> int:
+    regular = find_font(size)
+    italic = find_font(size, italic=True)
+    prefix = '— Inspired by '
+    prefix_w, _ = text_size(draw, prefix, regular)
+    book_w, line_h = text_size(draw, book, italic)
+    total_w = prefix_w + book_w
+    x = (CANVAS_W - total_w) / 2
+    draw.text((x, y), prefix, font=regular, fill=BROWN)
+    draw.text((x + prefix_w, y), book, font=italic, fill=BROWN)
+
+    author_text = f'by {author}'
+    author_w, author_h = text_size(draw, author_text, regular)
+    author_y = y + line_h + 8
+    draw.text(((CANVAS_W - author_w) / 2, author_y), author_text, font=regular, fill=BROWN)
+    return line_h + 8 + author_h
+
+
 def draw_bottom_divider(draw, y: int) -> None:
-    half_line = 126
+    half_line = 132
     center_x = CANVAS_W // 2
     draw.line(
         (center_x - half_line, y, center_x + half_line, y),
-        fill=TEXT_SECONDARY,
+        fill=BROWN,
         width=2,
     )
 
@@ -155,64 +174,41 @@ def compose(row: dict[str, str], output_path: Path) -> None:
     if not art_path.exists():
         raise FileNotFoundError(art_path)
 
-    quote_wrapped, quote_font, _, quote_h = fit_wrapped(
+    quote_wrapped, quote_font, _, _ = fit_wrapped(
         draw,
         quote,
-        max_width=735,
-        max_height=420,
-        max_size=54,
-        min_size=36,
-        spacing=13,
+        max_width=760,
+        max_height=430,
+        max_size=58,
+        min_size=38,
+        spacing=14,
     )
     support_font = find_font(30)
-    source_font = find_font(24)
-    handle_font = find_font(22)
+    handle_font = find_font(25)
 
     support_wrapped = wrap_text(draw, support, support_font, 760) if support else ''
-    source_wrapped = ''
-    if source_type == 'inspired_by' and book and author:
-        source_wrapped = f'— Inspired by {book}\nby {author}'
-
-    support_box = draw.multiline_textbbox(
-        (0, 0), support_wrapped, font=support_font, spacing=8, align='center'
-    ) if support_wrapped else (0, 0, 0, 0)
-    source_box = draw.multiline_textbbox(
-        (0, 0), source_wrapped, font=source_font, spacing=7, align='center'
-    ) if source_wrapped else (0, 0, 0, 0)
-    support_h = support_box[3] - support_box[1]
-    source_h = source_box[3] - source_box[1]
-
     art = fit_art(art_path)
-    handle_w, handle_h = text_size(draw, HANDLE, handle_font)
+    handle_w, _ = text_size(draw, HANDLE, handle_font)
 
-    # Upper typography follows the approved proof; the lower visual group is
-    # deliberately anchored lower so the post does not collapse into the top half.
-    y = 155
-    y += draw_centered_multiline(
-        draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=13
-    )
-    y += 48
+    # Match the approved reference proportions: generous top margin and stable
+    # horizontal margins, without compressing the lower visual group upward.
+    y = 150
+    y += draw_centered_multiline(draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=14)
+    y += 50
 
     if support_wrapped:
-        y += draw_centered_multiline(
-            draw, support_wrapped, y, support_font, TEXT_PRIMARY, spacing=8
-        )
+        y += draw_centered_multiline(draw, support_wrapped, y, support_font, TEXT_PRIMARY, spacing=9)
         y += 46
 
-    if source_wrapped:
-        y += draw_centered_multiline(
-            draw, source_wrapped, y, source_font, TEXT_SECONDARY, spacing=7
-        )
+    if source_type == 'inspired_by' and book and author:
+        y += draw_attribution(draw, book, author, y, size=25)
 
-    # Keep the illustration in the lower-middle zone like the approved reference.
-    natural_art_y = int(y + 36)
-    art_y = max(natural_art_y, 790)
+    # Anchor the illustration independently so attribution length cannot squeeze it.
+    art_y = max(y + 30, 825)
     art_x = (CANVAS_W - art.width) // 2
     canvas.paste(art, (art_x, art_y), art)
 
-    # Bottom divider and handle are anchored, not squeezed directly after the art.
-    divider_y = max(1095, art_y + art.height + 30)
-    divider_y = min(divider_y, 1180)
+    divider_y = min(max(1115, art_y + art.height + 30), 1182)
     draw_bottom_divider(draw, divider_y)
 
     handle_y = divider_y + 22
@@ -220,7 +216,7 @@ def compose(row: dict[str, str], output_path: Path) -> None:
         ((CANVAS_W - handle_w) / 2, handle_y),
         HANDLE,
         font=handle_font,
-        fill=TEXT_SECONDARY,
+        fill=BROWN,
     )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
