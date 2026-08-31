@@ -235,7 +235,7 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
     quote_wrapped, quote_font, quote_h = fit_char_wrapped(
         draw,
         quote,
-        char_width=15,
+        char_width=20,
         max_height=560,
         max_size=66,
         min_size=48,
@@ -244,7 +244,7 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
     support_font = find_font(34)
     handle_font = find_font(25)
 
-    support_wrapped = wrap_by_chars(support, 30) if support else ''
+    support_wrapped = wrap_by_chars(support, 40) if support else ''
     support_h = (
         measure_multiline_height(draw, support_wrapped, support_font, spacing=10)
         if support_wrapped
