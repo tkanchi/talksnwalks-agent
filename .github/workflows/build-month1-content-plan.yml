@@ -33,16 +33,18 @@ jobs:
           python - <<'PY'
           import csv
           from pathlib import Path
+          from build_month1_content_plan import TARGET
           p = Path('data/content_plan_month_01.csv')
           rows = list(csv.DictReader(p.open(newline='', encoding='utf-8')))
-          assert len(rows) == 70, len(rows)
-          assert len({r['QuoteID'] for r in rows}) == 70
+          assert len(rows) == TARGET, len(rows)
+          assert len({r['QuoteID'] for r in rows}) == TARGET
           assert all(r['Illustration'] and r['Placement'] for r in rows)
           assert all(r['SupportingText'] for r in rows)
-          assert len({r['SupportingText'] for r in rows}) == 70
+          assert len({r['SupportingText'] for r in rows}) == TARGET
+          assert all(r['SourceType'] == 'inspired_by' and r['InspiredBy'] and r['Author'] for r in rows)
           counts = [len(r['SupportingText'].replace('—', ' ').split()) for r in rows]
           assert min(counts) >= 6 and max(counts) <= 14, (min(counts), max(counts))
-          print(f'Verified 70 unique mapped posts with supporting text ({min(counts)}-{max(counts)} words)')
+          print(f'Verified {TARGET} unique book-inspired mapped posts with supporting text ({min(counts)}-{max(counts)} words)')
           PY
       - name: Commit content plan
         run: |
@@ -51,7 +53,7 @@ jobs:
             exit 0
           fi
           git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.email '4189828+github-actions[bot]@users.noreply.github.com'
           git add data/content_plan_month_01.csv
           git commit -m 'Build Phase 3 month-one content plan'
           git push
