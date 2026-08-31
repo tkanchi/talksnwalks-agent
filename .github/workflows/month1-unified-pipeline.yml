@@ -1,0 +1,158 @@
+name: Month 1 Unified Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      post_number:
+        description: "Month-one PostNumber (1-70)"
+        required: true
+        default: "1"
+        type: string
+      publish:
+        description: "Actually publish to Instagram"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-optionally-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      META_API_VERSION: "v26.0"
+      META_GRAPH_HOST: "https://graph.instagram.com"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve run mode
+        shell: bash
+        run: |
+          echo "POST_NUMBER=${{ inputs.post_number }}" >> "$GITHUB_ENV"
+          if [ "${{ inputs.publish }}" = "true" ]; then
+            echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+            echo "Manual unified run: publishing enabled."
+          else
+            echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
+            echo "Manual unified run: build-only."
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Ensure ffmpeg is available
+        shell: bash
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+          ffmpeg -version | head -n 1
+
+      - name: Build finalized feed card and Reel
+        env:
+          REQUIRE_REAL_AUDIO: ${{ inputs.publish }}
+        run: python build_month1_pipeline.py
+
+      - name: Verify build outputs
+        shell: bash
+        run: |
+          cat outputs/unified/publish.env >> "$GITHUB_ENV"
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          import os
+
+          padded = os.environ['DAY_PADDED']
+          feed = Path(f'outputs/unified/day_{padded}_feed.png')
+          reel_frame = Path(f'outputs/unified/day_{padded}_reel.jpg')
+          video = Path(f'public/unified/day_{padded}.mp4')
+
+          with Image.open(feed) as im:
+              assert im.size == (1080, 1350), im.size
+          with Image.open(reel_frame) as im:
+              assert im.size == (1080, 1920), im.size
+          assert video.exists() and video.stat().st_size > 0
+          print('Verified finalized 4:5 feed card and 9:16 Reel output')
+          PY
+
+      - name: Prevent duplicate publishing
+        if: env.SHOULD_PUBLISH == 'true'
+        shell: bash
+        run: |
+          if [ -f "published_logs/unified/day_${DAY_PADDED}.json" ]; then
+            echo "Unified Post ${DAY_NUMBER} already has a publish log. Skipping duplicate publish."
+            echo "ALREADY_PUBLISHED=true" >> "$GITHUB_ENV"
+          else
+            echo "ALREADY_PUBLISHED=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Commit Reel so Instagram can fetch it publicly
+        if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        shell: bash
+        run: |
+          git config user.name "talksnwalks-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add "public/unified/day_${DAY_PADDED}.mp4"
+          git commit -m "Add Unified Post ${DAY_NUMBER} Reel media" || echo "Media already committed"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "MEDIA_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Build public Reel URL
+        if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        shell: bash
+        run: |
+          VIDEO_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/public/unified/day_${DAY_PADDED}.mp4"
+          echo "VIDEO_URL=$VIDEO_URL" >> "$GITHUB_ENV"
+
+      - name: Verify Reel is publicly reachable
+        if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        shell: bash
+        run: |
+          curl --fail --location --silent --show-error \
+            --retry 8 --retry-delay 5 --retry-all-errors \
+            --output /dev/null "$VIDEO_URL"
+
+      - name: Publish through Instagram API
+        if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          VIDEO_URL: ${{ env.VIDEO_URL }}
+          CAPTION_FILE: outputs/unified/caption.txt
+          RESULT_FILE: outputs/unified/publish_result.json
+        run: python publish_instagram.py
+
+      - name: Save publishing audit log
+        if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true' && success()
+        shell: bash
+        run: |
+          mkdir -p published_logs/unified
+          cp outputs/unified/publish_result.json "published_logs/unified/day_${DAY_PADDED}.json"
+          git add "published_logs/unified/day_${DAY_PADDED}.json"
+          git commit -m "Log Unified Post ${DAY_NUMBER} Instagram publish" || true
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: month1-unified-post-${{ env.DAY_PADDED }}
+          path: |
+            outputs/unified/
+            public/unified/*.mp4
+          retention-days: 14
+          if-no-files-found: error
