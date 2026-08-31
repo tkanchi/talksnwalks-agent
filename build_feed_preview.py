@@ -16,24 +16,30 @@ CANVAS_W = 1080
 CANVAS_H = 1350
 HANDLE = '@talksnwalks101'
 
-# Final feed-post visual reference approved in chat:
-# clean sans quote, soft cream/pastel gradient, brown attribution/divider/handle,
-# centered illustration near the bottom, generous whitespace.
+# Final approved 4:5 feed-post direction:
+# - clean regular sans-serif main quote
+# - visible warm cream radial/vignette gradient
+# - readable supporting line
+# - brown source line, divider and handle
+# - illustration centered near the bottom
 TEXT_PRIMARY = (24, 22, 20)
-TEXT_SECONDARY = (111, 72, 48)
+TEXT_SECONDARY = (118, 74, 45)
+
+# Keep the month-one pastel families, but render them as very light warm-edged
+# gradients rather than flat fills. Vanilla is the approved reference look.
 BACKGROUND_RGB = {
-    'vanilla': (255, 245, 226),
-    'seafoam': (235, 247, 240),
-    'powder': (236, 244, 250),
-    'blush': (251, 237, 237),
-    'lavender': (244, 237, 249),
-    'apricot': (255, 235, 215),
-    'ice': (242, 248, 251),
-    'mint': (238, 249, 241),
-    'petal': (250, 235, 242),
-    'sky': (234, 243, 250),
+    'vanilla': (251, 232, 204),
+    'seafoam': (226, 242, 232),
+    'powder': (226, 238, 248),
+    'blush': (248, 226, 228),
+    'lavender': (237, 228, 247),
+    'apricot': (252, 224, 198),
+    'ice': (235, 245, 250),
+    'mint': (231, 246, 235),
+    'petal': (247, 226, 237),
+    'sky': (226, 239, 249),
 }
-CENTER_LIGHT = (255, 253, 248)
+CENTER_LIGHT = (255, 253, 247)
 
 
 def find_font(size: int, *, italic: bool = False):
@@ -80,7 +86,7 @@ def fit_wrapped(draw, text: str, *, max_width: int, max_height: int, max_size: i
     return wrapped, font, box[2] - box[0], box[3] - box[1]
 
 
-def fit_art(path: Path, max_w: int = 170, max_h: int = 200) -> Image.Image:
+def fit_art(path: Path, max_w: int = 170, max_h: int = 195) -> Image.Image:
     art = Image.open(path).convert('RGBA')
     bbox = art.getchannel('A').getbbox()
     if bbox:
@@ -103,18 +109,26 @@ def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
 
 
 def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
+    """Render the approved visible warm vignette: pale center, warmer edges."""
     image = Image.new('RGB', (CANVAS_W, CANVAS_H), edge_rgb)
     pixels = image.load()
+
+    # Slightly above visual center so the quote sits in the brightest area.
     cx = CANVAS_W / 2
-    cy = CANVAS_H * 0.47
-    max_distance = math.hypot(CANVAS_W * 0.64, CANVAS_H * 0.64)
+    cy = CANVAS_H * 0.43
+    radius_x = CANVAS_W * 0.68
+    radius_y = CANVAS_H * 0.69
 
     for y in range(CANVAS_H):
+        dy = (y - cy) / radius_y
         for x in range(CANVAS_W):
-            distance = min(1.0, math.hypot(x - cx, y - cy) / max_distance)
-            center_strength = 0.38 * (1.0 - distance) ** 1.8
+            dx = (x - cx) / radius_x
+            distance = min(1.0, math.sqrt(dx * dx + dy * dy))
+
+            # Strong enough to be visibly gradient, still subtle/premium.
+            light_mix = 0.82 * (1.0 - distance) ** 1.45
             pixels[x, y] = tuple(
-                round(edge_rgb[i] * (1.0 - center_strength) + CENTER_LIGHT[i] * center_strength)
+                round(edge_rgb[i] * (1.0 - light_mix) + CENTER_LIGHT[i] * light_mix)
                 for i in range(3)
             )
     return image
@@ -123,7 +137,11 @@ def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
 def draw_bottom_divider(draw, y: int) -> None:
     half_line = 126
     center_x = CANVAS_W // 2
-    draw.line((center_x - half_line, y, center_x + half_line, y), fill=TEXT_SECONDARY, width=2)
+    draw.line(
+        (center_x - half_line, y, center_x + half_line, y),
+        fill=TEXT_SECONDARY,
+        width=2,
+    )
 
 
 def compose(row: dict[str, str], output_path: Path) -> None:
@@ -140,51 +158,64 @@ def compose(row: dict[str, str], output_path: Path) -> None:
     if not art_path.exists():
         raise FileNotFoundError(art_path)
 
+    # Narrower quote block is intentional: the approved proof has a tall,
+    # editorial quote shape rather than a wide three-line banner.
     quote_wrapped, quote_font, _, quote_h = fit_wrapped(
-        draw, quote, max_width=820, max_height=420, max_size=56, min_size=36, spacing=12
+        draw,
+        quote,
+        max_width=730,
+        max_height=430,
+        max_size=54,
+        min_size=36,
+        spacing=13,
     )
-    support_font = find_font(30)
-    source_font = find_font(25)
+    support_font = find_font(29)
+    source_font = find_font(24)
     handle_font = find_font(22)
 
-    support_wrapped = wrap_text(draw, support, support_font, 790) if support else ''
+    support_wrapped = wrap_text(draw, support, support_font, 760) if support else ''
     source_wrapped = ''
     if source_type == 'inspired_by' and book and author:
         source_wrapped = f'— Inspired by {book}\nby {author}'
 
-    support_box = draw.multiline_textbbox((0, 0), support_wrapped, font=support_font, spacing=8, align='center') if support_wrapped else (0, 0, 0, 0)
-    source_box = draw.multiline_textbbox((0, 0), source_wrapped, font=source_font, spacing=7, align='center') if source_wrapped else (0, 0, 0, 0)
+    support_box = draw.multiline_textbbox(
+        (0, 0), support_wrapped, font=support_font, spacing=8, align='center'
+    ) if support_wrapped else (0, 0, 0, 0)
+    source_box = draw.multiline_textbbox(
+        (0, 0), source_wrapped, font=source_font, spacing=7, align='center'
+    ) if source_wrapped else (0, 0, 0, 0)
     support_h = support_box[3] - support_box[1]
     source_h = source_box[3] - source_box[1]
 
     art = fit_art(art_path)
     handle_w, handle_h = text_size(draw, HANDLE, handle_font)
 
-    quote_gap_bottom = 46
-    support_gap_bottom = 44
-    source_gap_bottom = 24
+    # Spacing copied from the approved visual rhythm rather than centering the
+    # entire group. The quote begins high enough to preserve the large lower
+    # breathing area seen in the reference.
+    quote_gap_bottom = 44
+    support_gap_bottom = 42
+    source_gap_bottom = 25
     art_gap_bottom = 24
-    divider_gap_bottom = 20
+    divider_gap_bottom = 18
 
-    content_height = (
-        quote_h + quote_gap_bottom
-        + support_h + (support_gap_bottom if support_h else 0)
-        + source_h + (source_gap_bottom if source_h else 0)
-        + art.height + art_gap_bottom
-        + 2 + divider_gap_bottom + handle_h
+    y = 165
+
+    y += draw_centered_multiline(
+        draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=13
     )
-
-    y = max(92, int((CANVAS_H - content_height) / 2) - 10)
-
-    y += draw_centered_multiline(draw, quote_wrapped, y, quote_font, TEXT_PRIMARY, spacing=12)
     y += quote_gap_bottom
 
     if support_wrapped:
-        y += draw_centered_multiline(draw, support_wrapped, y, support_font, TEXT_PRIMARY, spacing=8)
+        y += draw_centered_multiline(
+            draw, support_wrapped, y, support_font, TEXT_PRIMARY, spacing=8
+        )
         y += support_gap_bottom
 
     if source_wrapped:
-        y += draw_centered_multiline(draw, source_wrapped, y, source_font, TEXT_SECONDARY, spacing=7)
+        y += draw_centered_multiline(
+            draw, source_wrapped, y, source_font, TEXT_SECONDARY, spacing=7
+        )
         y += source_gap_bottom
 
     art_x = (CANVAS_W - art.width) // 2
@@ -194,7 +225,12 @@ def compose(row: dict[str, str], output_path: Path) -> None:
     draw_bottom_divider(draw, int(y))
     y += divider_gap_bottom
 
-    draw.text(((CANVAS_W - handle_w) / 2, y), HANDLE, font=handle_font, fill=TEXT_SECONDARY)
+    draw.text(
+        ((CANVAS_W - handle_w) / 2, y),
+        HANDLE,
+        font=handle_font,
+        fill=TEXT_SECONDARY,
+    )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(output_path, 'PNG', optimize=True)
