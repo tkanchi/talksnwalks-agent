@@ -87,17 +87,29 @@ jobs:
               'recorder_result_file_contract': recorder.RESULT_FILE.relative_to(recorder.ROOT) == expected_result,
               'live_history_contract': recorder.HISTORY_FILE.relative_to(recorder.ROOT) == expected_history,
               'audit_directory_contract': recorder.AUDIT_DIR.relative_to(recorder.ROOT) == expected_audit_dir,
+              'public_media_is_jpeg': str(package.get('public_path', '')).endswith('.jpg'),
           }
 
           image_path = root / 'post.png'
+          publish_image_path = root / 'post.jpg'
           caption_path = root / 'caption.txt'
           checks['image_present'] = image_path.exists()
+          checks['publish_image_present'] = publish_image_path.exists()
           checks['caption_file_present'] = caption_path.exists()
+
           if image_path.exists():
               with Image.open(image_path) as image:
                   checks['image_1080x1350'] = image.size == (1080, 1350)
           else:
               checks['image_1080x1350'] = False
+
+          if publish_image_path.exists():
+              with Image.open(publish_image_path) as image:
+                  checks['publish_image_1080x1350'] = image.size == (1080, 1350)
+                  checks['publish_image_jpeg'] = image.format == 'JPEG'
+          else:
+              checks['publish_image_1080x1350'] = False
+              checks['publish_image_jpeg'] = False
 
           passed = all(checks.values())
           qa = {
@@ -165,7 +177,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p "$(dirname "$PUBLIC_PATH")"
-          cp outputs/unified_live/post.png "$PUBLIC_PATH"
+          cp outputs/unified_live/post.jpg "$PUBLIC_PATH"
           git config user.name "talksnwalks-agent"
           git config user.email "actions@users.noreply.github.com"
           git add "$PUBLIC_PATH"
@@ -195,6 +207,7 @@ jobs:
         shell: bash
         run: |
           test "$RESULT_FILE" = "outputs/unified_live/publish_result.json"
+          test -f outputs/unified_live/post.jpg
           test -f outputs/unified_live/caption.txt
           test -f outputs/unified_live/package.json
           echo "RESULT_FILE=$RESULT_FILE"
@@ -247,6 +260,7 @@ jobs:
             outputs/unified_live/package.json
             outputs/unified_live/caption.txt
             outputs/unified_live/post.png
+            outputs/unified_live/post.jpg
             outputs/unified_live/qa_report.json
             outputs/unified_live/publish_result.json
           if-no-files-found: warn
