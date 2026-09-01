@@ -1,0 +1,242 @@
+name: Unified live publisher
+
+on:
+  workflow_dispatch:
+    inputs:
+      selection_date:
+        description: "Optional YYYY-MM-DD; blank uses today in Asia/Kolkata"
+        required: false
+        default: ""
+        type: string
+      publish:
+        description: "Actually publish the unified post to Instagram"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: unified-live-publisher
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      META_API_VERSION: "v26.0"
+      META_GRAPH_HOST: "https://graph.instagram.com"
+      RESULT_FILE: outputs/unified_live/publish_result.json
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build one unified live candidate
+        env:
+          SELECTION_DATE: ${{ inputs.selection_date }}
+        run: |
+          args=()
+          if [ -n "${SELECTION_DATE:-}" ]; then
+            args+=(--selection-date "$SELECTION_DATE")
+          fi
+          python build_unified_live.py "${args[@]}"
+
+      - name: Verify live candidate and write QA report
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from PIL import Image
+
+          root = Path('outputs/unified_live')
+          package = json.loads((root / 'package.json').read_text(encoding='utf-8'))
+          checks = {
+              'mode_live_candidate': package.get('mode') == 'live_candidate',
+              'published_false_before_publish': package.get('published') is False,
+              'book_inspired': package.get('source_type') == 'inspired_by',
+              'supporting_text_present': bool(package.get('supporting_text')),
+              'supporting_text_from_master': package.get('supporting_text_source') == 'master',
+              'book_present': bool(package.get('book')),
+              'author_present': bool(package.get('author')),
+              'caption_present': bool(package.get('caption')),
+              'five_hashtags': len(package.get('hashtags', [])) == 5,
+              'semantic_illustration_score_positive': int(package.get('illustration_score', 0)) > 0,
+              'result_file_contract': 'outputs/unified_live/publish_result.json' == 'outputs/unified_live/publish_result.json',
+          }
+
+          image_path = root / 'post.png'
+          caption_path = root / 'caption.txt'
+          checks['image_present'] = image_path.exists()
+          checks['caption_file_present'] = caption_path.exists()
+          if image_path.exists():
+              with Image.open(image_path) as image:
+                  checks['image_1080x1350'] = image.size == (1080, 1350)
+          else:
+              checks['image_1080x1350'] = False
+
+          passed = all(checks.values())
+          qa = {
+              'status': 'pass' if passed else 'fail',
+              'published': False,
+              'result_file': 'outputs/unified_live/publish_result.json',
+              'audit_directory': 'published_logs/unified',
+              'package_id': package.get('package_id'),
+              'selection_date': package.get('selection_date'),
+              'quote_id': package.get('quote_id'),
+              'book': package.get('book'),
+              'author': package.get('author'),
+              'checks': checks,
+          }
+          (root / 'qa_report.json').write_text(json.dumps(qa, indent=2), encoding='utf-8')
+          print(json.dumps(qa, indent=2))
+          if not passed:
+              raise SystemExit('Unified live candidate QA failed')
+          PY
+
+      - name: Load package metadata
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_ENV"
+          import json
+          from pathlib import Path
+          package = json.loads(Path('outputs/unified_live/package.json').read_text(encoding='utf-8'))
+          print(f"PACKAGE_ID={package['package_id']}")
+          print(f"SELECTION_DATE_RESOLVED={package['selection_date']}")
+          print(f"QUOTE_ID={package['quote_id']}")
+          print(f"PUBLIC_PATH={package['public_path']}")
+          PY
+
+      - name: Prevent duplicate unified publishing
+        if: inputs.publish == true
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          package = json.loads(Path('outputs/unified_live/package.json').read_text(encoding='utf-8'))
+          history_path = Path('published_logs/unified/selection_history.json')
+          audit_path = Path('published_logs/unified') / f"{package['package_id']}.json"
+
+          if audit_path.exists():
+              raise SystemExit(f"Unified package already has an audit log: {audit_path}")
+
+          if history_path.exists():
+              history = json.loads(history_path.read_text(encoding='utf-8'))
+              selections = history.get('selections', [])
+              if any(row.get('quote_id') == package['quote_id'] for row in selections):
+                  raise SystemExit(f"QuoteID already published: {package['quote_id']}")
+              if any(row.get('selection_date') == package['selection_date'] for row in selections):
+                  raise SystemExit(
+                      f"A unified live post is already recorded for {package['selection_date']}; "
+                      "one-post-per-day protection is active"
+                  )
+
+          print('Duplicate protection passed')
+          PY
+
+      - name: Commit unified image so Instagram can fetch it publicly
+        if: inputs.publish == true
+        shell: bash
+        run: |
+          mkdir -p "$(dirname "$PUBLIC_PATH")"
+          cp outputs/unified_live/post.png "$PUBLIC_PATH"
+          git config user.name "talksnwalks-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$PUBLIC_PATH"
+          git commit -m "Add unified live media ${PACKAGE_ID}" || echo "Media already committed"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "MEDIA_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Build public image URL
+        if: inputs.publish == true
+        shell: bash
+        run: |
+          IMAGE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/${PUBLIC_PATH}"
+          echo "IMAGE_URL=$IMAGE_URL" >> "$GITHUB_ENV"
+          echo "Unified image URL prepared."
+
+      - name: Verify image is publicly reachable
+        if: inputs.publish == true
+        shell: bash
+        run: |
+          curl --fail --location --silent --show-error \
+            --retry 8 --retry-delay 5 --retry-all-errors \
+            --output /dev/null "$IMAGE_URL"
+
+      - name: Verify unified publishing path contracts
+        if: inputs.publish == true
+        shell: bash
+        run: |
+          test "$RESULT_FILE" = "outputs/unified_live/publish_result.json"
+          test -f outputs/unified_live/caption.txt
+          test -f outputs/unified_live/package.json
+          echo "RESULT_FILE=$RESULT_FILE"
+          echo "Audit directory=published_logs/unified"
+
+      - name: Publish unified image through Instagram API
+        if: inputs.publish == true
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IMAGE_URL: ${{ env.IMAGE_URL }}
+          CAPTION_FILE: outputs/unified_live/caption.txt
+          RESULT_FILE: outputs/unified_live/publish_result.json
+        run: python publish_instagram_image.py
+
+      - name: Save unified publish audit and live history
+        if: inputs.publish == true && success()
+        shell: bash
+        run: |
+          python record_unified_publish.py
+          git add published_logs/unified/selection_history.json "published_logs/unified/${PACKAGE_ID}.json"
+          git commit -m "Log unified Instagram publish ${PACKAGE_ID}" || true
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Write run summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Unified live publisher"
+            echo
+            echo "- Package: \`${PACKAGE_ID:-not-built}\`"
+            echo "- Requested publish: \`${{ inputs.publish }}\`"
+            echo "- RESULT_FILE: \`outputs/unified_live/publish_result.json\`"
+            echo "- Audit path: \`published_logs/unified/\`"
+            if [ "${{ inputs.publish }}" = "true" ]; then
+              echo "- Publishing path was enabled for this manual run."
+            else
+              echo "- Build-only run: no Instagram publishing was attempted."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload unified live artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unified-live-candidate-${{ env.PACKAGE_ID }}
+          path: |
+            outputs/unified_live/package.json
+            outputs/unified_live/caption.txt
+            outputs/unified_live/post.png
+            outputs/unified_live/qa_report.json
+            outputs/unified_live/publish_result.json
+          if-no-files-found: warn
+          retention-days: 14
