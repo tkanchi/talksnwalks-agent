@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
 import requests
@@ -50,6 +51,32 @@ def create_container(caption):
     return container_id
 
 
+def wait_until_ready(container_id, timeout_seconds=180):
+    url = f"{GRAPH_HOST}/{API_VERSION}/{container_id}"
+    deadline = time.time() + timeout_seconds
+    last = None
+
+    while time.time() < deadline:
+        payload = request_json(
+            "GET",
+            url,
+            params={
+                "fields": "status_code,status",
+                "access_token": ACCESS_TOKEN,
+            },
+        )
+        last = payload
+        status = payload.get("status_code", "")
+        print(f"Container status: {status}")
+        if status in {"FINISHED", "PUBLISHED"}:
+            return payload
+        if status in {"ERROR", "EXPIRED"}:
+            raise RuntimeError(f"Container failed: {payload}")
+        time.sleep(5)
+
+    raise TimeoutError(f"Container was not ready within {timeout_seconds}s. Last status: {last}")
+
+
 def publish(container_id):
     url = f"{GRAPH_HOST}/{API_VERSION}/{IG_USER_ID}/media_publish"
     payload = request_json(
@@ -79,6 +106,7 @@ def main():
     container_id = create_container(caption)
     print(f"Container created: {container_id}")
 
+    wait_until_ready(container_id)
     print("Publishing Instagram image...")
     media_id = publish(container_id)
     print(f"Published Instagram media id: {media_id}")
