@@ -1,6 +1,8 @@
 name: Month 1 Unified Pipeline
 
 on:
+  schedule:
+    - cron: "43 5 * * *" # 11:13 IST
   workflow_dispatch:
     inputs:
       post_number:
@@ -29,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
+      START_DATE: "2026-09-02"
       META_API_VERSION: "v26.0"
       META_GRAPH_HOST: "https://graph.instagram.com"
 
@@ -41,7 +44,26 @@ jobs:
       - name: Resolve run mode
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            TODAY="$(date -u +%F)"
+            START_EPOCH="$(date -u -d "$START_DATE" +%s)"
+            TODAY_EPOCH="$(date -u -d "$TODAY" +%s)"
+            SCHEDULED_POST=$(( (TODAY_EPOCH - START_EPOCH) / 86400 + 1 ))
+
+            if [ "$SCHEDULED_POST" -lt 1 ]; then
+              echo "Unified schedule starts on $START_DATE. This pre-start run will build only."
+              echo "POST_NUMBER=1" >> "$GITHUB_ENV"
+              echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
+            elif [ "$SCHEDULED_POST" -gt 70 ]; then
+              echo "Unified Month 1 pool is exhausted. Publishing disabled."
+              echo "POST_NUMBER=70" >> "$GITHUB_ENV"
+              echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
+            else
+              echo "Scheduled unified Post $SCHEDULED_POST: publishing enabled."
+              echo "POST_NUMBER=$SCHEDULED_POST" >> "$GITHUB_ENV"
+              echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+            fi
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "POST_NUMBER=${{ inputs.post_number }}" >> "$GITHUB_ENV"
             if [ "${{ inputs.publish }}" = "true" ]; then
               echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
@@ -76,7 +98,7 @@ jobs:
 
       - name: Build finalized feed card and Reel
         env:
-          REQUIRE_REAL_AUDIO: ${{ github.event_name == 'workflow_dispatch' && inputs.publish || false }}
+          REQUIRE_REAL_AUDIO: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
         run: python build_month1_pipeline.py
 
       - name: Load build metadata
