@@ -34,6 +34,11 @@ def main() -> None:
     if not package_id or not selection_date or not quote_id:
         raise RuntimeError("Package is missing package_id, selection_date, or quote_id")
 
+    AUDIT_DIR.mkdir(parents=True, exist_ok=True)
+    audit_path = AUDIT_DIR / f"{package_id}.json"
+    if audit_path.exists():
+        raise RuntimeError(f"Audit log already exists: {audit_path}")
+
     if HISTORY_FILE.exists():
         history = load_json(HISTORY_FILE)
     else:
@@ -74,10 +79,6 @@ def main() -> None:
         "package_id": package_id,
         "media_id": result.get("media_id", ""),
     }
-    selections.append(history_entry)
-
-    AUDIT_DIR.mkdir(parents=True, exist_ok=True)
-    HISTORY_FILE.write_text(json.dumps(history, indent=2), encoding="utf-8")
 
     audit = {
         "status": "PUBLISHED",
@@ -85,9 +86,10 @@ def main() -> None:
         "package": {**package, "mode": "live", "published": True},
         "publish_result": result,
     }
-    audit_path = AUDIT_DIR / f"{package_id}.json"
-    if audit_path.exists():
-        raise RuntimeError(f"Audit log already exists: {audit_path}")
+
+    # Both files are prepared only after every duplicate guard has passed.
+    selections.append(history_entry)
+    HISTORY_FILE.write_text(json.dumps(history, indent=2), encoding="utf-8")
     audit_path.write_text(json.dumps(audit, indent=2), encoding="utf-8")
 
     print(f"Recorded unified publish audit: {audit_path.relative_to(ROOT)}")
