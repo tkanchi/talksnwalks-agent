@@ -55,15 +55,22 @@ jobs:
           fi
           python build_unified_live.py "${args[@]}"
 
-      - name: Verify live candidate and write QA report
+      - name: Verify live candidate and publishing contracts
         run: |
           python - <<'PY'
           import json
+          import os
           from pathlib import Path
           from PIL import Image
+          import record_unified_publish as recorder
+          import publish_instagram_image as image_publisher
 
           root = Path('outputs/unified_live')
           package = json.loads((root / 'package.json').read_text(encoding='utf-8'))
+          expected_result = Path('outputs/unified_live/publish_result.json')
+          expected_history = Path('published_logs/unified/selection_history.json')
+          expected_audit_dir = Path('published_logs/unified')
+
           checks = {
               'mode_live_candidate': package.get('mode') == 'live_candidate',
               'published_false_before_publish': package.get('published') is False,
@@ -75,7 +82,11 @@ jobs:
               'caption_present': bool(package.get('caption')),
               'five_hashtags': len(package.get('hashtags', [])) == 5,
               'semantic_illustration_score_positive': int(package.get('illustration_score', 0)) > 0,
-              'result_file_contract': 'outputs/unified_live/publish_result.json' == 'outputs/unified_live/publish_result.json',
+              'workflow_result_file_contract': Path(os.environ['RESULT_FILE']) == expected_result,
+              'publisher_result_file_contract': image_publisher.RESULT_FILE == expected_result,
+              'recorder_result_file_contract': recorder.RESULT_FILE.relative_to(recorder.ROOT) == expected_result,
+              'live_history_contract': recorder.HISTORY_FILE.relative_to(recorder.ROOT) == expected_history,
+              'audit_directory_contract': recorder.AUDIT_DIR.relative_to(recorder.ROOT) == expected_audit_dir,
           }
 
           image_path = root / 'post.png'
@@ -92,8 +103,9 @@ jobs:
           qa = {
               'status': 'pass' if passed else 'fail',
               'published': False,
-              'result_file': 'outputs/unified_live/publish_result.json',
-              'audit_directory': 'published_logs/unified',
+              'result_file': expected_result.as_posix(),
+              'live_history': expected_history.as_posix(),
+              'audit_directory': expected_audit_dir.as_posix(),
               'package_id': package.get('package_id'),
               'selection_date': package.get('selection_date'),
               'quote_id': package.get('quote_id'),
@@ -125,7 +137,6 @@ jobs:
         run: |
           python - <<'PY'
           import json
-          import os
           from pathlib import Path
 
           package = json.loads(Path('outputs/unified_live/package.json').read_text(encoding='utf-8'))
