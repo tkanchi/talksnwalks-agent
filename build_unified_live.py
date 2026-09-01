@@ -6,6 +6,8 @@ from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from PIL import Image
+
 from build_feed_preview import compose
 from build_unified_shadow import build_caption, build_hashtags, semantic_category
 from select_next_post import build_selection, clean, load_history, output_payload
@@ -50,6 +52,7 @@ def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     image_path = OUTPUT_DIR / "post.png"
+    publish_image_path = OUTPUT_DIR / "post.jpg"
     caption_path = OUTPUT_DIR / "caption.txt"
     package_path = OUTPUT_DIR / "package.json"
 
@@ -58,7 +61,17 @@ def main() -> None:
         raise RuntimeError(f"Expected exactly 5 hashtags, got {hashtags}")
     caption = build_caption(selection, hashtags)
 
+    # Keep the approved renderer untouched. PNG is the canonical render; JPEG is
+    # only the delivery copy required by Instagram's single-image publishing flow.
     compose(selection, image_path, index=len(history.get("selections", [])))
+    with Image.open(image_path) as rendered:
+        rendered.convert("RGB").save(
+            publish_image_path,
+            format="JPEG",
+            quality=95,
+            subsampling=0,
+            optimize=True,
+        )
 
     package_id = f"{clean(selection.get('SelectionDate'))}_{clean(selection.get('QuoteID'))}"
     payload = output_payload(selection)
@@ -68,7 +81,8 @@ def main() -> None:
             "published": False,
             "package_id": package_id,
             "image": image_path.relative_to(ROOT).as_posix(),
-            "public_path": f"public/unified/{package_id}.png",
+            "publish_image": publish_image_path.relative_to(ROOT).as_posix(),
+            "public_path": f"public/unified/{package_id}.jpg",
             "caption_category": semantic_category(selection),
             "caption": caption,
             "hashtags": hashtags,
