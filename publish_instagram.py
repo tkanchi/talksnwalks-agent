@@ -11,6 +11,7 @@ API_VERSION = os.getenv("META_API_VERSION", "v26.0")
 IG_USER_ID = os.getenv("IG_USER_ID", "").strip()
 ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN", "").strip()
 VIDEO_URL = os.getenv("VIDEO_URL", "").strip()
+IMAGE_URL = os.getenv("IMAGE_URL", "").strip()
 CAPTION_FILE = Path(os.getenv("CAPTION_FILE", "outputs/caption.txt"))
 RESULT_FILE = Path(os.getenv("RESULT_FILE", "outputs/publish_result.json"))
 SHARE_TO_FEED = os.getenv("SHARE_TO_FEED", "true").lower() == "true"
@@ -37,13 +38,20 @@ def request_json(method, url, **kwargs):
 
 def create_container(caption):
     url = f"{GRAPH_HOST}/{API_VERSION}/{IG_USER_ID}/media"
-    data = {
-        "media_type": "REELS",
-        "video_url": VIDEO_URL,
-        "caption": caption,
-        "share_to_feed": "true" if SHARE_TO_FEED else "false",
-        "access_token": ACCESS_TOKEN,
-    }
+    if IMAGE_URL:
+        data = {
+            "image_url": IMAGE_URL,
+            "caption": caption,
+            "access_token": ACCESS_TOKEN,
+        }
+    else:
+        data = {
+            "media_type": "REELS",
+            "video_url": VIDEO_URL,
+            "caption": caption,
+            "share_to_feed": "true" if SHARE_TO_FEED else "false",
+            "access_token": ACCESS_TOKEN,
+        }
     payload = request_json("POST", url, data=data)
     container_id = payload.get("id")
     if not container_id:
@@ -98,34 +106,40 @@ def publish(container_id):
 def main():
     require("IG_USER_ID", IG_USER_ID)
     require("META_ACCESS_TOKEN", ACCESS_TOKEN)
-    require("VIDEO_URL", VIDEO_URL)
+    if IMAGE_URL:
+        media_kind = "Post"
+        media_url = IMAGE_URL
+    else:
+        require("VIDEO_URL", VIDEO_URL)
+        media_kind = "Reel"
+        media_url = VIDEO_URL
 
     if not CAPTION_FILE.exists():
         raise FileNotFoundError(f"Caption file not found: {CAPTION_FILE}")
 
     caption = CAPTION_FILE.read_text(encoding="utf-8").strip()
-    print("Creating Instagram Reel container...")
+    print(f"Creating Instagram {media_kind} container...")
     container_id = create_container(caption)
     print(f"Container created: {container_id}")
 
     wait_until_ready(container_id)
-    print("Publishing Reel...")
+    print(f"Publishing {media_kind}...")
     media_id = publish(container_id)
     print(f"Published Instagram media id: {media_id}")
 
+    result = {
+        "status": "PUBLISHED",
+        "media_type": "IMAGE" if IMAGE_URL else "REELS",
+        "container_id": container_id,
+        "media_id": media_id,
+    }
+    if IMAGE_URL:
+        result["image_url"] = media_url
+    else:
+        result["video_url"] = media_url
+
     RESULT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    RESULT_FILE.write_text(
-        json.dumps(
-            {
-                "status": "PUBLISHED",
-                "container_id": container_id,
-                "media_id": media_id,
-                "video_url": VIDEO_URL,
-            },
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
+    RESULT_FILE.write_text(json.dumps(result, indent=2), encoding="utf-8")
 
 
 if __name__ == "__main__":
