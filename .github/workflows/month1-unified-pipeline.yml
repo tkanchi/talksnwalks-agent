@@ -96,16 +96,16 @@ jobs:
           fi
           ffmpeg -version | head -n 1
 
-      - name: Build finalized feed card and Reel
+      - name: Build finalized feed card
         env:
-          REQUIRE_REAL_AUDIO: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
+          REQUIRE_REAL_AUDIO: "false"
         run: python build_month1_pipeline.py
 
       - name: Load build metadata
         shell: bash
         run: cat outputs/unified/publish.env >> "$GITHUB_ENV"
 
-      - name: Verify build outputs
+      - name: Verify feed post output
         shell: bash
         run: |
           python - <<'PY'
@@ -115,15 +115,9 @@ jobs:
 
           padded = os.environ['DAY_PADDED']
           feed = Path(f'outputs/unified/day_{padded}_feed.png')
-          reel_frame = Path(f'outputs/unified/day_{padded}_reel.jpg')
-          video = Path(f'public/unified/day_{padded}.mp4')
-
           with Image.open(feed) as im:
               assert im.size == (1080, 1350), im.size
-          with Image.open(reel_frame) as im:
-              assert im.size == (1080, 1920), im.size
-          assert video.exists() and video.stat().st_size > 0
-          print('Verified finalized 4:5 feed card and 9:16 Reel output')
+          print('Verified finalized 4:5 Instagram feed post')
           PY
 
       - name: Prevent duplicate publishing
@@ -137,39 +131,41 @@ jobs:
             echo "ALREADY_PUBLISHED=false" >> "$GITHUB_ENV"
           fi
 
-      - name: Commit Reel so Instagram can fetch it publicly
+      - name: Commit image so Instagram can fetch it publicly
         if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         shell: bash
         run: |
+          mkdir -p public/unified
+          cp "outputs/unified/day_${DAY_PADDED}_feed.png" "public/unified/day_${DAY_PADDED}_feed.png"
           git config user.name "talksnwalks-agent"
           git config user.email "actions@users.noreply.github.com"
-          git add "public/unified/day_${DAY_PADDED}.mp4"
-          git commit -m "Add Unified Post ${DAY_NUMBER} Reel media" || echo "Media already committed"
+          git add "public/unified/day_${DAY_PADDED}_feed.png"
+          git commit -m "Add Unified Post ${DAY_NUMBER} feed image" || echo "Image already committed"
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
           echo "MEDIA_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
-      - name: Build public Reel URL
+      - name: Build public image URL
         if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         shell: bash
         run: |
-          VIDEO_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/public/unified/day_${DAY_PADDED}.mp4"
-          echo "VIDEO_URL=$VIDEO_URL" >> "$GITHUB_ENV"
+          IMAGE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/public/unified/day_${DAY_PADDED}_feed.png"
+          echo "IMAGE_URL=$IMAGE_URL" >> "$GITHUB_ENV"
 
-      - name: Verify Reel is publicly reachable
+      - name: Verify image is publicly reachable
         if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         shell: bash
         run: |
           curl --fail --location --silent --show-error \
             --retry 8 --retry-delay 5 --retry-all-errors \
-            --output /dev/null "$VIDEO_URL"
+            --output /dev/null "$IMAGE_URL"
 
-      - name: Publish through Instagram API
+      - name: Publish Instagram feed post
         if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
-          VIDEO_URL: ${{ env.VIDEO_URL }}
+          IMAGE_URL: ${{ env.IMAGE_URL }}
           CAPTION_FILE: outputs/unified/caption.txt
           RESULT_FILE: outputs/unified/publish_result.json
         run: python publish_instagram.py
@@ -191,6 +187,6 @@ jobs:
           name: month1-unified-post-${{ env.DAY_PADDED }}
           path: |
             outputs/unified/
-            public/unified/*.mp4
+            public/unified/day_*_feed.png
           retention-days: 14
           if-no-files-found: error
