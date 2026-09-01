@@ -1,0 +1,107 @@
+import json
+import os
+import sys
+from pathlib import Path
+
+import requests
+
+GRAPH_HOST = os.getenv("META_GRAPH_HOST", "https://graph.instagram.com").rstrip("/")
+API_VERSION = os.getenv("META_API_VERSION", "v26.0")
+IG_USER_ID = os.getenv("IG_USER_ID", "").strip()
+ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN", "").strip()
+IMAGE_URL = os.getenv("IMAGE_URL", "").strip()
+CAPTION_FILE = Path(os.getenv("CAPTION_FILE", "outputs/unified_live/caption.txt"))
+RESULT_FILE = Path(os.getenv("RESULT_FILE", "outputs/unified_live/publish_result.json"))
+
+
+def require(name, value):
+    if not value:
+        raise RuntimeError(f"Missing required environment variable: {name}")
+
+
+def request_json(method, url, **kwargs):
+    response = requests.request(method, url, timeout=60, **kwargs)
+    try:
+        payload = response.json()
+    except ValueError:
+        payload = {"raw": response.text}
+    if not response.ok:
+        safe = dict(payload)
+        if "access_token" in safe:
+            safe["access_token"] = "***"
+        raise RuntimeError(f"Instagram API error {response.status_code}: {safe}")
+    return payload
+
+
+def create_container(caption):
+    url = f"{GRAPH_HOST}/{API_VERSION}/{IG_USER_ID}/media"
+    payload = request_json(
+        "POST",
+        url,
+        data={
+            "image_url": IMAGE_URL,
+            "caption": caption,
+            "access_token": ACCESS_TOKEN,
+        },
+    )
+    container_id = payload.get("id")
+    if not container_id:
+        raise RuntimeError(f"Instagram did not return a container id: {payload}")
+    return container_id
+
+
+def publish(container_id):
+    url = f"{GRAPH_HOST}/{API_VERSION}/{IG_USER_ID}/media_publish"
+    payload = request_json(
+        "POST",
+        url,
+        data={
+            "creation_id": container_id,
+            "access_token": ACCESS_TOKEN,
+        },
+    )
+    media_id = payload.get("id")
+    if not media_id:
+        raise RuntimeError(f"Instagram did not return a published media id: {payload}")
+    return media_id
+
+
+def main():
+    require("IG_USER_ID", IG_USER_ID)
+    require("META_ACCESS_TOKEN", ACCESS_TOKEN)
+    require("IMAGE_URL", IMAGE_URL)
+
+    if not CAPTION_FILE.exists():
+        raise FileNotFoundError(f"Caption file not found: {CAPTION_FILE}")
+
+    caption = CAPTION_FILE.read_text(encoding="utf-8").strip()
+    print("Creating Instagram image container...")
+    container_id = create_container(caption)
+    print(f"Container created: {container_id}")
+
+    print("Publishing Instagram image...")
+    media_id = publish(container_id)
+    print(f"Published Instagram media id: {media_id}")
+
+    RESULT_FILE.parent.mkdir(parents=True, exist_ok=True)
+    RESULT_FILE.write_text(
+        json.dumps(
+            {
+                "status": "PUBLISHED",
+                "media_type": "IMAGE",
+                "container_id": container_id,
+                "media_id": media_id,
+                "image_url": IMAGE_URL,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(1)
