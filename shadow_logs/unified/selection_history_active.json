@@ -300,6 +300,42 @@
         "#dailywisdom",
         "#talksnwalks"
       ]
+    },
+    {
+      "selection_date": "2026-09-12",
+      "quote_id": "WEMP287",
+      "audience": "Women",
+      "topic_category": "Relationships",
+      "topic": "Friendship",
+      "book": "Wolfpack",
+      "author": "Abby Wambach",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ032",
+      "illustration": "chess_queen_01.png",
+      "illustration_score": 430,
+      "illustration_tags": [
+        "chess",
+        "confidence",
+        "leadership",
+        "queen"
+      ],
+      "placement": "bottom_right",
+      "background": "seafoam",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-12_WEMP287",
+      "caption_category": "Business",
+      "caption": "At its simplest, this is about leadership.\n\nOne to revisit before urgency decides the direction for you.\n\nInspired by Wolfpack by Abby Wambach.\n\n@talksnwalks101\n#success #entrepreneurship #bookinspiration #dailywisdom #talksnwalks",
+      "hashtags": [
+        "#success",
+        "#entrepreneurship",
+        "#bookinspiration",
+        "#dailywisdom",
+        "#talksnwalks"
+      ]
     }
   ]
 }
