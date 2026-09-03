@@ -336,6 +336,45 @@
         "#dailywisdom",
         "#talksnwalks"
       ]
+    },
+    {
+      "selection_date": "2026-09-13",
+      "quote_id": "SG220",
+      "audience": "All",
+      "topic_category": "Mindset",
+      "topic": "Goals",
+      "book": "The Magic of Thinking Big",
+      "author": "David J. Schwartz",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ019",
+      "illustration": "key_01.png",
+      "illustration_score": 300,
+      "illustration_tags": [
+        "access",
+        "choice",
+        "equality",
+        "freedom",
+        "identity",
+        "inclusion",
+        "key"
+      ],
+      "placement": "bottom_left",
+      "background": "powder",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-13_SG220",
+      "caption_category": "Mindset",
+      "caption": "In everyday life, this keeps the focus on courage.\n\nOne to come back to when your thoughts get noisy.\n\nInspired by The Magic of Thinking Big by David J. Schwartz.\n\n@talksnwalks101\n#mindset #motivation #bookinspiration #dailywisdom #talksnwalks",
+      "hashtags": [
+        "#mindset",
+        "#motivation",
+        "#bookinspiration",
+        "#dailywisdom",
+        "#talksnwalks"
+      ]
     }
   ]
 }
