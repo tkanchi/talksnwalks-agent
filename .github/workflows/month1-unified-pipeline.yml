@@ -116,8 +116,8 @@ jobs:
           padded = os.environ['DAY_PADDED']
           feed = Path(f'outputs/unified/day_{padded}_feed.png')
           with Image.open(feed) as im:
-              assert im.size == (1080, 1350), im.size
-          print('Verified finalized 4:5 Instagram feed post')
+              assert im.size == (1080, 1080), im.size
+          print('Verified finalized 1:1 Instagram feed post')
           PY
 
       - name: Prevent duplicate publishing
