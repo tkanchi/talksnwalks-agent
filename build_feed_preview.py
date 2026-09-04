@@ -139,18 +139,19 @@ def build_background(patch_rgb: tuple[int, int, int]) -> Image.Image:
     draw = ImageDraw.Draw(overlay)
 
     # Fixed overlapping shapes keep the result deterministic while avoiding a
-    # perfectly uniform radial gradient.
+    # perfectly uniform radial gradient. Opacity is strong enough to remain
+    # visibly pastel while still keeping the overall background very light.
     shapes = [
-        (-180, -120, 430, 330, 50),
-        (690, 40, 1190, 440, 34),
-        (-120, 690, 390, 1160, 30),
-        (720, 690, 1240, 1200, 45),
-        (250, 790, 760, 1160, 18),
+        (-180, -120, 430, 330, 92),
+        (690, 40, 1190, 440, 72),
+        (-120, 690, 390, 1160, 66),
+        (720, 690, 1240, 1200, 86),
+        (250, 790, 760, 1160, 54),
     ]
     for left, top, right, bottom, alpha in shapes:
         draw.ellipse((left, top, right, bottom), fill=(*patch_rgb, alpha))
 
-    overlay = overlay.filter(ImageFilter.GaussianBlur(95))
+    overlay = overlay.filter(ImageFilter.GaussianBlur(105))
     return Image.alpha_composite(base.convert('RGBA'), overlay).convert('RGB')
 
 
