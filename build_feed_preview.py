@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import csv
-import math
 import os
 import textwrap
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parent
 PLAN = ROOT / 'data' / 'content_plan_month_01.csv'
@@ -14,46 +13,39 @@ ILLUSTRATION_DIR = ROOT / 'illustrations' / 'objects' / 'core'
 OUTPUT_DIR = ROOT / 'outputs' / 'feed_preview'
 
 CANVAS_W = 1080
-CANVAS_H = 1350
+CANVAS_H = 1080
 HANDLE = '@talksnwalks101'
 
-# Locked 4:5 feed-post proof direction from the approved reference:
-# - clean regular sans-serif quote
-# - visible soft pastel vignette/gradient
-# - vertically centered full content block
-# - larger quote, support and attribution typography
-# - brown attribution, divider and handle
-# - illustration centered above the divider
+# Approved simplified square feed-post direction:
+# - quote only; no supporting text
+# - smaller main quote with longer line wrapping
+# - quote -> illustration -> book/author -> handle
+# - very light cream/ivory base with subtle uneven pastel patches
 TEXT_PRIMARY = (23, 22, 20)
 BROWN = (118, 76, 48)
 
-# Keep a consistent rhythm through the lower content blocks, with a deliberately
-# larger pause between the main quote and supporting line.
-GAP_QUOTE_TO_SUPPORT = 72
-GAP_SUPPORT_TO_SOURCE = 44
-GAP_SOURCE_TO_ART = 44
-GAP_ART_TO_DIVIDER = 44
-GAP_DIVIDER_TO_HANDLE = 44
+GAP_QUOTE_TO_ART = 54
+GAP_ART_TO_SOURCE = 40
+GAP_SOURCE_TO_HANDLE = 38
 
-# The center stays very light while the perimeter carries a visible warm pastel tint.
+# Keep every background family extremely light and pastel.
 BACKGROUND_RGB = {
-    'vanilla': (248, 220, 183),
-    'seafoam': (216, 238, 224),
-    'powder': (217, 233, 247),
-    'blush': (247, 218, 222),
-    'lavender': (232, 220, 246),
-    'apricot': (250, 215, 183),
-    'ice': (228, 241, 249),
-    'mint': (223, 243, 231),
-    'petal': (246, 219, 233),
-    'sky': (217, 234, 248),
+    'vanilla': (250, 238, 220),
+    'seafoam': (235, 247, 240),
+    'powder': (236, 244, 250),
+    'blush': (251, 236, 239),
+    'lavender': (243, 237, 250),
+    'apricot': (252, 237, 224),
+    'ice': (240, 247, 251),
+    'mint': (239, 249, 243),
+    'petal': (250, 238, 245),
+    'sky': (238, 246, 251),
 }
 BACKGROUND_KEYS = list(BACKGROUND_RGB.keys())
-CENTER_LIGHT = (255, 252, 246)
+BASE_IVORY = (255, 252, 246)
 
 
 def resolve_background(family: str | None, index: int) -> tuple[int, int, int]:
-    """Look up the requested background color, tolerating case/whitespace."""
     key = (family or '').strip().lower()
     if key in BACKGROUND_RGB:
         return BACKGROUND_RGB[key]
@@ -62,8 +54,8 @@ def resolve_background(family: str | None, index: int) -> tuple[int, int, int]:
 
 def find_font(size: int, *, italic: bool = False):
     candidates = [
-        '/usr/share/fonts/truetype/liberation2/LiberationSans-Italic.ttf' if italic else '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
-        '/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf' if italic else '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+        '/usr/share/fonts/truetype/liberation2/LiberationSerif-Italic.ttf' if italic else '/usr/share/fonts/truetype/liberation2/LiberationSerif-Regular.ttf',
+        '/usr/share/fonts/truetype/dejavu/DejaVuSerif-Italic.ttf' if italic else '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf',
     ]
     for path in candidates:
         try:
@@ -74,7 +66,6 @@ def find_font(size: int, *, italic: bool = False):
 
 
 def wrap_by_chars(text: str, width: int) -> str:
-    """Wrap on word boundaries while keeping each line close to a character target."""
     return '\n'.join(
         textwrap.wrap(
             text,
@@ -110,7 +101,7 @@ def fit_char_wrapped(
     return wrapped, font, box[3] - box[1]
 
 
-def fit_art(path: Path, max_w: int = 225, max_h: int = 260) -> Image.Image:
+def fit_art(path: Path, max_w: int = 205, max_h: int = 230) -> Image.Image:
     art = Image.open(path).convert('RGBA')
     bbox = art.getchannel('A').getbbox()
     if bbox:
@@ -141,81 +132,54 @@ def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
     return box[3] - box[1]
 
 
-def measure_multiline_height(draw, text, font, spacing=10):
-    if not text:
-        return 0
-    box = draw.multiline_textbbox(
-        (0, 0), text, font=font, spacing=spacing, align='center'
-    )
-    return box[3] - box[1]
+def build_background(patch_rgb: tuple[int, int, int]) -> Image.Image:
+    """Ivory base with soft, irregular pastel patches rather than a flat fill."""
+    base = Image.new('RGB', (CANVAS_W, CANVAS_H), BASE_IVORY)
+    overlay = Image.new('RGBA', (CANVAS_W, CANVAS_H), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+
+    # Fixed overlapping shapes keep the result deterministic while avoiding a
+    # perfectly uniform radial gradient.
+    shapes = [
+        (-180, -120, 430, 330, 50),
+        (690, 40, 1190, 440, 34),
+        (-120, 690, 390, 1160, 30),
+        (720, 690, 1240, 1200, 45),
+        (250, 790, 760, 1160, 18),
+    ]
+    for left, top, right, bottom, alpha in shapes:
+        draw.ellipse((left, top, right, bottom), fill=(*patch_rgb, alpha))
+
+    overlay = overlay.filter(ImageFilter.GaussianBlur(95))
+    return Image.alpha_composite(base.convert('RGBA'), overlay).convert('RGB')
 
 
-def build_background(edge_rgb: tuple[int, int, int]) -> Image.Image:
-    """Soft luminous gradient with a broad light center and slimmer dark perimeter."""
-    image = Image.new('RGB', (CANVAS_W, CANVAS_H), edge_rgb)
-    pixels = image.load()
-
-    cx = CANVAS_W / 2
-    cy = CANVAS_H * 0.48
-    radius_x = CANVAS_W * 0.82
-    radius_y = CANVAS_H * 0.92
-
-    for y in range(CANVAS_H):
-        dy = (y - cy) / radius_y
-        for x in range(CANVAS_W):
-            dx = (x - cx) / radius_x
-            distance = min(1.0, math.sqrt(dx * dx + dy * dy))
-            center_mix = 0.97 * (1.0 - distance) ** 1.25
-            pixels[x, y] = tuple(
-                round(
-                    edge_rgb[i] * (1.0 - center_mix)
-                    + CENTER_LIGHT[i] * center_mix
-                )
-                for i in range(3)
-            )
-    return image
-
-
-def measure_attribution_height(draw, book: str, author: str, size: int = 28) -> int:
+def measure_attribution_height(draw, book: str, author: str, size: int = 25) -> int:
     regular = find_font(size)
     italic = find_font(size, italic=True)
-    _, prefix_h = text_size(draw, '— Inspired by ', regular)
+    _, prefix_h = text_size(draw, 'Inspired by Book: ', regular)
     _, book_h = text_size(draw, book, italic)
-    _, author_h = text_size(draw, f'by {author}', regular)
+    _, author_h = text_size(draw, f'{book} — {author}', regular)
     return max(prefix_h, book_h) + 8 + author_h
 
 
-def draw_attribution(draw, book: str, author: str, y: int, size: int = 28) -> int:
+def draw_attribution(draw, book: str, author: str, y: int, size: int = 25) -> int:
     regular = find_font(size)
     italic = find_font(size, italic=True)
-    prefix = '— Inspired by '
-    prefix_w, _ = text_size(draw, prefix, regular)
-    book_w, line_h = text_size(draw, book, italic)
-    total_w = prefix_w + book_w
-    x = (CANVAS_W - total_w) / 2
-    draw.text((x, y), prefix, font=regular, fill=BROWN)
-    draw.text((x + prefix_w, y), book, font=italic, fill=BROWN)
+    label = 'Inspired by Book:'
+    label_w, label_h = text_size(draw, label, italic)
+    draw.text(((CANVAS_W - label_w) / 2, y), label, font=italic, fill=BROWN)
 
-    author_text = f'by {author}'
-    author_w, author_h = text_size(draw, author_text, regular)
-    author_y = y + line_h + 8
+    source_text = f'{book} — {author}'
+    source_w, source_h = text_size(draw, source_text, regular)
+    source_y = y + label_h + 8
     draw.text(
-        ((CANVAS_W - author_w) / 2, author_y),
-        author_text,
+        ((CANVAS_W - source_w) / 2, source_y),
+        source_text,
         font=regular,
         fill=BROWN,
     )
-    return line_h + 8 + author_h
-
-
-def draw_bottom_divider(draw, y: int) -> None:
-    half_line = 132
-    center_x = CANVAS_W // 2
-    draw.line(
-        (center_x - half_line, y, center_x + half_line, y),
-        fill=BROWN,
-        width=2,
-    )
+    return label_h + 8 + source_h
 
 
 def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
@@ -224,7 +188,6 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
     draw = ImageDraw.Draw(canvas)
 
     quote = (row.get('Quote') or '').strip()
-    support = (row.get('SupportingText') or '').strip()
     source_type = (row.get('SourceType') or '').strip().lower()
     book = (row.get('InspiredBy') or '').strip()
     author = (row.get('Author') or '').strip()
@@ -235,38 +198,25 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
     quote_wrapped, quote_font, quote_h = fit_char_wrapped(
         draw,
         quote,
-        char_width=20,
-        max_height=560,
-        max_size=66,
-        min_size=48,
-        spacing=16,
-    )
-    support_font = find_font(34)
-    handle_font = find_font(25)
-
-    support_wrapped = wrap_by_chars(support, 40) if support else ''
-    support_h = (
-        measure_multiline_height(draw, support_wrapped, support_font, spacing=10)
-        if support_wrapped
-        else 0
+        char_width=40,
+        max_height=330,
+        max_size=48,
+        min_size=36,
+        spacing=12,
     )
     art = fit_art(art_path)
+    handle_font = find_font(22)
     handle_w, handle_h = text_size(draw, HANDLE, handle_font)
 
     has_source = source_type == 'inspired_by' and book and author
-    source_h = measure_attribution_height(draw, book, author, size=28) if has_source else 0
+    source_h = measure_attribution_height(draw, book, author, size=25) if has_source else 0
 
-    total_h = quote_h
-    if support_wrapped:
-        total_h += GAP_QUOTE_TO_SUPPORT + support_h
+    total_h = quote_h + GAP_QUOTE_TO_ART + art.height
     if has_source:
-        total_h += GAP_SUPPORT_TO_SOURCE + source_h
-    total_h += GAP_SOURCE_TO_ART + art.height
-    total_h += GAP_ART_TO_DIVIDER + 2
-    total_h += GAP_DIVIDER_TO_HANDLE + handle_h
+        total_h += GAP_ART_TO_SOURCE + source_h
+    total_h += GAP_SOURCE_TO_HANDLE + handle_h
 
-    # Vertically center the complete composition rather than anchoring blocks separately.
-    y = max(24, (CANVAS_H - total_h) // 2)
+    y = max(30, (CANVAS_H - total_h) // 2)
 
     y += draw_centered_multiline(
         draw,
@@ -274,32 +224,19 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
         y,
         quote_font,
         TEXT_PRIMARY,
-        spacing=16,
+        spacing=12,
     )
 
-    if support_wrapped:
-        y += GAP_QUOTE_TO_SUPPORT
-        y += draw_centered_multiline(
-            draw,
-            support_wrapped,
-            y,
-            support_font,
-            TEXT_PRIMARY,
-            spacing=10,
-        )
-
-    if has_source:
-        y += GAP_SUPPORT_TO_SOURCE
-        y += draw_attribution(draw, book, author, y, size=28)
-
-    art_y = y + GAP_SOURCE_TO_ART
+    art_y = y + GAP_QUOTE_TO_ART
     art_x = (CANVAS_W - art.width) // 2
     canvas.paste(art, (art_x, art_y), art)
+    y = art_y + art.height
 
-    divider_y = art_y + art.height + GAP_ART_TO_DIVIDER
-    draw_bottom_divider(draw, divider_y)
+    if has_source:
+        y += GAP_ART_TO_SOURCE
+        y += draw_attribution(draw, book, author, y, size=25)
 
-    handle_y = divider_y + GAP_DIVIDER_TO_HANDLE
+    handle_y = y + GAP_SOURCE_TO_HANDLE
     draw.text(
         ((CANVAS_W - handle_w) / 2, handle_y),
         HANDLE,
