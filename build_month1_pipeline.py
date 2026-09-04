@@ -65,8 +65,8 @@ def make_reel_frame(feed_image: Path, row: dict[str, str], output_path: Path) ->
     family = (row.get("BackgroundFamily") or "vanilla").strip()
     bg = BACKGROUND_RGB.get(family, BACKGROUND_RGB["vanilla"])
     card = Image.open(feed_image).convert("RGB")
-    if card.size != (1080, 1350):
-        raise ValueError(f"Expected 1080x1350 feed card, got {card.size}")
+    if card.size != (1080, 1080):
+        raise ValueError(f"Expected 1080x1080 feed card, got {card.size}")
 
     frame = Image.new("RGB", (REEL_W, REEL_H), bg)
     frame.paste(card, (0, (REEL_H - card.height) // 2))
@@ -80,10 +80,8 @@ def hashtag_token(value: str) -> str:
 
 def build_caption(row: dict[str, str]) -> str:
     quote = (row.get("Quote") or "").strip()
-    support = (row.get("SupportingText") or "").strip()
     topic = (row.get("Topic") or "Mindset").strip()
     category = (row.get("TopicCategory") or "Mindset").strip()
-    audience = (row.get("Audience") or "All").strip()
 
     tags: list[str] = []
     for candidate in (
@@ -98,11 +96,7 @@ def build_caption(row: dict[str, str]) -> str:
         if len(tags) == 5:
             break
 
-    caption_parts = [quote]
-    if support:
-        caption_parts.append(support)
-    caption_parts.append(HANDLE)
-    caption_parts.append(" ".join(f"#{tag}" for tag in tags))
+    caption_parts = [quote, HANDLE, " ".join(f"#{tag}" for tag in tags)]
     return "\n\n".join(caption_parts)
 
 
