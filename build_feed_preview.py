@@ -133,23 +133,22 @@ def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
 
 
 def build_background(patch_rgb: tuple[int, int, int]) -> Image.Image:
-    """Ivory base with soft, irregular pastel patches rather than a flat fill."""
-    base = Image.new('RGB', (CANVAS_W, CANVAS_H), BASE_IVORY)
+    """Use the selected pastel as the dominant background with soft ivory variation."""
+    base = Image.new('RGB', (CANVAS_W, CANVAS_H), patch_rgb)
     overlay = Image.new('RGBA', (CANVAS_W, CANVAS_H), (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
 
-    # Fixed overlapping shapes keep the result deterministic while avoiding a
-    # perfectly uniform radial gradient. Opacity is strong enough to remain
-    # visibly pastel while still keeping the overall background very light.
+    # Keep the selected family clearly visible while adding a light,
+    # premium uneven wash so the card does not look like a flat color fill.
     shapes = [
-        (-180, -120, 430, 330, 92),
-        (690, 40, 1190, 440, 72),
-        (-120, 690, 390, 1160, 66),
-        (720, 690, 1240, 1200, 86),
-        (250, 790, 760, 1160, 54),
+        (-180, -120, 430, 330, 62),
+        (690, 40, 1190, 440, 44),
+        (-120, 690, 390, 1160, 38),
+        (720, 690, 1240, 1200, 56),
+        (250, 790, 760, 1160, 30),
     ]
     for left, top, right, bottom, alpha in shapes:
-        draw.ellipse((left, top, right, bottom), fill=(*patch_rgb, alpha))
+        draw.ellipse((left, top, right, bottom), fill=(*BASE_IVORY, alpha))
 
     overlay = overlay.filter(ImageFilter.GaussianBlur(105))
     return Image.alpha_composite(base.convert('RGBA'), overlay).convert('RGB')
