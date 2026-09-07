@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import os
+import re
 import textwrap
 from pathlib import Path
 
@@ -182,12 +183,26 @@ def draw_attribution(draw, book: str, author: str, y: int, size: int = 25) -> in
     return label_h + 8 + source_h
 
 
+def validate_quote_585(quote: str) -> None:
+    words = re.findall(r"\b[\w]+(?:['’][\w]+)?\b", quote)
+    count = len(words)
+    if count < 5:
+        raise ValueError(
+            f"585 rule: quote has {count} words; single-post quotes need 5-8 words."
+        )
+    if count > 8:
+        raise ValueError(
+            f"585 rule: quote has {count} words; more than 8 words requires a carousel with a hook slide."
+        )
+
+
 def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
     bg = resolve_background(row.get('BackgroundFamily'), index)
     canvas = build_background(bg)
     draw = ImageDraw.Draw(canvas)
 
     quote = (row.get('Quote') or '').strip()
+    validate_quote_585(quote)
     source_type = (row.get('SourceType') or '').strip().lower()
     book = (row.get('InspiredBy') or '').strip()
     author = (row.get('Author') or '').strip()
