@@ -29,18 +29,18 @@ GAP_QUOTE_TO_ART = 54
 GAP_ART_TO_SOURCE = 40
 GAP_SOURCE_TO_HANDLE = 38
 
-# Keep every background family extremely light and pastel.
+# Unified daily-post background is locked to pure white.
 BACKGROUND_RGB = {
-    'vanilla': (250, 238, 220),
-    'seafoam': (235, 247, 240),
-    'powder': (236, 244, 250),
-    'blush': (251, 236, 239),
-    'lavender': (243, 237, 250),
-    'apricot': (252, 237, 224),
-    'ice': (240, 247, 251),
-    'mint': (239, 249, 243),
-    'petal': (250, 238, 245),
-    'sky': (238, 246, 251),
+    'vanilla': (255, 255, 255),
+    'seafoam': (255, 255, 255),
+    'powder': (255, 255, 255),
+    'blush': (255, 255, 255),
+    'lavender': (255, 255, 255),
+    'apricot': (255, 255, 255),
+    'ice': (255, 255, 255),
+    'mint': (255, 255, 255),
+    'petal': (255, 255, 255),
+    'sky': (255, 255, 255),
 }
 BACKGROUND_KEYS = list(BACKGROUND_RGB.keys())
 BASE_IVORY = (255, 252, 246)
@@ -134,25 +134,8 @@ def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
 
 
 def build_background(patch_rgb: tuple[int, int, int]) -> Image.Image:
-    """Use the selected pastel as the dominant background with soft ivory variation."""
-    base = Image.new('RGB', (CANVAS_W, CANVAS_H), patch_rgb)
-    overlay = Image.new('RGBA', (CANVAS_W, CANVAS_H), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(overlay)
-
-    # Keep the selected family clearly visible while adding a light,
-    # premium uneven wash so the card does not look like a flat color fill.
-    shapes = [
-        (-180, -120, 430, 330, 62),
-        (690, 40, 1190, 440, 44),
-        (-120, 690, 390, 1160, 38),
-        (720, 690, 1240, 1200, 56),
-        (250, 790, 760, 1160, 30),
-    ]
-    for left, top, right, bottom, alpha in shapes:
-        draw.ellipse((left, top, right, bottom), fill=(*BASE_IVORY, alpha))
-
-    overlay = overlay.filter(ImageFilter.GaussianBlur(105))
-    return Image.alpha_composite(base.convert('RGBA'), overlay).convert('RGB')
+    """Build the locked pure-white unified post background."""
+    return Image.new('RGB', (CANVAS_W, CANVAS_H), (255, 255, 255))
 
 
 def measure_attribution_height(draw, book: str, author: str, size: int = 25) -> int:
