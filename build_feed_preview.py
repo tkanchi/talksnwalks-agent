@@ -14,10 +14,10 @@ ILLUSTRATION_DIR = ROOT / 'illustrations' / 'objects' / 'core'
 OUTPUT_DIR = ROOT / 'outputs' / 'feed_preview'
 
 CANVAS_W = 1080
-CANVAS_H = 1080
+CANVAS_H = 1350
 HANDLE = '@talksnwalks101'
 
-# Approved simplified square feed-post direction:
+# Approved simplified 4:5 feed-post direction:
 # - quote only; no supporting text
 # - smaller main quote with longer line wrapping
 # - quote -> illustration -> book/author -> handle
