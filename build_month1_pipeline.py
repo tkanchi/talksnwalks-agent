@@ -20,6 +20,136 @@ HANDLE = "@talksnwalks101"
 REEL_W = 1080
 REEL_H = 1920
 
+SEO_BY_TOPIC = {
+    "Authenticity & Identity": (
+        "Being yourself builds real self confidence.",
+        ["SelfConfidence", "BeYourself", "PersonalGrowth", "Mindset", "Motivation"],
+    ),
+    "Career": (
+        "Career growth starts with small clear steps.",
+        ["CareerGrowth", "CareerAdvice", "PersonalGrowth", "Mindset", "Motivation"],
+    ),
+    "Communication & Social Skills": (
+        "Good communication builds stronger relationships.",
+        ["Communication", "HealthyRelationships", "RelationshipAdvice", "PersonalGrowth", "Mindset"],
+    ),
+    "Courage": (
+        "Courage grows when you face fear.",
+        ["Courage", "Confidence", "SelfGrowth", "Mindset", "Motivation"],
+    ),
+    "Digital Responsibility": (
+        "Healthy screen habits protect your focus.",
+        ["DigitalWellbeing", "HealthyHabits", "Focus", "Mindset", "SelfGrowth"],
+    ),
+    "Discipline": (
+        "Simple discipline builds habits that last.",
+        ["Discipline", "Habits", "SelfGrowth", "Mindset", "Motivation"],
+    ),
+    "Execution": (
+        "Deep focus helps you do better work.",
+        ["DeepWork", "Focus", "Productivity", "SelfGrowth", "Mindset"],
+    ),
+    "Fitness": (
+        "Healthy habits build stronger self confidence.",
+        ["HealthyHabits", "SelfConfidence", "Wellness", "SelfGrowth", "Mindset"],
+    ),
+    "Friendship": (
+        "Strong friendships grow through real support.",
+        ["Friendship", "HealthyRelationships", "Support", "PersonalGrowth", "Mindset"],
+    ),
+    "Goals": (
+        "Clear goals make daily action easier.",
+        ["Goals", "GoalSetting", "SelfGrowth", "Mindset", "Motivation"],
+    ),
+    "Growth": (
+        "Personal growth starts with staying open.",
+        ["PersonalGrowth", "GrowthMindset", "SelfGrowth", "Mindset", "Motivation"],
+    ),
+    "Happiness": (
+        "Positive thinking helps you notice good things.",
+        ["PositiveMindset", "Happiness", "Gratitude", "Mindset", "Motivation"],
+    ),
+    "Integrity & Character": (
+        "Strong values guide better daily choices.",
+        ["Values", "Integrity", "PersonalGrowth", "Mindset", "Motivation"],
+    ),
+    "Justice & Equality": (
+        "Equality grows when everyone gets a chance.",
+        ["Equality", "WomenEmpowerment", "Confidence", "PersonalGrowth", "Mindset"],
+    ),
+    "Kindness": (
+        "Kindness can change someone's whole day.",
+        ["Kindness", "PositiveMindset", "PersonalGrowth", "Mindset", "Motivation"],
+    ),
+    "Leadership": (
+        "Good leadership starts with taking responsibility.",
+        ["Leadership", "LeadershipMindset", "PersonalGrowth", "Mindset", "Motivation"],
+    ),
+    "Money Mindset": (
+        "Money freedom starts with better choices.",
+        ["MoneyMindset", "FinancialFreedom", "PersonalGrowth", "Mindset", "Motivation"],
+    ),
+    "Peace": (
+        "Inner peace grows when life slows.",
+        ["InnerPeace", "MentalWellness", "SelfCare", "Mindset", "PersonalGrowth"],
+    ),
+    "Purpose & Meaning": (
+        "Purpose gives hard days more meaning.",
+        ["Purpose", "Resilience", "PersonalGrowth", "Mindset", "Motivation"],
+    ),
+    "Resilience": (
+        "Resilience grows when you keep going.",
+        ["Resilience", "KeepGoing", "SelfGrowth", "Mindset", "Motivation"],
+    ),
+    "Self-Belief": (
+        "Self belief grows when you begin.",
+        ["SelfBelief", "Confidence", "SelfGrowth", "Mindset", "Motivation"],
+    ),
+    "Strategy & Decision-Making": (
+        "Better choices protect your time and energy.",
+        ["DecisionMaking", "Productivity", "SelfGrowth", "Mindset", "Motivation"],
+    ),
+    "Study & Learning": (
+        "Learning gets easier when you keep trying.",
+        ["StudyMotivation", "Learning", "GrowthMindset", "Mindset", "Motivation"],
+    ),
+}
+
+SEO_BY_CATEGORY = {
+    "Relationships": (
+        "Healthy relationships grow through honest connection.",
+        ["HealthyRelationships", "Relationships", "Communication", "PersonalGrowth", "Mindset"],
+    ),
+    "Family": (
+        "Strong families grow through care and support.",
+        ["Family", "Relationships", "Kindness", "PersonalGrowth", "Mindset"],
+    ),
+    "Wellness": (
+        "Healthy habits support a calmer mind.",
+        ["Wellness", "HealthyHabits", "SelfCare", "Mindset", "PersonalGrowth"],
+    ),
+    "Mindset": (
+        "Small mindset shifts can change your day.",
+        ["Mindset", "SelfGrowth", "PersonalGrowth", "PositiveMindset", "Motivation"],
+    ),
+    "Business": (
+        "Better thinking leads to better work.",
+        ["BusinessMindset", "Productivity", "CareerGrowth", "Mindset", "Motivation"],
+    ),
+    "Youth": (
+        "Small lessons can build strong confidence.",
+        ["GrowthMindset", "Confidence", "Learning", "Mindset", "Motivation"],
+    ),
+    "Values": (
+        "Strong values guide better daily choices.",
+        ["Values", "Kindness", "PersonalGrowth", "Mindset", "Motivation"],
+    ),
+    "Lifestyle": (
+        "Small daily choices shape a better life.",
+        ["Lifestyle", "HealthyHabits", "PersonalGrowth", "Mindset", "Motivation"],
+    ),
+}
+
 
 def load_plan() -> list[dict[str, str]]:
     with PLAN.open(newline="", encoding="utf-8") as handle:
@@ -83,20 +213,25 @@ def build_caption(row: dict[str, str]) -> str:
     topic = (row.get("Topic") or "Mindset").strip()
     category = (row.get("TopicCategory") or "Mindset").strip()
 
-    tags: list[str] = []
-    for candidate in (
-        hashtag_token(topic),
-        hashtag_token(category),
-        "Motivation",
-        "DailyQuotes",
-        "TalksNWalks",
-    ):
-        if candidate and candidate.lower() not in {tag.lower() for tag in tags}:
-            tags.append(candidate)
-        if len(tags) == 5:
-            break
+    seo_line, tags = SEO_BY_TOPIC.get(
+        topic,
+        SEO_BY_CATEGORY.get(
+            category,
+            (
+                "Simple ideas can help you grow.",
+                ["Mindset", "SelfGrowth", "PersonalGrowth", "PositiveMindset", "Motivation"],
+            ),
+        ),
+    )
 
-    caption_parts = [quote, HANDLE, " ".join(f"#{tag}" for tag in tags)]
+    # Keep hashtags precise and limited. Do not use our own channel hashtag.
+    tags = tags[:5]
+    caption_parts = [
+        quote,
+        seo_line,
+        HANDLE,
+        " ".join(f"#{tag}" for tag in tags),
+    ]
     return "\n\n".join(caption_parts)
 
 
