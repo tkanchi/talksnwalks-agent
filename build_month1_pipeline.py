@@ -21,135 +21,137 @@ REEL_W = 1080
 REEL_H = 1920
 
 SEO_BY_TOPIC = {
+    # Caption copy deliberately uses natural Instagram-search keywords.
+    # Hashtags follow the 2026 precision-over-volume approach: exactly five
+    # highly relevant tags, mixing broad discovery terms with topic-specific ones.
     "Authenticity & Identity": (
-        "Being yourself builds real self confidence.",
-        ["SelfConfidence", "BeYourself", "PersonalGrowth", "Mindset", "Motivation"],
+        "Self-confidence and personal growth become stronger when you know yourself instead of chasing approval.",
+        ["SelfConfidence", "PersonalGrowth", "SelfImprovement", "Mindset", "Motivation"],
     ),
     "Career": (
-        "Career growth starts with small clear steps.",
-        ["CareerGrowth", "CareerAdvice", "PersonalGrowth", "Mindset", "Motivation"],
+        "Career growth becomes easier when clear goals, confidence and consistent action work together.",
+        ["CareerGrowth", "CareerAdvice", "Productivity", "SelfImprovement", "Motivation"],
     ),
     "Communication & Social Skills": (
-        "Good communication builds stronger relationships.",
-        ["Communication", "HealthyRelationships", "RelationshipAdvice", "PersonalGrowth", "Mindset"],
+        "Healthy relationships grow through better communication, listening and emotional intelligence.",
+        ["HealthyRelationships", "Communication", "RelationshipAdvice", "EmotionalIntelligence", "PersonalGrowth"],
     ),
     "Courage": (
-        "Courage grows when you face fear.",
-        ["Courage", "Confidence", "SelfGrowth", "Mindset", "Motivation"],
+        "Confidence and courage grow when you take action even before fear disappears.",
+        ["Confidence", "Courage", "SelfImprovement", "Mindset", "Motivation"],
     ),
     "Digital Responsibility": (
-        "Healthy screen habits protect your focus.",
-        ["DigitalWellbeing", "HealthyHabits", "Focus", "Mindset", "SelfGrowth"],
+        "Digital wellbeing improves when healthy screen habits protect your focus and mental health.",
+        ["DigitalWellbeing", "HealthyHabits", "MentalHealth", "Focus", "SelfImprovement"],
     ),
     "Discipline": (
-        "Simple discipline builds habits that last.",
-        ["Discipline", "Habits", "SelfGrowth", "Mindset", "Motivation"],
+        "Discipline, consistency and small habits are the foundation of lasting self-improvement.",
+        ["Discipline", "Habits", "SelfImprovement", "Mindset", "Motivation"],
     ),
     "Execution": (
-        "Deep focus helps you do better work.",
-        ["DeepWork", "Focus", "Productivity", "SelfGrowth", "Mindset"],
+        "Deep work, focus and productivity help turn good intentions into meaningful results.",
+        ["Productivity", "DeepWork", "Focus", "SelfImprovement", "Mindset"],
     ),
     "Fitness": (
-        "Healthy habits build stronger self confidence.",
-        ["HealthyHabits", "SelfConfidence", "Wellness", "SelfGrowth", "Mindset"],
+        "Fitness, healthy habits and self-confidence grow through consistent daily choices.",
+        ["Fitness", "HealthyHabits", "Wellness", "SelfImprovement", "Motivation"],
     ),
     "Friendship": (
-        "Strong friendships grow through real support.",
-        ["Friendship", "HealthyRelationships", "Support", "PersonalGrowth", "Mindset"],
+        "Strong friendships grow through support, trust and healthy relationships.",
+        ["Friendship", "Relationships", "HealthyRelationships", "PersonalGrowth", "Mindset"],
     ),
     "Goals": (
-        "Clear goals make daily action easier.",
-        ["Goals", "GoalSetting", "SelfGrowth", "Mindset", "Motivation"],
+        "Goal setting turns motivation into clear action and steady personal growth.",
+        ["Goals", "GoalSetting", "PersonalGrowth", "SelfImprovement", "Motivation"],
     ),
     "Growth": (
-        "Personal growth starts with staying open.",
-        ["PersonalGrowth", "GrowthMindset", "SelfGrowth", "Mindset", "Motivation"],
+        "Personal growth and a growth mindset begin with staying curious, teachable and consistent.",
+        ["PersonalGrowth", "GrowthMindset", "SelfImprovement", "Mindset", "Motivation"],
     ),
     "Happiness": (
-        "Positive thinking helps you notice good things.",
-        ["PositiveMindset", "Happiness", "Gratitude", "Mindset", "Motivation"],
+        "Positive thinking, gratitude and a healthy mindset help you notice more of what is already good.",
+        ["PositiveMindset", "Gratitude", "Happiness", "Mindset", "SelfImprovement"],
     ),
     "Integrity & Character": (
-        "Strong values guide better daily choices.",
-        ["Values", "Integrity", "PersonalGrowth", "Mindset", "Motivation"],
+        "Integrity, character and strong values make everyday decisions easier to trust.",
+        ["Integrity", "Character", "Values", "PersonalGrowth", "Mindset"],
     ),
     "Justice & Equality": (
-        "Equality grows when everyone gets a chance.",
+        "Equality and women empowerment grow when girls are raised with confidence, choice and opportunity.",
         ["Equality", "WomenEmpowerment", "Confidence", "PersonalGrowth", "Mindset"],
     ),
     "Kindness": (
-        "Kindness can change someone's whole day.",
-        ["Kindness", "PositiveMindset", "PersonalGrowth", "Mindset", "Motivation"],
+        "Kindness, empathy and emotional intelligence can change the way someone experiences a hard day.",
+        ["Kindness", "Empathy", "EmotionalIntelligence", "PersonalGrowth", "Motivation"],
     ),
     "Leadership": (
-        "Good leadership starts with taking responsibility.",
-        ["Leadership", "LeadershipMindset", "PersonalGrowth", "Mindset", "Motivation"],
+        "Leadership, accountability and personal growth start with taking responsibility for the next action.",
+        ["Leadership", "Accountability", "PersonalGrowth", "Business", "Motivation"],
     ),
     "Money Mindset": (
-        "Money freedom starts with better choices.",
-        ["MoneyMindset", "FinancialFreedom", "PersonalGrowth", "Mindset", "Motivation"],
+        "Money mindset improves when financial goals, better decisions and consistent habits work together.",
+        ["MoneyMindset", "FinancialFreedom", "PersonalFinance", "SelfImprovement", "Motivation"],
     ),
     "Peace": (
-        "Inner peace grows when life slows.",
-        ["InnerPeace", "MentalWellness", "SelfCare", "Mindset", "PersonalGrowth"],
+        "Inner peace and mental wellness grow when you protect your energy, slow down and practice self-care.",
+        ["InnerPeace", "MentalHealth", "SelfCare", "Wellness", "Mindset"],
     ),
     "Purpose & Meaning": (
-        "Purpose gives hard days more meaning.",
-        ["Purpose", "Resilience", "PersonalGrowth", "Mindset", "Motivation"],
+        "Purpose, resilience and personal growth give difficult seasons a clearer reason to keep going.",
+        ["Purpose", "Resilience", "PersonalGrowth", "SelfImprovement", "Motivation"],
     ),
     "Resilience": (
-        "Resilience grows when you keep going.",
-        ["Resilience", "KeepGoing", "SelfGrowth", "Mindset", "Motivation"],
+        "Resilience and mental strength grow when setbacks become lessons instead of endings.",
+        ["Resilience", "MentalStrength", "SelfImprovement", "Mindset", "Motivation"],
     ),
     "Self-Belief": (
-        "Self belief grows when you begin.",
-        ["SelfBelief", "Confidence", "SelfGrowth", "Mindset", "Motivation"],
+        "Self-belief and confidence grow when you take action before you feel completely ready.",
+        ["SelfBelief", "Confidence", "SelfImprovement", "Mindset", "Motivation"],
     ),
     "Strategy & Decision-Making": (
-        "Better choices protect your time and energy.",
-        ["DecisionMaking", "Productivity", "SelfGrowth", "Mindset", "Motivation"],
+        "Better decision making, productivity and focus help protect your time, energy and priorities.",
+        ["DecisionMaking", "Productivity", "Focus", "SelfImprovement", "Mindset"],
     ),
     "Study & Learning": (
-        "Learning gets easier when you keep trying.",
-        ["StudyMotivation", "Learning", "GrowthMindset", "Mindset", "Motivation"],
+        "Study motivation gets stronger when learning, consistency and a growth mindset work together.",
+        ["StudyMotivation", "Learning", "GrowthMindset", "SelfImprovement", "Motivation"],
     ),
 }
 
 SEO_BY_CATEGORY = {
     "Relationships": (
-        "Healthy relationships grow through honest connection.",
-        ["HealthyRelationships", "Relationships", "Communication", "PersonalGrowth", "Mindset"],
+        "Healthy relationships grow through communication, trust and emotional intelligence.",
+        ["Relationships", "HealthyRelationships", "Communication", "PersonalGrowth", "Mindset"],
     ),
     "Family": (
-        "Strong families grow through care and support.",
-        ["Family", "Relationships", "Kindness", "PersonalGrowth", "Mindset"],
+        "Strong family relationships grow through care, communication and consistent support.",
+        ["Family", "Parenting", "Relationships", "PersonalGrowth", "Mindset"],
     ),
     "Wellness": (
-        "Healthy habits support a calmer mind.",
-        ["Wellness", "HealthyHabits", "SelfCare", "Mindset", "PersonalGrowth"],
+        "Wellness, mental health and healthy habits support a calmer, stronger life.",
+        ["Wellness", "MentalHealth", "HealthyHabits", "SelfCare", "SelfImprovement"],
     ),
     "Mindset": (
-        "Small mindset shifts can change your day.",
-        ["Mindset", "SelfGrowth", "PersonalGrowth", "PositiveMindset", "Motivation"],
+        "Mindset, self-improvement and personal growth are built through small choices repeated daily.",
+        ["Mindset", "SelfImprovement", "PersonalGrowth", "PositiveMindset", "Motivation"],
     ),
     "Business": (
-        "Better thinking leads to better work.",
-        ["BusinessMindset", "Productivity", "CareerGrowth", "Mindset", "Motivation"],
+        "Business growth improves when productivity, focus and better decisions work together.",
+        ["Business", "Productivity", "Entrepreneurship", "CareerGrowth", "Motivation"],
     ),
     "Youth": (
-        "Small lessons can build strong confidence.",
-        ["GrowthMindset", "Confidence", "Learning", "Mindset", "Motivation"],
+        "Learning, confidence and a growth mindset become stronger through consistent practice.",
+        ["Learning", "Confidence", "GrowthMindset", "SelfImprovement", "Motivation"],
     ),
     "Values": (
-        "Strong values guide better daily choices.",
-        ["Values", "Kindness", "PersonalGrowth", "Mindset", "Motivation"],
+        "Kindness, integrity and strong values shape the decisions that build character.",
+        ["Kindness", "Integrity", "Values", "PersonalGrowth", "Mindset"],
     ),
     "Lifestyle": (
-        "Small daily choices shape a better life.",
-        ["Lifestyle", "HealthyHabits", "PersonalGrowth", "Mindset", "Motivation"],
+        "Healthy habits and intentional daily choices support personal growth and a better lifestyle.",
+        ["Lifestyle", "HealthyHabits", "PersonalGrowth", "SelfImprovement", "Motivation"],
     ),
 }
-
 
 def load_plan() -> list[dict[str, str]]:
     with PLAN.open(newline="", encoding="utf-8") as handle:
@@ -218,14 +220,15 @@ def build_caption(row: dict[str, str]) -> str:
         SEO_BY_CATEGORY.get(
             category,
             (
-                "Simple ideas can help you grow.",
-                ["Mindset", "SelfGrowth", "PersonalGrowth", "PositiveMindset", "Motivation"],
+                "Self-improvement and personal growth start with small mindset shifts repeated consistently.",
+                ["Mindset", "SelfImprovement", "PersonalGrowth", "PositiveMindset", "Motivation"],
             ),
         ),
     )
 
-    # Keep hashtags precise and limited. Do not use our own channel hashtag.
-    tags = tags[:5]
+    # Instagram discovery now rewards precise classification over hashtag stuffing.
+    # Keep exactly five highly relevant tags and do not use our own channel hashtag.
+    tags = list(dict.fromkeys(tags))[:5]
     caption_parts = [
         quote,
         seo_line,
