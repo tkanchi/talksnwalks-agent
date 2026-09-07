@@ -197,8 +197,8 @@ def make_reel_frame(feed_image: Path, row: dict[str, str], output_path: Path) ->
     family = (row.get("BackgroundFamily") or "vanilla").strip()
     bg = BACKGROUND_RGB.get(family, BACKGROUND_RGB["vanilla"])
     card = Image.open(feed_image).convert("RGB")
-    if card.size != (1080, 1080):
-        raise ValueError(f"Expected 1080x1080 feed card, got {card.size}")
+    if card.size != (1080, 1350):
+        raise ValueError(f"Expected 1080x1350 feed card, got {card.size}")
 
     frame = Image.new("RGB", (REEL_W, REEL_H), bg)
     frame.paste(card, (0, (REEL_H - card.height) // 2))
