@@ -22,8 +22,8 @@ HANDLE = '@talksnwalks101'
 # - smaller main quote with longer line wrapping
 # - quote -> illustration -> book/author -> handle
 # - very light cream/ivory base with subtle uneven pastel patches
-TEXT_PRIMARY = (23, 22, 20)
-BROWN = (118, 76, 48)
+TEXT_PRIMARY = (0, 0, 0)
+BROWN = (0, 0, 0)
 
 GAP_QUOTE_TO_ART = 54
 GAP_ART_TO_SOURCE = 40
