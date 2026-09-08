@@ -8,6 +8,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
+from background_generator import generate_background
+
 ROOT = Path(__file__).resolve().parent
 PLAN = ROOT / 'data' / 'content_plan_month_01.csv'
 ILLUSTRATION_DIR = ROOT / 'illustrations' / 'objects' / 'core'
@@ -133,9 +135,19 @@ def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
     return box[3] - box[1]
 
 
-def build_background(patch_rgb: tuple[int, int, int]) -> Image.Image:
-    """Build the locked pure-white unified post background."""
-    return Image.new('RGB', (CANVAS_W, CANVAS_H), (255, 255, 255))
+def build_background(
+    patch_rgb: tuple[int, int, int],
+    *,
+    family: str | None = None,
+    index: int = 0,
+) -> Image.Image:
+    """Build a subtle deterministic pattern while preserving the existing API."""
+    return generate_background(
+        CANVAS_W,
+        CANVAS_H,
+        family=(family or 'vanilla'),
+        index=index,
+    )
 
 
 def measure_attribution_height(draw, book: str, author: str, size: int = 25) -> int:
@@ -180,8 +192,9 @@ def validate_quote_585(quote: str) -> None:
 
 
 def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
-    bg = resolve_background(row.get('BackgroundFamily'), index)
-    canvas = build_background(bg)
+    family = (row.get('BackgroundFamily') or 'vanilla').strip().lower()
+    bg = resolve_background(family, index)
+    canvas = build_background(bg, family=family, index=index)
     draw = ImageDraw.Draw(canvas)
 
     quote = (row.get('Quote') or '').strip()
