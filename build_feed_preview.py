@@ -171,11 +171,11 @@ def validate_quote_585(quote: str) -> None:
     count = len(words)
     if count < 5:
         raise ValueError(
-            f"585 rule: quote has {count} words; single-post quotes need 5-8 words."
+            f"Feed quote has {count} words; use a complete thought rather than an overly short fragment."
         )
-    if count > 8:
+    if count > 32 or len(quote) > 180:
         raise ValueError(
-            f"585 rule: quote has {count} words; more than 8 words requires a carousel with a hook slide."
+            f"Feed quote is too long for the 4:5 single-post layout ({count} words, {len(quote)} characters)."
         )
 
 
