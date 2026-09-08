@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -24,20 +23,14 @@ PALETTES: dict[str, dict[str, tuple[int, int, int]]] = {
 
 PATTERNS = (
     "grid",
+    "gingham",
     "dots",
     "pinstripe",
     "diagonal",
     "checker",
     "notebook",
-    "wide_grid",
     "waves",
 )
-
-
-def _stable_index(family: str, index: int) -> int:
-    token = f"{family}:{index}".encode("utf-8")
-    digest = hashlib.sha256(token).digest()
-    return int.from_bytes(digest[:4], "big")
 
 
 def _grid(draw: ImageDraw.ImageDraw, size: tuple[int, int], ink, spacing: int = 52) -> None:
@@ -85,8 +78,16 @@ def _notebook(draw: ImageDraw.ImageDraw, size: tuple[int, int], ink, accent) -> 
     draw.line((margin_x, 0, margin_x, height), fill=accent, width=2)
 
 
-def _wide_grid(draw: ImageDraw.ImageDraw, size: tuple[int, int], ink) -> None:
-    _grid(draw, size, ink, spacing=84)
+def _gingham(draw: ImageDraw.ImageDraw, size: tuple[int, int], ink, accent) -> None:
+    width, height = size
+    spacing = 86
+    band = 24
+    for x in range(0, width, spacing):
+        draw.rectangle((x, 0, x + band, height), fill=accent)
+        draw.line((x, 0, x, height), fill=ink, width=1)
+    for y in range(0, height, spacing):
+        draw.rectangle((0, y, width, y + band), fill=accent)
+        draw.line((0, y, width, y), fill=ink, width=1)
 
 
 def _waves(draw: ImageDraw.ImageDraw, size: tuple[int, int], ink) -> None:
@@ -110,8 +111,8 @@ def generate_background(
     palette = PALETTES.get(family_key, PALETTES["vanilla"])
 
     if pattern is None:
-        seed = _stable_index(family_key, index)
-        pattern = PATTERNS[seed % len(PATTERNS)]
+        # Guaranteed visual rotation: consecutive posts use different pattern styles.
+        pattern = PATTERNS[index % len(PATTERNS)]
     pattern = pattern.strip().lower()
     if pattern not in PATTERNS:
         raise ValueError(f"Unknown background pattern: {pattern}")
@@ -122,6 +123,8 @@ def generate_background(
 
     if pattern == "grid":
         _grid(draw, size, palette["ink"])
+    elif pattern == "gingham":
+        _gingham(draw, size, palette["ink"], palette["accent"])
     elif pattern == "dots":
         _dots(draw, size, palette["ink"])
     elif pattern == "pinstripe":
@@ -132,8 +135,6 @@ def generate_background(
         _checker(draw, size, palette["accent"])
     elif pattern == "notebook":
         _notebook(draw, size, palette["ink"], palette["accent"])
-    elif pattern == "wide_grid":
-        _wide_grid(draw, size, palette["ink"])
     elif pattern == "waves":
         _waves(draw, size, palette["ink"])
 
