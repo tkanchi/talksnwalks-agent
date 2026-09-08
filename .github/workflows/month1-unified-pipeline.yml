@@ -19,6 +19,7 @@ on:
     paths:
       - 'build_month1_pipeline.py'
       - 'build_feed_preview.py'
+      - 'background_generator.py'
       - 'data/content_plan_month_01.csv'
       - 'illustrations/objects/core/**'
       - '.github/workflows/month1-unified-pipeline.yml'
