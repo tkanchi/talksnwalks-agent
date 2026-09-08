@@ -23,11 +23,9 @@ PALETTES: dict[str, dict[str, tuple[int, int, int]]] = {
 
 PATTERNS = (
     "grid",
-    "gingham",
     "dots",
     "pinstripe",
     "diagonal",
-    "checker",
     "notebook",
     "waves",
 )
