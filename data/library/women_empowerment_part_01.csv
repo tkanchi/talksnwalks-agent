@@ -2,10 +2,10 @@ QuoteID,Quote,Audience,Topic,Theme,SourceType,InspiredBy,Author,OriginalTheme
 WEMP001,Do not wait to feel perfectly ready before stepping toward the opportunity you already earned.,Women,Leadership,Dreams,inspired_by,Lean In,Sheryl Sandberg,Career & Leadership
 WEMP002,The woman beneath everyone else's expectations still has a voice; learn to recognize it.,Women,Authenticity & Identity,Self-Worth,inspired_by,Untamed,Glennon Doyle,Authenticity & Freedom
 WEMP003,Your story is still becoming; no single chapter gets to define the whole woman.,Women,Authenticity & Identity,Becoming,inspired_by,Becoming,Michelle Obama,Identity & Becoming
-WEMP004,Confidence is easier to carry when it is built from self-knowledge rather than applause.,Women,Fitness,Believe in Yourself,inspired_by,The Light We Carry,Michelle Obama,Confidence & Inner Strength
-WEMP005,Equality begins when girls are raised for possibility instead of limitation.,Women,Justice & Equality,Self-Worth,inspired_by,We Should All Be Feminists,Chimamanda Ngozi Adichie,Equality & Voice
+WEMP004,"Real confidence grows from knowing yourself, not from collecting praise. When you trust who you are, applause matters less.",Women,Fitness,Believe in Yourself,inspired_by,The Light We Carry,Michelle Obama,Confidence & Inner Strength
+WEMP005,Do not raise girls to make themselves smaller for the world. Teach them to see how many possibilities are open to them.,Women,Justice & Equality,Self-Worth,inspired_by,We Should All Be Feminists,Chimamanda Ngozi Adichie,Equality & Voice
 WEMP006,Raise a girl to know she is a complete person before anyone calls her someone's wife.,Women,Growth,Growth,inspired_by,"Dear Ijeawele, or A Feminist Manifesto in Fifteen Suggestions",Chimamanda Ngozi Adichie,Raising Empowered Girls
-WEMP007,"When a woman is called too loud, ask whether the real discomfort is that she is audible at all.",Women,Justice & Equality,Self-Worth,inspired_by,Women & Power,Mary Beard,Power & Public Voice
+WEMP007,Do not shrink your voice because someone thinks you are too loud. Sometimes their discomfort simply means you were finally heard.,Women,Justice & Equality,Self-Worth,inspired_by,Women & Power,Mary Beard,Power & Public Voice
 WEMP008,A woman can be both warm and formidable; leadership should not force her to choose one.,Women,Justice & Equality,Dreams,inspired_by,Women and Leadership,Julia Gillard & Ngozi Okonjo-Iweala,Leadership & Gender Bias
 WEMP009,"When women gain power over education, money, health, and choice, entire communities gain possibility.",Women,Justice & Equality,Self-Worth,inspired_by,The Moment of Lift,Melinda French Gates,Global Equality & Opportunity
 WEMP010,A girl's education is powerful precisely because it gives her more choices than others may have planned for her.,Women,Study & Learning,Courage,inspired_by,I Am Malala,Malala Yousafzai & Christina Lamb,Education & Courage
@@ -35,7 +35,7 @@ WEMP033,True belonging should not require borrowing someone else's beliefs.,Wome
 WEMP034,A boundary is not cruel simply because someone preferred unlimited access to you.,Women,Peace,Peace & Letting Go,inspired_by,"Set Boundaries, Find Peace",Nedra Glover Tawwab,Boundaries & Peace
 WEMP035,Some patterns survive because they once protected you; gratitude does not require keeping them forever.,Women,Mental Health,Happiness & Gratitude,inspired_by,The Mountain Is You,Brianna Wiest,Healing & Self-Sabotage
 WEMP036,Do not wait for someone else to perform the care you keep denying yourself.,Women,Rest & Recovery,Peace & Letting Go,inspired_by,Buy Yourself the F*cking Lilies,Tara Schuster,Self-Care & Self-Respect
-WEMP037,Women do not have to compete for the single seat that scarcity once offered.,Women,Friendship,Dreams,inspired_by,Wolfpack,Abby Wambach,Teamwork & Women's Leadership
+WEMP037,Another woman’s success does not take anything away from yours. There is room to support each other and rise together.,Women,Friendship,Dreams,inspired_by,Wolfpack,Abby Wambach,Teamwork & Women's Leadership
 WEMP038,Success is too expensive when your body and mind are paying the bill.,Women,Rest & Recovery,Peace & Letting Go,inspired_by,Thrive,Arianna Huffington,Well-Being & Success
 WEMP039,You can build a meaningful life even after the version you planned is no longer available.,Women,Resilience,Resilience,inspired_by,Option B,Sheryl Sandberg & Adam Grant,Resilience & Recovery
 WEMP040,Pay attention to the truths life keeps teaching you in different disguises.,Women,Authenticity & Identity,Self-Worth,inspired_by,What I Know for Sure,Oprah Winfrey,Self-Worth & Wisdom
@@ -44,7 +44,7 @@ WEMP042,"Love should be measured by care, respect, honesty, and responsibility�
 WEMP043,"Protect the part of you that knows when something feels alive, dangerous, false, or necessary.",Women,Authenticity & Identity,Growth,inspired_by,Women Who Run With the Wolves,Clarissa Pinkola Estés,Instinct & Inner Life
 WEMP044,"Creative freedom needs time, privacy, resources, and the right to take your own mind seriously.",Women,Authenticity & Identity,Growth,inspired_by,A Room of One's Own,Virginia Woolf,Independence & Creative Freedom
 WEMP045,"Women should be educated as thinking citizens, not trained merely to attract approval.",Women,Justice & Equality,Self-Worth,inspired_by,A Vindication of the Rights of Woman,Mary Wollstonecraft,Education & Equality
-WEMP046,Leadership does not need to imitate hierarchy to create strong results.,Women,Fitness,Dreams,inspired_by,The Female Advantage,Sally Helgesen,Women & Leadership Strengths
+WEMP046,"Strong leadership does not have to mean controlling everything from the top. Listening, sharing information, and working together can make a team stronger.",Women,Fitness,Dreams,inspired_by,The Female Advantage,Sally Helgesen,Women & Leadership Strengths
 WEMP047,"Care about people enough to tell them the truth they need, not only the praise they enjoy.",Women,Communication & Social Skills,Happiness & Gratitude,inspired_by,Radical Candor,Kim Scott,Communication & Leadership
 WEMP048,Change becomes smarter when you leave familiar rooms and listen to people living different realities.,Women,Justice & Equality,Growth,inspired_by,My Life on the Road,Gloria Steinem,Activism & Listening
 WEMP049,"When women are missing from the data, inequality can hide inside decisions that look neutral.",Women,Justice & Equality,Self-Worth,inspired_by,Invisible Women,Caroline Criado Perez,"Data, Design & Equality"
@@ -52,7 +52,7 @@ WEMP050,You do not have to perform ideological perfection before caring about wo
 WEMP051,Ambition does not become arrogance simply because a woman owns it out loud.,Women,Leadership,Dreams,inspired_by,Lean In,Sheryl Sandberg,Career & Leadership
 WEMP052,Stop building a life that looks acceptable if it feels unlivable from the inside.,Women,Authenticity & Identity,Self-Worth,inspired_by,Untamed,Glennon Doyle,Authenticity & Freedom
 WEMP053,Carry your roots with pride without letting anyone use them to limit your destination.,Women,Authenticity & Identity,Becoming,inspired_by,Becoming,Michelle Obama,Identity & Becoming
-WEMP054,Keep a few practices that steady you when the world becomes louder than your own voice.,Women,Fitness,Self-Worth,inspired_by,The Light We Carry,Michelle Obama,Confidence & Inner Strength
+WEMP054,"When the world gets loud, keep a few habits that bring you back to yourself. Confidence is easier to find when you know what steadies you.",Women,Fitness,Self-Worth,inspired_by,The Light We Carry,Michelle Obama,Confidence & Inner Strength
 WEMP055,A woman's success should not require an explanation that a man's success never needs.,Women,Justice & Equality,Self-Worth,inspired_by,We Should All Be Feminists,Chimamanda Ngozi Adichie,Equality & Voice
 WEMP056,Teach competence before teaching prettiness as a source of value.,Women,Growth,Growth,inspired_by,"Dear Ijeawele, or A Feminist Manifesto in Fifteen Suggestions",Chimamanda Ngozi Adichie,Raising Empowered Girls
 WEMP057,Power structures do not become neutral simply because women learn to survive inside them.,Women,Justice & Equality,Self-Worth,inspired_by,Women & Power,Mary Beard,Power & Public Voice
@@ -85,7 +85,7 @@ WEMP083,Stand alone when necessary without turning solitude into superiority.,Wo
 WEMP084,Say what you need before resentment becomes the only language left.,Women,Peace,Peace & Letting Go,inspired_by,"Set Boundaries, Find Peace",Nedra Glover Tawwab,Boundaries & Peace
 WEMP085,"Stop calling yourself lazy when fear, grief, or self-protection may be underneath the delay.",Women,Mental Health,Dreams,inspired_by,The Mountain Is You,Brianna Wiest,Healing & Self-Sabotage
 WEMP086,Small rituals can teach your nervous system that your life deserves tenderness.,Women,Rest & Recovery,Peace & Letting Go,inspired_by,Buy Yourself the F*cking Lilies,Tara Schuster,Self-Care & Self-Respect
-WEMP087,"Build tables, teams, and networks where more women can win together.",Women,Friendship,Dreams,inspired_by,Wolfpack,Abby Wambach,Teamwork & Women's Leadership
+WEMP087,Women do not have to build alone or compete for limited space. Create circles where more women can succeed together.,Women,Friendship,Dreams,inspired_by,Wolfpack,Abby Wambach,Teamwork & Women's Leadership
 WEMP088,"Sleep, wisdom, connection, and wonder belong inside a serious definition of achievement.",Women,Rest & Recovery,Peace & Letting Go,inspired_by,Thrive,Arianna Huffington,Well-Being & Success
 WEMP089,"Resilience is strengthened by support, honesty, and permission to grieve without a timetable.",Women,Resilience,Resilience,inspired_by,Option B,Sheryl Sandberg & Adam Grant,Resilience & Recovery
 WEMP090,Your life improves when gratitude becomes a practice instead of a reaction to perfect circumstances.,Women,Authenticity & Identity,Happiness & Gratitude,inspired_by,What I Know for Sure,Oprah Winfrey,Self-Worth & Wisdom
@@ -94,7 +94,7 @@ WEMP092,A woman should not have to accept control in order to call a relationshi
 WEMP093,A woman's instincts weaken when she is repeatedly taught to distrust them.,Women,Authenticity & Identity,Growth,inspired_by,Women Who Run With the Wolves,Clarissa Pinkola Estés,Instinct & Inner Life
 WEMP094,Talent struggles to grow where a woman has no space that belongs to her.,Women,Authenticity & Identity,Growth,inspired_by,A Room of One's Own,Virginia Woolf,Independence & Creative Freedom
 WEMP095,Equality becomes impossible when girls are praised for obedience more than judgment.,Women,Justice & Equality,Self-Worth,inspired_by,A Vindication of the Rights of Woman,Mary Wollstonecraft,Education & Equality
-WEMP096,"Collaboration, information-sharing, and relationship-building can be strategic strengths rather than soft extras.",Women,Fitness,Self-Worth,inspired_by,The Female Advantage,Sally Helgesen,Women & Leadership Strengths
+WEMP096,"Listening, sharing information, and building strong relationships are not weak leadership skills. They can be some of the reasons a team succeeds.",Women,Fitness,Self-Worth,inspired_by,The Female Advantage,Sally Helgesen,Women & Leadership Strengths
 WEMP097,Direct feedback can be respectful when dignity and clarity stay in the conversation.,Women,Communication & Social Skills,Dreams,inspired_by,Radical Candor,Kim Scott,Communication & Leadership
 WEMP098,"Movements grow through conversation, travel, organizing, and the willingness to keep learning.",Women,Justice & Equality,Growth,inspired_by,My Life on the Road,Gloria Steinem,Activism & Listening
 WEMP099,Design for the average human fails when the average is quietly assumed to be male.,Women,Justice & Equality,Self-Worth,inspired_by,Invisible Women,Caroline Criado Perez,"Data, Design & Equality"
