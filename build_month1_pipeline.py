@@ -255,7 +255,7 @@ def main() -> None:
     caption_file = OUTPUT_DIR / "caption.txt"
     env_file = OUTPUT_DIR / "publish.env"
 
-    compose_feed_post(row, feed_png)
+    compose_feed_post(row, feed_png, index=post_number - 1)
     make_reel_frame(feed_png, row, reel_jpg)
     build_reel.write_fallback_audio(fallback_wav, duration=build_reel.REEL_SECONDS)
     build_reel.make_mp4(reel_jpg, fallback_wav, reel_mp4)
