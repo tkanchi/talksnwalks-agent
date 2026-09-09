@@ -2,7 +2,7 @@ name: Month 1 Unified Pipeline
 
 on:
   schedule:
-    - cron: "43 5 * * *" # 11:13 IST
+    - cron: "30 11 * * *" # 17:00 IST
   workflow_dispatch:
     inputs:
       post_number:
