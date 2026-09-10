@@ -412,6 +412,43 @@
         "#dailywisdom",
         "#talksnwalks"
       ]
+    },
+    {
+      "selection_date": "2026-09-15",
+      "quote_id": "SG079",
+      "audience": "All",
+      "topic_category": "Mindset",
+      "topic": "Happiness",
+      "book": "The Secret",
+      "author": "Rhonda Byrne",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ018",
+      "illustration": "telescope_01.png",
+      "illustration_score": 430,
+      "illustration_tags": [
+        "dreams",
+        "future",
+        "purpose",
+        "telescope",
+        "vision"
+      ],
+      "placement": "bottom_left",
+      "background": "lavender",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-15_SG079",
+      "caption_category": "Mindset",
+      "caption": "The point here is to keep noticing goals.\n\nWorth keeping nearby for the harder days.\n\nInspired by The Secret by Rhonda Byrne.\n\n@talksnwalks101\n#mindset #motivation #bookinspiration #dailywisdom #talksnwalks",
+      "hashtags": [
+        "#mindset",
+        "#motivation",
+        "#bookinspiration",
+        "#dailywisdom",
+        "#talksnwalks"
+      ]
     }
   ]
 }
