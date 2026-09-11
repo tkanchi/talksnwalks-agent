@@ -449,6 +449,42 @@
         "#dailywisdom",
         "#talksnwalks"
       ]
+    },
+    {
+      "selection_date": "2026-09-16",
+      "quote_id": "SG070",
+      "audience": "All",
+      "topic_category": "Values",
+      "topic": "Integrity & Character",
+      "book": "The Subtle Art of Not Giving a F*ck",
+      "author": "Mark Manson",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ003",
+      "illustration": "compass_01.png",
+      "illustration_score": 430,
+      "illustration_tags": [
+        "choice",
+        "direction",
+        "purpose",
+        "travel"
+      ],
+      "placement": "bottom_center",
+      "background": "apricot",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-16_SG070",
+      "caption_category": "Business",
+      "caption": "This is really a reminder about strategy and decision-making.\n\nWorth keeping in mind when priorities start competing.\n\nInspired by The Subtle Art of Not Giving a F*ck by Mark Manson.\n\n@talksnwalks101\n#success #entrepreneurship #bookinspiration #dailywisdom #talksnwalks",
+      "hashtags": [
+        "#success",
+        "#entrepreneurship",
+        "#bookinspiration",
+        "#dailywisdom",
+        "#talksnwalks"
+      ]
     }
   ]
 }
