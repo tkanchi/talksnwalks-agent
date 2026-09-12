@@ -1,4 +1,4 @@
-"""Build Talk N Walks premium editorial carousel slides.
+"""Build Talk N Walks premium landscape carousel slides.
 
 This stream is intentionally independent from the daily Women/Men builders.
 It produces 1080x1350 (4:5) JPEG slides plus caption/manifest metadata.
@@ -11,7 +11,13 @@ import os
 from datetime import date, timedelta
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
+
+from carousel_landscape import (
+    RECENT_REPEAT_BLOCK,
+    choose_landscape_family,
+    generate_landscape_background,
+)
 
 CANVAS_W = 1080
 CANVAS_H = 1350
@@ -21,17 +27,17 @@ OUTPUT_ROOT = Path(os.getenv("CAROUSEL_OUTPUT_DIR", "outputs/carousels"))
 PUBLIC_ROOT = Path(os.getenv("CAROUSEL_PUBLIC_DIR", "public/carousels"))
 START_DATE = date.fromisoformat(os.getenv("CAROUSEL_START_DATE", "2026-09-16"))
 SCHEDULE_WEEKDAYS = {2, 5}  # Wednesday, Saturday
-STYLE_VERSION = "premium-editorial-v2"
+STYLE_VERSION = "premium-landscape-v3"
 
 PALETTES = {
-    "dusty_blue": {"hook": (205, 220, 230), "base": (247, 246, 241), "wash": (224, 234, 240), "accent": (81, 105, 121), "text": (48, 48, 46)},
-    "sage": {"hook": (214, 226, 214), "base": (248, 247, 241), "wash": (227, 236, 224), "accent": (88, 108, 88), "text": (48, 50, 46)},
-    "warm_peach": {"hook": (239, 216, 201), "base": (250, 246, 240), "wash": (247, 228, 216), "accent": (141, 92, 71), "text": (55, 47, 44)},
-    "soft_lilac": {"hook": (224, 217, 235), "base": (249, 247, 243), "wash": (236, 229, 243), "accent": (105, 88, 124), "text": (52, 48, 55)},
-    "ice_blue": {"hook": (213, 229, 237), "base": (247, 248, 244), "wash": (226, 238, 242), "accent": (75, 108, 126), "text": (47, 51, 52)},
-    "sky_lilac": {"hook": (216, 225, 241), "base": (248, 247, 244), "wash": (229, 232, 246), "accent": (87, 99, 139), "text": (49, 49, 57)},
-    "sand_blue": {"hook": (221, 221, 214), "base": (248, 246, 239), "wash": (230, 233, 231), "accent": (82, 99, 106), "text": (49, 50, 48)},
-    "blush_cream": {"hook": (237, 219, 216), "base": (250, 246, 239), "wash": (247, 231, 226), "accent": (137, 89, 88), "text": (55, 47, 47)},
+    "dusty_blue": {"wash": (224, 234, 240), "accent": (81, 105, 121), "text": (48, 48, 46)},
+    "sage": {"wash": (227, 236, 224), "accent": (88, 108, 88), "text": (48, 50, 46)},
+    "warm_peach": {"wash": (247, 228, 216), "accent": (141, 92, 71), "text": (55, 47, 44)},
+    "soft_lilac": {"wash": (236, 229, 243), "accent": (105, 88, 124), "text": (52, 48, 55)},
+    "ice_blue": {"wash": (226, 238, 242), "accent": (75, 108, 126), "text": (47, 51, 52)},
+    "sky_lilac": {"wash": (229, 232, 246), "accent": (87, 99, 139), "text": (49, 49, 57)},
+    "sand_blue": {"wash": (230, 233, 231), "accent": (82, 99, 106), "text": (49, 50, 48)},
+    "blush_cream": {"wash": (247, 231, 226), "accent": (137, 89, 88), "text": (55, 47, 47)},
 }
 
 HOOK_WORDS = {"STOP", "DON'T", "DON’T", "NEVER", "BEFORE", "THIS", "NOBODY", "IF"}
@@ -64,30 +70,58 @@ def mix(a, b, t):
     return tuple(round(x + (y - x) * t) for x, y in zip(a, b))
 
 
-def editorial_background(palette, *, hook=False, closing=False):
-    """Create a warm editorial paper surface with one soft atmospheric wash."""
-    base = palette["hook"] if hook else palette["base"]
-    image = Image.new("RGB", (CANVAS_W, CANVAS_H), base)
+def _slide_crop(base: Image.Image, slide_index: int) -> Image.Image:
+    """Apply a tiny deterministic pan/zoom so slides share a scene without cloning."""
+    zoom = 1.035
+    w = round(CANVAS_W * zoom)
+    h = round(CANVAS_H * zoom)
+    enlarged = base.resize((w, h), Image.Resampling.LANCZOS)
+    extra_x = w - CANVAS_W
+    extra_y = h - CANVAS_H
 
-    # A single restrained blurred wash gives depth without becoming decorative.
-    wash_layer = Image.new("RGBA", (CANVAS_W, CANVAS_H), (0, 0, 0, 0))
-    wash_draw = ImageDraw.Draw(wash_layer)
-    wash = palette["wash"]
+    x_positions = [0.15, 0.50, 0.82, 0.34, 0.68, 0.22, 0.76, 0.44, 0.60, 0.30]
+    y_positions = [0.24, 0.18, 0.30, 0.22, 0.28, 0.16, 0.26, 0.20, 0.32, 0.18]
+    pos = max(0, slide_index) % len(x_positions)
+    left = round(extra_x * x_positions[pos])
+    top = round(extra_y * y_positions[pos])
+    return enlarged.crop((left, top, left + CANVAS_W, top + CANVAS_H))
+
+
+def landscape_background(
+    base_landscape: Image.Image,
+    palette: dict,
+    *,
+    slide_index: int,
+    hook: bool = False,
+    closing: bool = False,
+) -> Image.Image:
+    """Prepare AI landscape for typography without hiding the scenery."""
+    image = _slide_crop(base_landscape, slide_index).convert("RGB")
+
+    image = ImageEnhance.Color(image).enhance(0.88)
+    image = ImageEnhance.Contrast(image).enhance(0.96)
+
+    # A feathered ivory veil preserves readability without looking like a card.
+    veil = Image.new("RGBA", (CANVAS_W, CANVAS_H), (0, 0, 0, 0))
+    vd = ImageDraw.Draw(veil)
+    opacity = 168 if hook else (150 if closing else 138)
+    vd.rounded_rectangle((45, 38, 990, 1010), radius=95, fill=(255, 252, 246, opacity))
+    veil = veil.filter(ImageFilter.GaussianBlur(58))
+    image = Image.alpha_composite(image.convert("RGBA"), veil)
+
+    wash = Image.new("RGBA", (CANVAS_W, CANVAS_H), (0, 0, 0, 0))
+    wd = ImageDraw.Draw(wash)
+    wash_color = palette["wash"]
     if hook:
-        wash_draw.ellipse((-280, 760, 850, 1630), fill=(*wash, 190))
+        wd.ellipse((-320, 750, 820, 1600), fill=(*wash_color, 42))
     elif closing:
-        wash_draw.ellipse((520, -260, 1370, 580), fill=(*wash, 145))
+        wd.ellipse((560, -260, 1370, 560), fill=(*wash_color, 34))
     else:
-        wash_draw.ellipse((650, -240, 1320, 500), fill=(*wash, 105))
-    wash_layer = wash_layer.filter(ImageFilter.GaussianBlur(95))
-    image = Image.alpha_composite(image.convert("RGBA"), wash_layer).convert("RGB")
+        wd.ellipse((660, -220, 1330, 520), fill=(*wash_color, 26))
+    wash = wash.filter(ImageFilter.GaussianBlur(105))
+    image = Image.alpha_composite(image, wash)
 
-    # Very subtle paper grain so the background does not feel digitally flat.
-    noise = Image.effect_noise((CANVAS_W, CANVAS_H), 5).convert("L")
-    noise_rgba = Image.new("RGBA", (CANVAS_W, CANVAS_H), (255, 255, 255, 0))
-    noise_rgba.putalpha(noise.point(lambda p: max(0, min(15, abs(p - 128) // 6))))
-    image = Image.alpha_composite(image.convert("RGBA"), noise_rgba).convert("RGB")
-    return image
+    return image.convert("RGB")
 
 
 def wrap_to_width(draw, text, font, max_width):
@@ -154,7 +188,7 @@ def render_hook(draw, carousel, slide, palette):
         hook_font = find_font(78, serif=False, bold=True)
         draw.text((106, y), parts[0], font=hook_font, fill=accent)
         y += 112
-        wrapped, title_font, title_box = fit_text(
+        wrapped, title_font, _ = fit_text(
             draw,
             rest,
             max_width=820,
@@ -166,7 +200,7 @@ def render_hook(draw, carousel, slide, palette):
             spacing=16,
         )
     else:
-        wrapped, title_font, title_box = fit_text(
+        wrapped, title_font, _ = fit_text(
             draw,
             title,
             max_width=820,
@@ -183,9 +217,8 @@ def render_hook(draw, carousel, slide, palette):
     body = slide.get("body", "").strip()
     if body:
         body_wrapped = wrap_to_width(draw, body, body_font, 680)
-        draw.multiline_text((106, body_y), body_wrapped, font=body_font, fill=mix(text_color, (255, 255, 255), 0.16), spacing=12)
+        draw.multiline_text((106, body_y), body_wrapped, font=body_font, fill=mix(text_color, (255, 255, 255), 0.12), spacing=12)
 
-    # Small swipe cue, deliberately quiet.
     cue_font = find_font(19, serif=False, bold=True)
     draw.text((806, 1245), "SWIPE  →", font=cue_font, fill=accent)
 
@@ -196,15 +229,14 @@ def render_lesson(draw, slide, index, total_lessons, palette):
 
     number_font = find_font(25, serif=False, bold=True)
     draw.text((106, 116), f"{index:02d}", font=number_font, fill=accent)
-    draw.text((164, 116), f"/ {total_lessons:02d}", font=find_font(20, serif=False), fill=mix(accent, (255, 255, 255), 0.2))
+    draw.text((164, 116), f"/ {total_lessons:02d}", font=find_font(20, serif=False), fill=mix(accent, (255, 255, 255), 0.18))
 
-    # Oversized ghost number adds editorial structure without an illustration.
     ghost_font = find_font(205, serif=True, bold=True)
     ghost = f"{index:02d}"
-    ghost_fill = mix(palette["wash"], (255, 255, 255), 0.38)
+    ghost_fill = mix(palette["wash"], (255, 255, 255), 0.48)
     draw.text((770, 85), ghost, font=ghost_font, fill=ghost_fill)
 
-    wrapped, title_font, title_box = fit_text(
+    wrapped, title_font, _ = fit_text(
         draw,
         slide["title"],
         max_width=760,
@@ -229,7 +261,7 @@ def render_lesson(draw, slide, index, total_lessons, palette):
             (106, divider_y + 52),
             body_wrapped,
             font=body_font,
-            fill=mix(text_color, (255, 255, 255), 0.12),
+            fill=mix(text_color, (255, 255, 255), 0.08),
             spacing=16,
         )
 
@@ -243,7 +275,7 @@ def render_closing(draw, slide, palette):
     draw.text((106, 116), "KEEP THIS ONE", font=kicker_font, fill=accent)
     draw.line((106, 158, 222, 158), fill=accent, width=3)
 
-    wrapped, title_font, title_box = fit_text(
+    wrapped, title_font, _ = fit_text(
         draw,
         slide["title"],
         max_width=820,
@@ -263,17 +295,22 @@ def render_closing(draw, slide, palette):
         body_wrapped = wrap_to_width(draw, body, body_font, 720)
         draw.multiline_text((106, title_y + title_h + 72), body_wrapped, font=body_font, fill=accent, spacing=14)
 
-    # A restrained closing rule anchors the composition.
     draw.line((106, 1120, 390, 1120), fill=accent, width=5)
     draw_footer(draw, palette)
 
 
-def render_slide(carousel, slide, index, total, output_path):
+def render_slide(carousel, slide, index, total, output_path, base_landscape):
     palette = PALETTES.get(carousel.get("Palette"), PALETTES["dusty_blue"])
     kind = slide.get("kind", "lesson")
     hook = kind == "hook"
     closing = kind == "closing"
-    image = editorial_background(palette, hook=hook, closing=closing)
+    image = landscape_background(
+        base_landscape,
+        palette,
+        slide_index=index,
+        hook=hook,
+        closing=closing,
+    )
     draw = ImageDraw.Draw(image)
 
     if hook:
@@ -332,9 +369,21 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
     public_dir.mkdir(parents=True, exist_ok=True)
 
+    landscape_family = choose_landscape_family(carousel_id, library)
+    landscape_path = output_dir / "landscape_base.jpg"
+    base_landscape = generate_landscape_background(
+        family=landscape_family,
+        carousel_id=carousel_id,
+        audience=carousel.get("Audience") or "All",
+        topic=carousel.get("Topic") or "Mindset",
+        width=CANVAS_W,
+        height=CANVAS_H,
+        debug_path=landscape_path,
+    )
+
     for idx, slide in enumerate(slides, start=1):
         filename = f"slide_{idx:02d}.jpg"
-        render_slide(carousel, slide, idx - 1, len(slides), output_dir / filename)
+        render_slide(carousel, slide, idx - 1, len(slides), output_dir / filename, base_landscape)
         (public_dir / filename).write_bytes((output_dir / filename).read_bytes())
 
     caption = (carousel.get("Caption") or "").strip()
@@ -348,16 +397,25 @@ def main():
         "goal": carousel.get("Goal"),
         "palette": carousel.get("Palette"),
         "style_version": STYLE_VERSION,
+        "landscape_family": landscape_family,
+        "landscape_source": "openai_generated",
+        "landscape_recent_repeat_block": RECENT_REPEAT_BLOCK,
         "slide_count": len(slides),
         "public_files": [f"public/carousels/{carousel_id}/slide_{i:02d}.jpg" for i in range(1, len(slides) + 1)],
         "publish_ready": False,
     }
     (output_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     (output_dir / "publish.env").write_text(
-        f"CAROUSEL_ID={carousel_id}\nCAROUSEL_SLIDE_COUNT={len(slides)}\nCAROUSEL_PUBLISH_READY=false\n",
+        f"CAROUSEL_ID={carousel_id}\n"
+        f"CAROUSEL_SLIDE_COUNT={len(slides)}\n"
+        f"CAROUSEL_LANDSCAPE_FAMILY={landscape_family}\n"
+        "CAROUSEL_PUBLISH_READY=false\n",
         encoding="utf-8",
     )
-    print(f"Built {carousel_id}: {len(slides)} slides ({STYLE_VERSION}) -> {output_dir}")
+    print(
+        f"Built {carousel_id}: {len(slides)} slides ({STYLE_VERSION}, "
+        f"landscape={landscape_family}) -> {output_dir}"
+    )
 
 
 if __name__ == "__main__":
