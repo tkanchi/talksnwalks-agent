@@ -70,6 +70,8 @@ TEXT_SECONDARY = (110, 92, 82)
 SOURCE_FONT_SIZE = 18
 QUOTE_TO_SOURCE_GAP = 32
 SOURCE_TO_ART_GAP = 30
+ILLUSTRATION_MAX_W = 680
+ILLUSTRATION_MAX_H = 620
 _SOURCE_METADATA_CACHE = None
 
 
@@ -170,8 +172,8 @@ def apply_visual_theme(build_reel, *, stream: str = "women"):
 
             art = build_reel.fit_inside(
                 source_art,
-                build_reel.ILLUSTRATION_MAX_W,
-                build_reel.ILLUSTRATION_MAX_H,
+                ILLUSTRATION_MAX_W,
+                ILLUSTRATION_MAX_H,
             )
             # Coloured illustrations are already approved artwork. Preserve their
             # original colours instead of re-tinting them with the legacy palette.
