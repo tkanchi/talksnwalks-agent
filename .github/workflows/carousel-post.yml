@@ -67,7 +67,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           AI_IMAGE_MODEL: "gpt-image-2"
           AI_IMAGE_QUALITY: "medium"
-          CAROUSEL_AI_LANDSCAPE_REQUIRED: "true"
+          CAROUSEL_AI_LANDSCAPE_REQUIRED: "false"
         run: python build_carousel.py
 
       - name: Load carousel metadata
