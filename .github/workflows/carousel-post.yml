@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "build_carousel.py"
+      - "carousel_landscape.py"
       - "publish_instagram_carousel.py"
       - "data/carousels/**"
       - ".github/workflows/carousel-post.yml"
@@ -62,6 +63,11 @@ jobs:
           fi
 
       - name: Build carousel
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AI_IMAGE_MODEL: "gpt-image-2"
+          AI_IMAGE_QUALITY: "medium"
+          CAROUSEL_AI_LANDSCAPE_REQUIRED: "true"
         run: python build_carousel.py
 
       - name: Load carousel metadata
