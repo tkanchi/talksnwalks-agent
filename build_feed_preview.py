@@ -295,12 +295,12 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
     quote_wrapped, quote_font, quote_h = fit_char_wrapped(
         draw,
         quote,
-        char_width=34,
+        char_width=40,
         max_width=900,
-        max_height=390,
-        max_size=60,
-        min_size=42,
-        spacing=14,
+        max_height=330,
+        max_size=48,
+        min_size=36,
+        spacing=12,
     )
     highlight_words = choose_highlight_words(quote)
     art = fit_art(art_path)
@@ -322,7 +322,7 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
         quote_wrapped,
         y,
         quote_font,
-        spacing=14,
+        spacing=12,
         highlight_words=highlight_words,
     )
 
