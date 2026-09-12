@@ -95,7 +95,8 @@ jobs:
         run: |
           URL_FILE="outputs/carousels/${CAROUSEL_ID}/image_urls.txt"
           : > "$URL_FILE"
-          for n in $(seq -w 1 "$CAROUSEL_SLIDE_COUNT"); do
+          for i in $(seq 1 "$CAROUSEL_SLIDE_COUNT"); do
+            n=$(printf "%02d" "$i")
             echo "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/public/carousels/${CAROUSEL_ID}/slide_${n}.jpg" >> "$URL_FILE"
           done
           echo "CAROUSEL_URLS_FILE=$URL_FILE" >> "$GITHUB_ENV"
