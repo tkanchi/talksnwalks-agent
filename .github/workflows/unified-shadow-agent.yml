@@ -111,6 +111,8 @@ jobs:
               image_path = package_dir / 'post.png'
               caption_path = package_dir / 'caption.txt'
               package_path = package_dir / 'package.json'
+              caption = str(row.get('caption', ''))
+              keywords = [str(keyword).strip() for keyword in row.get('keywords', []) if str(keyword).strip()]
 
               row_checks = {
                   'mode_shadow': row.get('mode') == 'shadow',
@@ -120,9 +122,10 @@ jobs:
                   'supporting_text_from_master': row.get('supporting_text_source') == 'master',
                   'book_present': bool(row.get('book')),
                   'author_present': bool(row.get('author')),
-                  'caption_present': bool(row.get('caption')),
-                  'five_hashtags': len(row.get('hashtags', [])) == 5,
-                  'hashtags_valid': all(str(tag).startswith('#') for tag in row.get('hashtags', [])),
+                  'caption_present': bool(caption),
+                  'keywords_present': len(keywords) >= 5,
+                  'keywords_in_caption': all(keyword.casefold() in caption.casefold() for keyword in keywords),
+                  'hashtags_absent': row.get('hashtags', []) == [] and '#' not in caption,
                   'semantic_illustration_score_positive': int(row.get('illustration_score', 0)) > 0,
                   'image_present': image_path.exists(),
                   'caption_file_present': caption_path.exists(),
@@ -147,6 +150,7 @@ jobs:
                   'object_id': row.get('object_id'),
                   'illustration_score': row.get('illustration_score'),
                   'event': row.get('event'),
+                  'keywords': keywords,
                   'image_size': image_size,
                   'checks': row_checks,
                   'passed': all(row_checks.values()),
@@ -193,7 +197,8 @@ jobs:
                   for report in package_reports:
                       handle.write(
                           f"- `{report['selection_date']}` `{report['quote_id']}` — "
-                          f"{report['book']} — illustration score `{report['illustration_score']}`\n"
+                          f"{report['book']} — illustration score `{report['illustration_score']}` — "
+                          f"keywords `{', '.join(report['keywords'])}`\n"
                       )
 
           print(json.dumps(qa, indent=2))
