@@ -1,6 +1,12 @@
 name: Carousel Post
 
 on:
+  push:
+    paths:
+      - "build_carousel.py"
+      - "publish_instagram_carousel.py"
+      - "data/carousels/**"
+      - ".github/workflows/carousel-post.yml"
   schedule:
     # Wednesday + Saturday at 13:07 IST (07:37 UTC).
     # Scheduled runs are build-only until live carousel publishing is approved.
@@ -51,6 +57,8 @@ jobs:
           echo "SHOULD_PUBLISH=${REQUESTED_PUBLISH}" >> "$GITHUB_ENV"
           if [ "${GITHUB_EVENT_NAME}" = "schedule" ]; then
             echo "Scheduled carousel run: build-only safety mode."
+          elif [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+            echo "Carousel CI run: build-only safety mode."
           fi
 
       - name: Build carousel
