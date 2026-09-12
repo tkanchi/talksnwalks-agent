@@ -89,14 +89,21 @@ def find_font(size: int, *, italic: bool = False):
 
 
 def wrap_by_chars(text: str, width: int) -> str:
-    return '\n'.join(
-        textwrap.wrap(
-            text,
-            width=width,
-            break_long_words=False,
-            break_on_hyphens=False,
+    sentences = [part.strip() for part in re.split(r'(?<=[.!?])\s+', text.strip()) if part.strip()]
+    if not sentences:
+        return ''
+    wrapped_sentences = [
+        '\n'.join(
+            textwrap.wrap(
+                sentence,
+                width=width,
+                break_long_words=False,
+                break_on_hyphens=False,
+            )
         )
-    )
+        for sentence in sentences
+    ]
+    return '\n'.join(wrapped_sentences)
 
 
 def fit_char_wrapped(
