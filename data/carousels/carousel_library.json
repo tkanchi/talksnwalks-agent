@@ -1,0 +1,157 @@
+[
+  {
+    "CarouselID": "CAR_001",
+    "Audience": "All",
+    "TopicCategory": "Relationships",
+    "Topic": "Communication & Social Skills",
+    "Goal": "Share",
+    "Palette": "dusty_blue",
+    "Hook": "STOP trying to win arguments with someone you want to keep.",
+    "Caption": "Good communication is not about winning. It is about understanding without abandoning your own needs. Save this for the next difficult conversation, and share it with someone who values healthier relationships.",
+    "Slides": [
+      {"kind": "hook", "title": "STOP trying to win arguments with someone you want to keep.", "body": "Swipe before the next difficult conversation."},
+      {"kind": "lesson", "title": "Listen for the problem underneath the words.", "body": "Sometimes the real issue is feeling unheard, dismissed or unsafe — not the sentence being argued about."},
+      {"kind": "lesson", "title": "Do not turn one mistake into a character attack.", "body": "Talk about what happened. Avoid turning ‘you did this’ into ‘you always are this.’"},
+      {"kind": "lesson", "title": "Pause when the goal becomes proving a point.", "body": "If both people are collecting evidence against each other, the conversation has stopped being useful."},
+      {"kind": "lesson", "title": "Ask what would actually help now.", "body": "An apology? A boundary? A change in behaviour? Clarity is more useful than repeating the same argument."},
+      {"kind": "lesson", "title": "You can be firm without becoming cruel.", "body": "Healthy communication makes room for honesty and respect at the same time."},
+      {"kind": "closing", "title": "Protect the relationship — not the need to be right.", "body": "Save this for the conversation you want to handle differently."}
+    ]
+  },
+  {
+    "CarouselID": "CAR_002",
+    "Audience": "All",
+    "TopicCategory": "Mindset",
+    "Topic": "Discipline",
+    "Goal": "Save",
+    "Palette": "sage",
+    "SourceType": "inspired_by",
+    "InspiredBy": "Atomic Habits",
+    "Author": "James Clear",
+    "Hook": "STOP waiting to feel motivated before you become consistent.",
+    "Caption": "Consistency becomes easier when the environment and the routine carry more of the load than motivation does. These ideas are inspired by Atomic Habits by James Clear. Save this for the days when motivation disappears.",
+    "Slides": [
+      {"kind": "hook", "title": "STOP waiting to feel motivated before you become consistent.", "body": "5 reminders inspired by Atomic Habits."},
+      {"kind": "lesson", "title": "Make the first step ridiculously easy.", "body": "Lower the resistance to starting. A routine that begins easily has a better chance of happening again."},
+      {"kind": "lesson", "title": "Design your environment before testing your willpower.", "body": "Put helpful cues where you can see them and make distractions slightly harder to reach."},
+      {"kind": "lesson", "title": "Attach the new habit to something you already do.", "body": "Existing routines can become reliable triggers for the behaviour you want to build."},
+      {"kind": "lesson", "title": "Track the repetition, not perfection.", "body": "A missed day does not erase progress. Return quickly instead of turning one miss into a pattern."},
+      {"kind": "lesson", "title": "Build evidence for the identity you want.", "body": "Each small action can become one more vote for the person you are trying to become."},
+      {"kind": "closing", "title": "Make consistency easier than quitting.", "body": "Inspired by Atomic Habits — James Clear"}
+    ]
+  },
+  {
+    "CarouselID": "CAR_003",
+    "Audience": "All",
+    "TopicCategory": "Wellness",
+    "Topic": "Body Confidence",
+    "Goal": "Share",
+    "Palette": "warm_peach",
+    "Hook": "DON’T postpone your life until you feel attractive enough.",
+    "Caption": "Your life does not need to wait for a future version of your body. Wear the outfit, take the picture, meet your friends and let yourself participate now. Save this for a low-confidence day — or send it to someone who needs the reminder.",
+    "Slides": [
+      {"kind": "hook", "title": "DON’T postpone your life until you feel attractive enough.", "body": "You are allowed to participate now."},
+      {"kind": "lesson", "title": "Wear the outfit you keep saving for ‘later.’", "body": "You do not need to earn clothes by changing your body first."},
+      {"kind": "lesson", "title": "Take the picture anyway.", "body": "A memory can matter more than whether you loved every angle that day."},
+      {"kind": "lesson", "title": "Go to the event.", "body": "Do not let one insecure thought make decisions for your whole evening."},
+      {"kind": "lesson", "title": "Notice how harshly you speak to yourself.", "body": "Try using the same standard of kindness you would use with someone you love."},
+      {"kind": "lesson", "title": "Comfort is a better goal than constant approval.", "body": "Feeling at home in your own life matters more than passing every imagined judgement."},
+      {"kind": "closing", "title": "Your life is happening now.", "body": "Do not wait to become ‘perfect’ before you let yourself enjoy it."}
+    ]
+  },
+  {
+    "CarouselID": "CAR_004",
+    "Audience": "All",
+    "TopicCategory": "Relationships",
+    "Topic": "Friendship",
+    "Goal": "Share",
+    "Palette": "soft_lilac",
+    "Hook": "STOP chasing friendships that only survive because you keep chasing.",
+    "Caption": "Some friendships change. Some become one-sided. That does not mean every friendship should be abandoned at the first difficult season — but reciprocity matters. Save this if you are learning the difference between effort and chasing.",
+    "Slides": [
+      {"kind": "hook", "title": "STOP chasing friendships that only survive because you keep chasing.", "body": "There is a difference between effort and carrying the whole friendship."},
+      {"kind": "lesson", "title": "Notice who initiates — over time, not just this week.", "body": "Everyone gets busy. Look for the pattern rather than judging one quiet period."},
+      {"kind": "lesson", "title": "Healthy support should move in both directions.", "body": "You should not always be the listener, fixer, planner and person who checks in."},
+      {"kind": "lesson", "title": "Boundaries do not make you a bad friend.", "body": "You can care about someone without being available for everything."},
+      {"kind": "lesson", "title": "Outgrowing a friendship is not automatically betrayal.", "body": "People change. Sometimes the honest choice is to stop forcing a closeness that no longer exists."},
+      {"kind": "lesson", "title": "Real friendship can survive honest conversations.", "body": "If something matters, say it respectfully before silently collecting resentment."},
+      {"kind": "closing", "title": "Choose friendships where care feels mutual.", "body": "Not perfectly equal every day — but genuinely mutual over time."}
+    ]
+  },
+  {
+    "CarouselID": "CAR_005",
+    "Audience": "All",
+    "TopicCategory": "Youth",
+    "Topic": "Digital Responsibility",
+    "Goal": "Save",
+    "Palette": "ice_blue",
+    "Hook": "STOP giving your best hours to your phone.",
+    "Caption": "Your phone is useful. It just should not get first access to every quiet moment, every morning and every difficult emotion. Save this as a simple digital reset and try one change at a time.",
+    "Slides": [
+      {"kind": "hook", "title": "STOP giving your best hours to your phone.", "body": "A simple digital reset for your attention."},
+      {"kind": "lesson", "title": "Do not make scrolling your first morning decision.", "body": "Give yourself a small window to wake up before absorbing everyone else’s updates."},
+      {"kind": "lesson", "title": "Move distracting apps away from your home screen.", "body": "A little friction can interrupt automatic opening."},
+      {"kind": "lesson", "title": "Protect one phone-free block every day.", "body": "Walking, eating, reading or talking to someone all count."},
+      {"kind": "lesson", "title": "Do not use comparison as entertainment.", "body": "If an account repeatedly leaves you feeling smaller, reconsider how much access it gets to your attention."},
+      {"kind": "lesson", "title": "Reach for a person before reaching for a feed.", "body": "When you feel lonely or upset, connection may help more than another hour of scrolling."},
+      {"kind": "closing", "title": "Use your phone. Do not hand it your whole day.", "body": "Protect your attention like it matters — because it does."}
+    ]
+  },
+  {
+    "CarouselID": "CAR_006",
+    "Audience": "Teens",
+    "TopicCategory": "Youth",
+    "Topic": "Teen Confidence",
+    "Goal": "Share",
+    "Palette": "sky_lilac",
+    "Hook": "DON’T let one rejection decide who you think you are.",
+    "Caption": "A rejection can hurt without becoming your identity. Exams, friendships, first heartbreaks, college choices and social comparison can all feel enormous when you are living through them. Save this for perspective — and share it with a young person who needs it.",
+    "Slides": [
+      {"kind": "hook", "title": "DON’T let one rejection decide who you think you are.", "body": "One result is not a complete verdict on your future."},
+      {"kind": "lesson", "title": "An exam score measures one performance.", "body": "It does not measure your entire intelligence, potential or value."},
+      {"kind": "lesson", "title": "A friendship ending does not make you unlikable.", "body": "Sometimes people grow differently. Learn what you can without turning every ending into self-blame."},
+      {"kind": "lesson", "title": "First heartbreak feels huge because it is new.", "body": "You can miss someone and still move forward. Pain does not mean you should return to what hurt you."},
+      {"kind": "lesson", "title": "Do not choose a career only to impress other people.", "body": "Ask what fits your strengths, interests, values and the kind of life you want to build."},
+      {"kind": "lesson", "title": "Social media is not a fair comparison tool.", "body": "You see selected moments from other people while living every ordinary moment of your own life."},
+      {"kind": "closing", "title": "You are still becoming.", "body": "Do not let one difficult chapter name the whole story."}
+    ]
+  },
+  {
+    "CarouselID": "CAR_007",
+    "Audience": "Men",
+    "TopicCategory": "Mindset",
+    "Topic": "Authenticity & Identity",
+    "Goal": "Share",
+    "Palette": "sand_blue",
+    "Hook": "MEN: STOP pretending you don’t need anyone.",
+    "Caption": "Strength is not the absence of need. Friendship, support, rest, honest conversations and asking for help can coexist with discipline and self-respect. Send this to a man you respect.",
+    "Slides": [
+      {"kind": "hook", "title": "MEN: STOP pretending you don’t need anyone.", "body": "Strength and support can exist at the same time."},
+      {"kind": "lesson", "title": "Call the friend before everything becomes a crisis.", "body": "Male friendship deserves more than jokes, updates and ‘I’m fine.’"},
+      {"kind": "lesson", "title": "Being a good father does not require being emotionless.", "body": "Children can learn strength by watching honesty, steadiness and repair."},
+      {"kind": "lesson", "title": "Confidence does not need arrogance.", "body": "You can know your value without needing to dominate the room."},
+      {"kind": "lesson", "title": "Discipline includes recovery.", "body": "Rest, sleep and stepping back when needed are part of sustainable strength."},
+      {"kind": "lesson", "title": "Ask for help before pride makes the problem heavier.", "body": "Self-respect includes knowing when another perspective or professional support could help."},
+      {"kind": "closing", "title": "Strong does not have to mean alone.", "body": "Build a life where you can be capable and connected."}
+    ]
+  },
+  {
+    "CarouselID": "CAR_008",
+    "Audience": "Women",
+    "TopicCategory": "Mindset",
+    "Topic": "Self-Belief",
+    "Goal": "Save",
+    "Palette": "blush_cream",
+    "Hook": "WOMEN: STOP saying yes when your whole body is saying no.",
+    "Caption": "Boundaries can protect your time, energy, ambitions, finances and relationships. You do not have to become cold to become clearer. Save this for the next moment guilt tries to make the decision for you.",
+    "Slides": [
+      {"kind": "hook", "title": "WOMEN: STOP saying yes when your whole body is saying no.", "body": "A boundary is not automatically selfish."},
+      {"kind": "lesson", "title": "You do not need a dramatic reason to decline.", "body": "Limited time, energy or desire can be enough information."},
+      {"kind": "lesson", "title": "People-pleasing can become expensive.", "body": "It can cost time, rest, money, focus and resentment you never wanted to carry."},
+      {"kind": "lesson", "title": "Ambition does not make you difficult.", "body": "Your career, financial independence and personal goals deserve space too."},
+      {"kind": "lesson", "title": "Motherhood should not erase identity.", "body": "Caring deeply for others and keeping parts of yourself alive are not opposites."},
+      {"kind": "lesson", "title": "Body confidence is not a prerequisite for being visible.", "body": "You can take up space, speak, lead, dress well and enjoy your life while confidence is still growing."},
+      {"kind": "closing", "title": "A clear no can protect a meaningful yes.", "body": "Choose your commitments with intention — not just guilt."}
+    ]
+  }
+]
