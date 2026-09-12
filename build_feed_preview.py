@@ -20,16 +20,19 @@ CANVAS_H = 1350
 HANDLE = '@talksnwalks101'
 
 # Approved simplified 4:5 feed-post direction:
-# - quote only; no supporting text
-# - smaller main quote with longer line wrapping
+# - quote is the visual hero, with restrained keyword emphasis
+# - illustration is a small supporting accent, never a large bottom block
+# - selector placement (bottom_left / bottom_right / bottom_center) is respected
 # - quote -> illustration -> book/author -> handle
 # - very light cream/ivory base with subtle uneven pastel patches
 TEXT_PRIMARY = (0, 0, 0)
 BROWN = (0, 0, 0)
+HIGHLIGHT_RGB = (143, 91, 68)
 
-GAP_QUOTE_TO_ART = 54
-GAP_ART_TO_SOURCE = 40
-GAP_SOURCE_TO_HANDLE = 38
+GAP_QUOTE_TO_ART = 46
+GAP_ART_TO_SOURCE = 34
+GAP_SOURCE_TO_HANDLE = 34
+ART_SIDE_MARGIN = 92
 
 # Unified daily-post background is locked to pure white.
 BACKGROUND_RGB = {
@@ -46,6 +49,23 @@ BACKGROUND_RGB = {
 }
 BACKGROUND_KEYS = list(BACKGROUND_RGB.keys())
 BASE_IVORY = (255, 252, 246)
+
+HIGHLIGHT_PRIORITY = {
+    'action', 'begin', 'believe', 'become', 'becoming', 'brave', 'bravery',
+    'change', 'choice', 'choose', 'confidence', 'consistent', 'consistency',
+    'courage', 'discipline', 'dream', 'dreams', 'enough', 'focus', 'freedom',
+    'grow', 'growing', 'growth', 'heal', 'healing', 'hope', 'kindness',
+    'learn', 'learning', 'love', 'peace', 'progress', 'purpose', 'resilience',
+    'rest', 'start', 'strength', 'trust', 'worthy', 'worth',
+}
+HIGHLIGHT_STOPWORDS = {
+    'a', 'an', 'and', 'are', 'as', 'at', 'be', 'been', 'but', 'by', 'can',
+    'do', 'for', 'from', 'had', 'has', 'have', 'he', 'her', 'his', 'i', 'if',
+    'in', 'is', 'it', 'its', 'me', 'more', 'my', 'no', 'not', 'of', 'on',
+    'or', 'our', 'she', 'so', 'than', 'that', 'the', 'their', 'them', 'then',
+    'there', 'they', 'this', 'to', 'too', 'up', 'us', 'was', 'we', 'were',
+    'what', 'when', 'where', 'which', 'who', 'will', 'with', 'you', 'your',
+}
 
 
 def resolve_background(family: str | None, index: int) -> tuple[int, int, int]:
@@ -84,6 +104,7 @@ def fit_char_wrapped(
     text: str,
     *,
     char_width: int,
+    max_width: int,
     max_height: int,
     max_size: int,
     min_size: int,
@@ -95,7 +116,7 @@ def fit_char_wrapped(
         box = draw.multiline_textbbox(
             (0, 0), wrapped, font=font, spacing=spacing, align='center'
         )
-        if box[3] - box[1] <= max_height:
+        if box[2] - box[0] <= max_width and box[3] - box[1] <= max_height:
             return wrapped, font, box[3] - box[1]
     font = find_font(min_size)
     box = draw.multiline_textbbox(
@@ -104,7 +125,7 @@ def fit_char_wrapped(
     return wrapped, font, box[3] - box[1]
 
 
-def fit_art(path: Path, max_w: int = 205, max_h: int = 230) -> Image.Image:
+def fit_art(path: Path, max_w: int = 175, max_h: int = 190) -> Image.Image:
     art = Image.open(path).convert('RGBA')
     bbox = art.getchannel('A').getbbox()
     if bbox:
@@ -119,20 +140,76 @@ def text_size(draw, text, font):
     return box[2] - box[0], box[3] - box[1]
 
 
-def draw_centered_multiline(draw, text, y, font, fill, spacing=10):
-    box = draw.multiline_textbbox(
-        (0, 0), text, font=font, spacing=spacing, align='center'
-    )
-    w = box[2] - box[0]
-    draw.multiline_text(
-        ((CANVAS_W - w) / 2, y),
-        text,
-        font=font,
-        fill=fill,
-        spacing=spacing,
-        align='center',
-    )
-    return box[3] - box[1]
+def normalized_word(token: str) -> str:
+    match = re.search(r"[A-Za-z0-9]+(?:['’][A-Za-z0-9]+)?", token)
+    return match.group(0).casefold() if match else ''
+
+
+def choose_highlight_words(text: str, limit: int = 3) -> set[str]:
+    ordered: list[str] = []
+    for token in re.findall(r"\b[\w]+(?:['’][\w]+)?\b", text):
+        word = token.casefold()
+        if word not in ordered:
+            ordered.append(word)
+
+    chosen = [word for word in ordered if word in HIGHLIGHT_PRIORITY][:limit]
+
+    if len(chosen) < min(2, limit):
+        candidates = [
+            word for word in ordered
+            if word not in HIGHLIGHT_STOPWORDS
+            and word not in chosen
+            and len(word) >= 4
+        ]
+        candidates.sort(key=lambda word: (-len(word), ordered.index(word)))
+        for word in candidates:
+            chosen.append(word)
+            if len(chosen) >= min(2, limit):
+                break
+
+    if len(chosen) < limit:
+        candidates = [
+            word for word in ordered
+            if word not in HIGHLIGHT_STOPWORDS
+            and word not in chosen
+            and len(word) >= 5
+        ]
+        candidates.sort(key=lambda word: (-len(word), ordered.index(word)))
+        for word in candidates:
+            chosen.append(word)
+            if len(chosen) >= limit:
+                break
+
+    return set(chosen[:limit])
+
+
+def draw_highlighted_multiline(
+    draw,
+    text: str,
+    y: int,
+    font,
+    *,
+    spacing: int = 14,
+    highlight_words: set[str] | None = None,
+) -> int:
+    highlights = highlight_words or set()
+    lines = text.splitlines()
+    sample_box = draw.textbbox((0, 0), 'Ag', font=font)
+    line_h = sample_box[3] - sample_box[1]
+    cursor_y = y
+
+    for line in lines:
+        tokens = re.findall(r'\S+|\s+', line)
+        widths = [draw.textlength(token, font=font) for token in tokens]
+        cursor_x = (CANVAS_W - sum(widths)) / 2
+        for token, width in zip(tokens, widths):
+            word = normalized_word(token)
+            fill = HIGHLIGHT_RGB if word in highlights else TEXT_PRIMARY
+            draw.text((cursor_x, cursor_y), token, font=font, fill=fill)
+            cursor_x += width
+        cursor_y += line_h + spacing
+
+    return max(0, len(lines) * line_h + max(0, len(lines) - 1) * spacing)
 
 
 def build_background(
@@ -191,6 +268,15 @@ def validate_quote_585(quote: str) -> None:
         )
 
 
+def illustration_x(placement: str, art_width: int) -> int:
+    placement = (placement or '').strip().lower()
+    if placement == 'bottom_left':
+        return ART_SIDE_MARGIN
+    if placement == 'bottom_right':
+        return CANVAS_W - ART_SIDE_MARGIN - art_width
+    return (CANVAS_W - art_width) // 2
+
+
 def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
     family = (row.get('BackgroundFamily') or 'vanilla').strip().lower()
     bg = resolve_background(family, index)
@@ -209,12 +295,14 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
     quote_wrapped, quote_font, quote_h = fit_char_wrapped(
         draw,
         quote,
-        char_width=40,
-        max_height=330,
-        max_size=48,
-        min_size=36,
-        spacing=12,
+        char_width=34,
+        max_width=900,
+        max_height=390,
+        max_size=60,
+        min_size=42,
+        spacing=14,
     )
+    highlight_words = choose_highlight_words(quote)
     art = fit_art(art_path)
     handle_font = find_font(22)
     handle_w, handle_h = text_size(draw, HANDLE, handle_font)
@@ -229,17 +317,18 @@ def compose(row: dict[str, str], output_path: Path, index: int = 0) -> None:
 
     y = max(30, (CANVAS_H - total_h) // 2)
 
-    y += draw_centered_multiline(
+    y += draw_highlighted_multiline(
         draw,
         quote_wrapped,
         y,
         quote_font,
-        TEXT_PRIMARY,
-        spacing=12,
+        spacing=14,
+        highlight_words=highlight_words,
     )
 
     art_y = y + GAP_QUOTE_TO_ART
-    art_x = (CANVAS_W - art.width) // 2
+    placement = (row.get('Placement') or 'bottom_center').strip().lower()
+    art_x = illustration_x(placement, art.width)
     canvas.paste(art, (art_x, art_y), art)
     y = art_y + art.height
 
