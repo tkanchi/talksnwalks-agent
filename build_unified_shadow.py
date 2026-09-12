@@ -27,17 +27,43 @@ OUTPUT_DIR = ROOT / "outputs" / "unified_shadow"
 TZ = ZoneInfo("Asia/Kolkata")
 HANDLE = "@talksnwalks101"
 
-CATEGORY_HASHTAGS = {
-    "Relationships": ("#relationships", "#communication"),
-    "Family": ("#family", "#parenting"),
-    "Wellness": ("#wellness", "#selfcare"),
-    "Mindset": ("#mindset", "#motivation"),
-    "Business": ("#success", "#entrepreneurship"),
-    "Youth": ("#learning", "#growthmindset"),
-    "Values": ("#kindness", "#personalgrowth"),
-    "Lifestyle": ("#lifestyle", "#inspiration"),
+# Instagram discovery now relies more on clear caption context than long hashtag
+# blocks. Keep these as readable phrases so the selected terms can be woven into
+# natural caption copy and logged for later performance analysis.
+CATEGORY_KEYWORDS = {
+    "Relationships": (
+        "relationships", "communication", "friendship", "love",
+        "healthy relationships", "boundaries", "emotional intelligence", "connection",
+    ),
+    "Family": (
+        "family", "parenting", "family relationships", "childhood",
+        "motherhood", "fatherhood", "home", "personal growth",
+    ),
+    "Wellness": (
+        "wellness", "self care", "mental health", "fitness",
+        "healthy lifestyle", "body confidence", "rest", "wellbeing",
+    ),
+    "Mindset": (
+        "mindset", "motivation", "self belief", "personal growth",
+        "self improvement", "confidence", "resilience", "positive thinking",
+    ),
+    "Business": (
+        "success", "entrepreneurship", "leadership", "career growth",
+        "discipline", "execution", "decision making", "money mindset",
+    ),
+    "Youth": (
+        "learning", "growth mindset", "teen confidence", "study motivation",
+        "school life", "digital wellbeing", "life skills", "personal growth",
+    ),
+    "Values": (
+        "kindness", "integrity", "character", "spirituality",
+        "gratitude", "compassion", "personal growth", "life lessons",
+    ),
+    "Lifestyle": (
+        "lifestyle", "inspiration", "work life balance", "travel",
+        "books", "reading", "music", "daily motivation",
+    ),
 }
-BASE_HASHTAGS = ("#bookinspiration", "#dailywisdom", "#talksnwalks")
 
 SEMANTIC_CATEGORY_PRIORITY = (
     (
@@ -139,11 +165,6 @@ GENERIC_CAPTION_NOTES = (
 )
 
 
-def hashtag_slug(text: str) -> str:
-    slug = re.sub(r"[^a-z0-9]+", "", clean(text).casefold())
-    return f"#{slug}" if slug else ""
-
-
 def semantic_category(selection: dict[str, str]) -> str:
     quote_text = clean(selection.get("Quote")).casefold()
     semantic_topics = _semantic_matches(quote_text, SEMANTIC_TOPIC_KEYWORDS)
@@ -164,28 +185,54 @@ def semantic_category(selection: dict[str, str]) -> str:
             return category
 
     fallback = clean(selection.get("TopicCategory"))
-    return fallback if fallback in CATEGORY_HASHTAGS else "Mindset"
+    return fallback if fallback in CATEGORY_KEYWORDS else "Mindset"
 
 
-def build_hashtags(selection: dict[str, str]) -> list[str]:
-    tags: list[str] = []
+def audience_keywords(selection: dict[str, str]) -> tuple[str, ...]:
+    audience = clean(selection.get("Audience")).casefold()
+    if "women" in audience:
+        return ("women empowerment", "confidence for women")
+    if audience == "men" or audience.startswith("men|") or "|men" in audience:
+        return ("men's mindset", "self respect")
+    if "kids" in audience or "teens" in audience:
+        return ("teen motivation", "growth mindset")
+    return ()
 
-    event = clean(selection.get("Event"))
-    if event:
-        event_tag = hashtag_slug(event)
-        if event_tag:
-            tags.append(event_tag)
 
+def build_keywords(selection: dict[str, str], limit: int = 9) -> list[str]:
     category = semantic_category(selection)
-    tags.extend(CATEGORY_HASHTAGS.get(category, ("#motivation", "#inspiration")))
-    tags.extend(BASE_HASHTAGS)
+    topic = clean(selection.get("Topic")).casefold()
+    event = clean(selection.get("Event")).casefold()
 
-    deduped: list[str] = []
-    for tag in tags:
-        if tag and tag not in deduped:
-            deduped.append(tag)
+    candidates: list[str] = []
+    if event:
+        candidates.append(event)
+    if topic:
+        candidates.append(topic)
+    candidates.extend(audience_keywords(selection))
+    candidates.extend(CATEGORY_KEYWORDS.get(category, CATEGORY_KEYWORDS["Mindset"]))
 
-    return deduped[:5]
+    keywords: list[str] = []
+    seen: set[str] = set()
+    for phrase in candidates:
+        phrase = clean(phrase).casefold()
+        if not phrase or phrase in seen:
+            continue
+        seen.add(phrase)
+        keywords.append(phrase)
+        if len(keywords) >= limit:
+            break
+    return keywords
+
+
+def natural_list(items: list[str]) -> str:
+    if not items:
+        return "personal growth"
+    if len(items) == 1:
+        return items[0]
+    if len(items) == 2:
+        return f"{items[0]} and {items[1]}"
+    return f"{', '.join(items[:-1])}, and {items[-1]}"
 
 
 def caption_note(selection: dict[str, str]) -> str:
@@ -196,17 +243,18 @@ def caption_note(selection: dict[str, str]) -> str:
     return options[int.from_bytes(digest[:2], "big") % len(options)]
 
 
-def build_caption(selection: dict[str, str], hashtags: list[str]) -> str:
+def build_caption(selection: dict[str, str], keywords: list[str]) -> str:
     support = clean(selection.get("SupportingText"))
     book = clean(selection.get("InspiredBy"))
     author = clean(selection.get("Author"))
     note = caption_note(selection)
+    keyword_text = natural_list(keywords)
     return (
         f"{support}\n\n"
         f"{note}\n\n"
+        f"If you're exploring {keyword_text}, save this reminder and share it with someone who may need it.\n\n"
         f"Inspired by {book} by {author}.\n\n"
-        f"{HANDLE}\n"
-        f"{' '.join(hashtags)}"
+        f"Follow {HANDLE} for book inspiration, daily wisdom and practical ideas for personal growth."
     )
 
 
@@ -244,10 +292,8 @@ def build_package(selection: dict[str, str], history: dict, index: int) -> dict:
     caption_path = package_dir / "caption.txt"
     package_path = package_dir / "package.json"
 
-    hashtags = build_hashtags(selection)
-    if len(hashtags) != 5:
-        raise RuntimeError(f"Expected exactly 5 hashtags for {package_id}, got {hashtags}")
-    caption = build_caption(selection, hashtags)
+    keywords = build_keywords(selection)
+    caption = build_caption(selection, keywords)
 
     compose(selection, image_path, index=index)
 
@@ -260,7 +306,10 @@ def build_package(selection: dict[str, str], history: dict, index: int) -> dict:
             "image": image_path.relative_to(ROOT).as_posix(),
             "caption_category": semantic_category(selection),
             "caption": caption,
-            "hashtags": hashtags,
+            "keywords": keywords,
+            # Keep the field for backward compatibility with old package readers,
+            # but new captions intentionally contain no hashtags.
+            "hashtags": [],
         }
     )
 
@@ -276,7 +325,8 @@ def build_package(selection: dict[str, str], history: dict, index: int) -> dict:
             "package_id": package_id,
             "caption_category": semantic_category(selection),
             "caption": caption,
-            "hashtags": hashtags,
+            "keywords": keywords,
+            "hashtags": [],
         }
     )
     return payload
