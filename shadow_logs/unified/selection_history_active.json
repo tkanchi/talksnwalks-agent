@@ -485,6 +485,45 @@
         "#dailywisdom",
         "#talksnwalks"
       ]
+    },
+    {
+      "selection_date": "2026-09-17",
+      "quote_id": "WEMP163",
+      "audience": "Women",
+      "topic_category": "Youth",
+      "topic": "Justice & Equality",
+      "book": "Hood Feminism",
+      "author": "Mikki Kendall",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ019",
+      "illustration": "key_01.png",
+      "illustration_score": 420,
+      "illustration_tags": [
+        "access",
+        "choice",
+        "equality",
+        "freedom",
+        "identity",
+        "inclusion",
+        "key"
+      ],
+      "placement": "bottom_right",
+      "background": "ice",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-17_WEMP163",
+      "caption_category": "Values",
+      "caption": "The thread running through this points back to justice and equality.\n\nCharacter usually shows up in ordinary moments first.\n\nInspired by Hood Feminism by Mikki Kendall.\n\n@talksnwalks101\n#kindness #personalgrowth #bookinspiration #dailywisdom #talksnwalks",
+      "hashtags": [
+        "#kindness",
+        "#personalgrowth",
+        "#bookinspiration",
+        "#dailywisdom",
+        "#talksnwalks"
+      ]
     }
   ]
 }
