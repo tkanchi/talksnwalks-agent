@@ -1,0 +1,143 @@
+name: Carousel Post
+
+on:
+  schedule:
+    # Wednesday + Saturday at 13:07 IST (07:37 UTC).
+    # Scheduled runs are build-only until live carousel publishing is approved.
+    - cron: "37 7 * * 3,6"
+  workflow_dispatch:
+    inputs:
+      carousel_id:
+        description: "Optional carousel ID, e.g. CAR_001"
+        required: false
+        type: string
+      publish:
+        description: "Publish this carousel to Instagram"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+env:
+  CAROUSEL_START_DATE: "2026-09-16"
+
+jobs:
+  build-carousel:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Resolve run mode
+        shell: bash
+        env:
+          REQUESTED_CAROUSEL_ID: ${{ github.event.inputs.carousel_id || '' }}
+          REQUESTED_PUBLISH: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true' }}
+        run: |
+          echo "CAROUSEL_ID=${REQUESTED_CAROUSEL_ID}" >> "$GITHUB_ENV"
+          echo "SHOULD_PUBLISH=${REQUESTED_PUBLISH}" >> "$GITHUB_ENV"
+          if [ "${GITHUB_EVENT_NAME}" = "schedule" ]; then
+            echo "Scheduled carousel run: build-only safety mode."
+          fi
+
+      - name: Build carousel
+        run: python build_carousel.py
+
+      - name: Load carousel metadata
+        shell: bash
+        run: |
+          ENV_FILE=$(find outputs/carousels -mindepth 2 -maxdepth 2 -name publish.env -print -quit)
+          if [ -z "$ENV_FILE" ]; then
+            echo "Carousel publish.env not found" >&2
+            exit 1
+          fi
+          cat "$ENV_FILE" >> "$GITHUB_ENV"
+
+      - name: Prevent duplicate publishing
+        if: env.SHOULD_PUBLISH == 'true'
+        shell: bash
+        run: |
+          if [ -f "published_logs/carousels/${CAROUSEL_ID}.json" ]; then
+            echo "${CAROUSEL_ID} already has a publish log. Skipping Instagram publish."
+            echo "ALREADY_PUBLISHED=true" >> "$GITHUB_ENV"
+          else
+            echo "ALREADY_PUBLISHED=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Commit carousel slides so Instagram can fetch them publicly
+        if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        shell: bash
+        run: |
+          git config user.name "talksnwalks-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add "public/carousels/${CAROUSEL_ID}/"
+          git commit -m "Add ${CAROUSEL_ID} carousel media" || echo "Carousel media already committed"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "MEDIA_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Build public slide URL list
+        if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        shell: bash
+        run: |
+          URL_FILE="outputs/carousels/${CAROUSEL_ID}/image_urls.txt"
+          : > "$URL_FILE"
+          for n in $(seq -w 1 "$CAROUSEL_SLIDE_COUNT"); do
+            echo "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/public/carousels/${CAROUSEL_ID}/slide_${n}.jpg" >> "$URL_FILE"
+          done
+          echo "CAROUSEL_URLS_FILE=$URL_FILE" >> "$GITHUB_ENV"
+
+      - name: Verify carousel slides are publicly reachable
+        if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        shell: bash
+        run: |
+          while IFS= read -r url; do
+            echo "Checking $url"
+            curl --fail --location --silent --show-error \
+              --retry 8 --retry-delay 5 --retry-all-errors \
+              --output /dev/null "$url"
+          done < "$CAROUSEL_URLS_FILE"
+
+      - name: Publish carousel through Instagram API
+        if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          CAROUSEL_URLS_FILE: ${{ env.CAROUSEL_URLS_FILE }}
+          CAPTION_FILE: outputs/carousels/${{ env.CAROUSEL_ID }}/caption.txt
+          RESULT_FILE: outputs/carousels/${{ env.CAROUSEL_ID }}/publish_result.json
+        run: python publish_instagram_carousel.py
+
+      - name: Save carousel publishing audit log
+        if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true' && success()
+        shell: bash
+        run: |
+          mkdir -p published_logs/carousels
+          cp "outputs/carousels/${CAROUSEL_ID}/publish_result.json" "published_logs/carousels/${CAROUSEL_ID}.json"
+          git add "published_logs/carousels/${CAROUSEL_ID}.json"
+          git commit -m "Log ${CAROUSEL_ID} Instagram publish" || true
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Upload carousel build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: talksnwalks-carousel-${{ env.CAROUSEL_ID }}
+          path: |
+            outputs/carousels/${{ env.CAROUSEL_ID }}/
+            public/carousels/${{ env.CAROUSEL_ID }}/
+          retention-days: 14
+          if-no-files-found: error
