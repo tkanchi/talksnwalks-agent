@@ -524,6 +524,50 @@
         "#dailywisdom",
         "#talksnwalks"
       ]
+    },
+    {
+      "selection_date": "2026-09-18",
+      "quote_id": "YB003",
+      "audience": "Kids|Teens",
+      "topic_category": "Values",
+      "topic": "Kindness",
+      "book": "Wonder",
+      "author": "R. J. Palacio",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ029",
+      "illustration": "heart_outline_01.png",
+      "illustration_score": 430,
+      "illustration_tags": [
+        "communication",
+        "family",
+        "heart",
+        "kindness",
+        "listening",
+        "love",
+        "relationship"
+      ],
+      "placement": "bottom_center",
+      "background": "mint",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-18_YB003",
+      "caption_category": "Values",
+      "caption": "Kindness sees the person before judging the situation.\n\nWorth remembering in the small decisions nobody applauds.\n\nIf you're exploring kindness, teen motivation, growth mindset, integrity, character, spirituality, gratitude, compassion, and personal growth, save this reminder and share it with someone who may need it.\n\nInspired by Wonder by R. J. Palacio.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "kindness",
+        "teen motivation",
+        "growth mindset",
+        "integrity",
+        "character",
+        "spirituality",
+        "gratitude",
+        "compassion",
+        "personal growth"
+      ],
+      "hashtags": []
     }
   ]
 }
