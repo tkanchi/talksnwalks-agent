@@ -1,8 +1,6 @@
 name: Month 1 Unified Pipeline
 
 on:
-  schedule:
-    - cron: "30 11 * * *" # 17:00 IST
   workflow_dispatch:
     inputs:
       post_number:
