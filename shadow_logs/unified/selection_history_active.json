@@ -609,6 +609,48 @@
         "decision making"
       ],
       "hashtags": []
+    },
+    {
+      "selection_date": "2026-09-20",
+      "quote_id": "WEMP364",
+      "audience": "Women",
+      "topic_category": "Relationships",
+      "topic": "Love",
+      "book": "The Body Is Not an Apology",
+      "author": "Sonya Renee Taylor",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ011",
+      "illustration": "candle_01.png",
+      "illustration_score": 430,
+      "illustration_tags": [
+        "calm",
+        "candle",
+        "hope",
+        "light",
+        "reflection"
+      ],
+      "placement": "bottom_center",
+      "background": "sky",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-20_WEMP364",
+      "caption_category": "Wellness",
+      "caption": "A useful way to read this keeps body confidence in mind.\n\nOne to revisit when taking care of yourself starts feeling complicated.\n\nIf you're exploring love, women empowerment, confidence for women, wellness, self care, mental health, fitness, healthy lifestyle, and body confidence, save this reminder and share it with someone who may need it.\n\nInspired by The Body Is Not an Apology by Sonya Renee Taylor.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "love",
+        "women empowerment",
+        "confidence for women",
+        "wellness",
+        "self care",
+        "mental health",
+        "fitness",
+        "healthy lifestyle",
+        "body confidence"
+      ],
+      "hashtags": []
     }
   ]
 }
