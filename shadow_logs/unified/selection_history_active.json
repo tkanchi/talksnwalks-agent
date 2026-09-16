@@ -651,6 +651,47 @@
         "body confidence"
       ],
       "hashtags": []
+    },
+    {
+      "selection_date": "2026-09-21",
+      "quote_id": "SG354",
+      "audience": "All",
+      "topic_category": "Wellness",
+      "topic": "Mental Health",
+      "book": "Can't Hurt Me",
+      "author": "David Goggins",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ013",
+      "illustration": "leaf_branch_01.png",
+      "illustration_score": 100,
+      "illustration_tags": [
+        "calm",
+        "leaf",
+        "nature",
+        "renewal",
+        "wellness"
+      ],
+      "placement": "bottom_right",
+      "background": "vanilla",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-21_SG354",
+      "caption_category": "Wellness",
+      "caption": "The everyday takeaway comes back to growth.\n\nWorth sitting with when you think about how you care for yourself.\n\nIf you're exploring mental health, wellness, self care, fitness, healthy lifestyle, body confidence, rest, and wellbeing, save this reminder and share it with someone who may need it.\n\nInspired by Can't Hurt Me by David Goggins.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "mental health",
+        "wellness",
+        "self care",
+        "fitness",
+        "healthy lifestyle",
+        "body confidence",
+        "rest",
+        "wellbeing"
+      ],
+      "hashtags": []
     }
   ]
 }
