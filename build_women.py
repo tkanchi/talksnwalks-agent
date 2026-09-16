@@ -4,6 +4,7 @@ Builds a fresh Day-1 production pool from the quote libraries and adds
 stream-aware illustrations plus topic-aware audio.
 """
 
+import shutil
 from pathlib import Path
 
 import build_reel
@@ -32,10 +33,38 @@ WOMEN_QUOTE_PARTS = [
 ]
 
 
+def _live_illustration_dir(stream: str) -> Path:
+    """Build a runtime pool that temporarily excludes all_* artwork."""
+    source = Path("illustrations")
+    target = Path(".runtime_illustrations") / stream
+    if target.exists():
+        shutil.rmtree(target)
+    target.mkdir(parents=True, exist_ok=True)
+
+    kept = 0
+    for path in source.iterdir():
+        if (
+            not path.is_file()
+            or path.suffix.lower() not in {".png", ".jpg", ".jpeg"}
+            or path.name.lower().startswith("all_")
+        ):
+            continue
+        destination = target / path.name
+        try:
+            destination.symlink_to(path.resolve())
+        except OSError:
+            shutil.copy2(path, destination)
+        kept += 1
+
+    if not kept:
+        raise FileNotFoundError("No non-all_* illustrations available for women publishing")
+    return target
+
+
 def _apply_visuals() -> None:
     apply_illustration_pool(
         build_reel,
-        Path("illustrations"),
+        _live_illustration_dir("women"),
         stream="women",
         quote_file=build_reel.QUOTES_FILE,
     )
