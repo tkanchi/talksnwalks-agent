@@ -692,6 +692,49 @@
         "wellbeing"
       ],
       "hashtags": []
+    },
+    {
+      "selection_date": "2026-09-22",
+      "quote_id": "WEMP072",
+      "audience": "Women",
+      "topic_category": "Business",
+      "topic": "Money Mindset",
+      "book": "We Should All Be Millionaires",
+      "author": "Rachel Rodgers",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ024",
+      "illustration": "target_01.png",
+      "illustration_score": 590,
+      "illustration_tags": [
+        "aim",
+        "execution",
+        "financial",
+        "focus",
+        "goals",
+        "target"
+      ],
+      "placement": "bottom_left",
+      "background": "seafoam",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-22_WEMP072",
+      "caption_category": "Business",
+      "caption": "A practical reading starts by noticing money mindset.\n\nWorth keeping in mind when priorities start competing.\n\nIf you're exploring money mindset, women empowerment, confidence for women, success, entrepreneurship, leadership, career growth, discipline, and execution, save this reminder and share it with someone who may need it.\n\nInspired by We Should All Be Millionaires by Rachel Rodgers.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "money mindset",
+        "women empowerment",
+        "confidence for women",
+        "success",
+        "entrepreneurship",
+        "leadership",
+        "career growth",
+        "discipline",
+        "execution"
+      ],
+      "hashtags": []
     }
   ]
 }
