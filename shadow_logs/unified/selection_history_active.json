@@ -735,6 +735,47 @@
         "execution"
       ],
       "hashtags": []
+    },
+    {
+      "selection_date": "2026-09-23",
+      "quote_id": "SG170",
+      "audience": "All",
+      "topic_category": "Mindset",
+      "topic": "Peace",
+      "book": "The Let Them Theory",
+      "author": "Mel Robbins & Sawyer Robbins",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ003",
+      "illustration": "compass_01.png",
+      "illustration_score": 430,
+      "illustration_tags": [
+        "choice",
+        "direction",
+        "purpose",
+        "travel"
+      ],
+      "placement": "bottom_center",
+      "background": "powder",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-23_SG170",
+      "caption_category": "Business",
+      "caption": "Keep the attention on strategy and decision-making in ordinary moments.\n\nA practical idea for the work that actually matters.\n\nIf you're exploring peace, success, entrepreneurship, leadership, career growth, discipline, execution, decision making, and money mindset, save this reminder and share it with someone who may need it.\n\nInspired by The Let Them Theory by Mel Robbins & Sawyer Robbins.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "peace",
+        "success",
+        "entrepreneurship",
+        "leadership",
+        "career growth",
+        "discipline",
+        "execution",
+        "decision making",
+        "money mindset"
+      ],
+      "hashtags": []
     }
   ]
 }
