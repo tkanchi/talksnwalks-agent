@@ -12,6 +12,7 @@ from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
 from illustration_pool import apply_illustration_pool
 from watercolor_background_theme import apply_visual_theme
+from women_quote_clarity import apply_women_quote_clarity, is_clear_women_quote
 from quote_library import build_curated_runtime_quote_file
 
 
@@ -81,6 +82,8 @@ if __name__ == "__main__":
         source_weights={"WOM": 12, "WEMP": 5, "UC": 4, "SG": 2},
         required_source_type="inspired_by",
         require_book_author=True,
+        row_transform=apply_women_quote_clarity,
+        row_filter=is_clear_women_quote,
     )
     _apply_visuals()
     build_reel.main()
