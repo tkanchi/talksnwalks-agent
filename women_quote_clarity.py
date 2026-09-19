@@ -51,7 +51,7 @@ WOMEN_QUOTE_OVERRIDES: dict[str, str] = {
     "SG266": "You get more done when you stop perfecting work that matters less.",
     "SG267": "Start with the task that will bring the most progress or relief.",
     "SG279": "Track the actions you can control, not only the final result.",
-    "SG288": "Build money habits that still work when motivation is low.",
+    "SG288": "Keep good money habits even on days you do not feel like it.",
     "SG289": "Save for your future before you spend everything today.",
     "SG291": "Do not put money into something you do not understand.",
     "SG316": "Try different ways to live instead of assuming one path fits everyone.",
@@ -271,6 +271,7 @@ WOMEN_QUOTE_OVERRIDES: dict[str, str] = {
     "WEMP053": "Be proud of where you come from without letting it limit where you go.",
     "SG061": "One bad result does not define who you are.",
     "SG354": "Your past can explain you, but it does not excuse staying stuck.",
+    "SG197": "Build a life you enjoy living, not one you always want to get away from.",
 }
 
 
