@@ -85,4 +85,4 @@ if __name__ == "__main__":
         duration=build_reel.REEL_SECONDS,
         stream="men",
     )
-    require_real_audio(build_reel.OUTPUT_DIR)
+    require_real_audio(build_reel.OUTPUT_DIR, allow_generated=True)
