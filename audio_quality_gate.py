@@ -1,4 +1,4 @@
-"""Fail build-only validation if a configured real audio track was not embedded."""
+"""Validate that an approved audio source was embedded in the built Reel."""
 
 from pathlib import Path
 
@@ -14,7 +14,7 @@ def _read_env(path: Path) -> dict[str, str]:
     return values
 
 
-def require_real_audio(output_dir: Path) -> None:
+def require_real_audio(output_dir: Path, *, allow_generated: bool = False) -> None:
     env_path = Path(output_dir) / "publish.env"
     if not env_path.exists():
         raise FileNotFoundError(f"Missing audio build metadata: {env_path}")
@@ -28,14 +28,22 @@ def require_real_audio(output_dir: Path) -> None:
     artist = values.get("AUDIO_ARTIST", "")
     track_id = values.get("AUDIO_TRACK_ID", "")
 
-    if source != "rights_cleared_remote":
+    approved_sources = {"rights_cleared_remote"}
+    if allow_generated:
+        approved_sources.add("generated_v2")
+
+    if source not in approved_sources:
+        expected = ", ".join(sorted(approved_sources))
         raise RuntimeError(
-            "Real audio quality gate failed: expected rights_cleared_remote, "
+            f"Audio quality gate failed: expected one of [{expected}], "
             f"got {source or 'missing'}. Track={artist} - {track}. "
             "Do not treat this build as audio-approved."
         )
 
-    if not track_id or not track:
-        raise RuntimeError("Real audio quality gate failed: selected track metadata is missing.")
+    if source == "rights_cleared_remote" and (not track_id or not track):
+        raise RuntimeError("Audio quality gate failed: selected remote track metadata is missing.")
 
-    print(f"Real audio verified: {track_id} | {artist} - {track}")
+    if source == "generated_v2" and (not track or not artist):
+        raise RuntimeError("Audio quality gate failed: generated track metadata is missing.")
+
+    print(f"Audio verified: {source} | {track_id} | {artist} - {track}")
