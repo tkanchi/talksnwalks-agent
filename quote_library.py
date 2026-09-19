@@ -10,6 +10,7 @@ from __future__ import annotations
 import csv
 import re
 from collections import defaultdict
+from collections.abc import Callable
 from pathlib import Path
 
 from quote_text_quality import polish_quote_row
@@ -154,6 +155,8 @@ def build_curated_runtime_quote_file(
     source_weights: dict[str, int] | None = None,
     required_source_type: str | None = None,
     require_book_author: bool = False,
+    row_transform: Callable[[dict[str, str]], dict[str, str]] | None = None,
+    row_filter: Callable[[dict[str, str]], bool] | None = None,
 ) -> Path:
     """Create a varied high-impact pool, with optional source/attribution filters."""
     raw_rows = _load_rows(parts)
@@ -161,6 +164,11 @@ def build_curated_runtime_quote_file(
     seen: set[str] = set()
     rows: list[dict[str, str]] = []
     for row in raw_rows:
+        if row_transform is not None:
+            row = row_transform(dict(row))
+        if row_filter is not None and not row_filter(row):
+            continue
+
         quote_id = row.get("QuoteID", "")
         if any(quote_id.startswith(prefix) for prefix in exclude_prefixes):
             continue
