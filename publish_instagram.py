@@ -15,6 +15,8 @@ IMAGE_URL = os.getenv("IMAGE_URL", "").strip()
 CAPTION_FILE = Path(os.getenv("CAPTION_FILE", "outputs/caption.txt"))
 RESULT_FILE = Path(os.getenv("RESULT_FILE", "outputs/publish_result.json"))
 SHARE_TO_FEED = os.getenv("SHARE_TO_FEED", "true").lower() == "true"
+TRIAL_REEL = os.getenv("TRIAL_REEL", "false").lower() == "true"
+TRIAL_GRADUATION_STRATEGY = os.getenv("TRIAL_GRADUATION_STRATEGY", "MANUAL").strip().upper()
 
 
 def require(name, value):
@@ -52,6 +54,17 @@ def create_container(caption):
             "share_to_feed": "true" if SHARE_TO_FEED else "false",
             "access_token": ACCESS_TOKEN,
         }
+        if TRIAL_REEL:
+            if TRIAL_GRADUATION_STRATEGY not in {"MANUAL", "SS_PERFORMANCE"}:
+                raise RuntimeError(
+                    "TRIAL_GRADUATION_STRATEGY must be MANUAL or SS_PERFORMANCE"
+                )
+            # Never silently fall back to a normal Reel. If Meta rejects
+            # trial_params, the container request fails and nothing is published.
+            data["share_to_feed"] = "false"
+            data["trial_params"] = json.dumps(
+                {"graduation_strategy": TRIAL_GRADUATION_STRATEGY}
+            )
     payload = request_json("POST", url, data=data)
     container_id = payload.get("id")
     if not container_id:
@@ -133,6 +146,10 @@ def main():
         "container_id": container_id,
         "media_id": media_id,
     }
+    if not IMAGE_URL:
+        result["trial_reel"] = TRIAL_REEL
+        if TRIAL_REEL:
+            result["trial_graduation_strategy"] = TRIAL_GRADUATION_STRATEGY
     if IMAGE_URL:
         result["image_url"] = media_url
     else:
