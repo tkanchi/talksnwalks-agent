@@ -9,6 +9,7 @@ from audio_quality_gate import require_real_audio
 from illustration_pool import apply_illustration_pool
 from watercolor_background_theme import apply_visual_theme
 from quote_library import build_curated_runtime_quote_file
+from men_quote_clarity import apply_men_quote_clarity, is_clear_men_quote
 
 
 CONTENT_NAME = "men"
@@ -76,6 +77,20 @@ if __name__ == "__main__":
         source_weights={"MEN": 12, "SG": 2},
         required_source_type="inspired_by",
         require_book_author=True,
+        row_transform=apply_men_quote_clarity,
+        row_filter=is_clear_men_quote,
+        fixed_quote_ids_by_day={
+            1: "SG094",
+            2: "SG305",
+            8: "SG333",
+            9: "SG311",
+            26: "SG139",
+            27: "SG363",
+            28: "SG204",
+            29: "SG220",
+            30: "SG218",
+        },
+        score_before_transform=True,
     )
     _apply_visuals()
     build_reel.main()
