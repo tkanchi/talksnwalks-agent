@@ -157,6 +157,7 @@ def build_curated_runtime_quote_file(
     require_book_author: bool = False,
     row_transform: Callable[[dict[str, str]], dict[str, str]] | None = None,
     row_filter: Callable[[dict[str, str]], bool] | None = None,
+    fixed_quote_ids_by_day: dict[int, str] | None = None,
 ) -> Path:
     """Create a varied high-impact pool, with optional source/attribution filters."""
     raw_rows = _load_rows(parts)
@@ -223,7 +224,25 @@ def build_curated_runtime_quote_file(
             selected.append(row)
         cursor += 1
 
-    return _write_runtime(selected[:target_days], destination)
+    selected = selected[:target_days]
+
+    # Preserve historically assigned QuoteIDs for manual catch-up and audit safety.
+    # Swap into the requested day so the overall selected set stays stable.
+    for day, quote_id in sorted((fixed_quote_ids_by_day or {}).items()):
+        if day < 1 or day > len(selected):
+            raise ValueError(f"Fixed day {day} is outside the selected quote pool")
+
+        target_index = next(
+            (index for index, row in enumerate(selected) if row.get("QuoteID", "") == quote_id),
+            None,
+        )
+        if target_index is None:
+            raise ValueError(f"Fixed QuoteID {quote_id} is not available in the selected quote pool")
+
+        day_index = day - 1
+        selected[day_index], selected[target_index] = selected[target_index], selected[day_index]
+
+    return _write_runtime(selected, destination)
 
 
 def build_curated_simple_quote_file(
