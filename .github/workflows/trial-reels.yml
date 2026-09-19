@@ -1,0 +1,274 @@
+name: Trial Reels - 2 Daily
+
+on:
+  schedule:
+    - cron: "53 4 * * *" # 10:23 IST - women/general trial
+    - cron: "7 10 * * *" # 15:37 IST - men trial
+  workflow_dispatch:
+    inputs:
+      stream:
+        description: "Trial stream"
+        required: true
+        default: "women"
+        type: choice
+        options:
+          - women
+          - men
+      day:
+        description: "Source quote day (1-365)"
+        required: true
+        default: "200"
+        type: string
+      publish:
+        description: "Actually publish as an Instagram Trial Reel"
+        required: true
+        default: false
+        type: boolean
+      graduation_strategy:
+        description: "What happens after the trial"
+        required: true
+        default: "MANUAL"
+        type: choice
+        options:
+          - MANUAL
+          - SS_PERFORMANCE
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trial-reels-publisher
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish-trial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      META_API_VERSION: "v26.0"
+      META_GRAPH_HOST: "https://graph.instagram.com"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Decide trial stream and day
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            case "${{ github.event.schedule }}" in
+              "53 4 * * *")
+                STREAM="women"
+                START_DATE="2026-08-20"
+                ;;
+              "7 10 * * *")
+                STREAM="men"
+                START_DATE="2026-08-21"
+                ;;
+              *)
+                echo "Unknown trial schedule: ${{ github.event.schedule }}"
+                exit 1
+                ;;
+            esac
+
+            TODAY="$(date -u +%F)"
+            START_EPOCH="$(date -u -d "$START_DATE" +%s)"
+            TODAY_EPOCH="$(date -u -d "$TODAY" +%s)"
+            BASE_DAY=$(( (TODAY_EPOCH - START_EPOCH) / 86400 + 1 ))
+
+            # Trial content stays about 180 days ahead of the normal stream so
+            # it does not duplicate today's regular Reel.
+            TRIAL_DAY=$(( ((BASE_DAY - 1 + 180) % 365) + 1 ))
+            SHOULD_PUBLISH="true"
+            GRADUATION_STRATEGY="MANUAL"
+          else
+            STREAM="${{ inputs.stream }}"
+            TRIAL_DAY="${{ inputs.day }}"
+            SHOULD_PUBLISH="${{ inputs.publish }}"
+            GRADUATION_STRATEGY="${{ inputs.graduation_strategy }}"
+          fi
+
+          if ! [[ "$TRIAL_DAY" =~ ^[0-9]+$ ]] || [ "$TRIAL_DAY" -lt 1 ] || [ "$TRIAL_DAY" -gt 365 ]; then
+            echo "Trial day must be between 1 and 365."
+            exit 1
+          fi
+
+          DAY_PADDED="$(printf "%03d" "$TRIAL_DAY")"
+          RUN_DATE="$(date -u +%F)"
+          RESULT_FILE="outputs/trials/$STREAM/${RUN_DATE}_publish_result.json"
+          AUDIT_FILE="published_logs/trials/${RUN_DATE}_${STREAM}.json"
+          TRIAL_MEDIA_PATH="public/trials/$STREAM/${RUN_DATE}_${STREAM}.mp4"
+
+          if [ "$STREAM" = "women" ]; then
+            SOURCE_MEDIA="public/day_${DAY_PADDED}.mp4"
+            CAPTION_FILE="outputs/caption.txt"
+          else
+            SOURCE_MEDIA="public/men/day_${DAY_PADDED}.mp4"
+            CAPTION_FILE="outputs/men/caption.txt"
+          fi
+
+          echo "STREAM=$STREAM" >> "$GITHUB_ENV"
+          echo "TRIAL_DAY=$TRIAL_DAY" >> "$GITHUB_ENV"
+          echo "DAY_PADDED=$DAY_PADDED" >> "$GITHUB_ENV"
+          echo "RUN_DATE=$RUN_DATE" >> "$GITHUB_ENV"
+          echo "SHOULD_PUBLISH=$SHOULD_PUBLISH" >> "$GITHUB_ENV"
+          echo "GRADUATION_STRATEGY=$GRADUATION_STRATEGY" >> "$GITHUB_ENV"
+          echo "RESULT_FILE=$RESULT_FILE" >> "$GITHUB_ENV"
+          echo "AUDIT_FILE=$AUDIT_FILE" >> "$GITHUB_ENV"
+          echo "TRIAL_MEDIA_PATH=$TRIAL_MEDIA_PATH" >> "$GITHUB_ENV"
+          echo "SOURCE_MEDIA=$SOURCE_MEDIA" >> "$GITHUB_ENV"
+          echo "CAPTION_FILE=$CAPTION_FILE" >> "$GITHUB_ENV"
+
+          echo "Trial stream: $STREAM"
+          echo "Source day: $TRIAL_DAY"
+          echo "Publish: $SHOULD_PUBLISH"
+          echo "Graduation: $GRADUATION_STRATEGY"
+
+      - name: Prevent duplicate trial publishing
+        shell: bash
+        run: |
+          if [ -f "$AUDIT_FILE" ]; then
+            echo "A trial Reel for $STREAM already has an audit for $RUN_DATE. Skipping."
+            echo "SKIP_TRIAL=true" >> "$GITHUB_ENV"
+          else
+            echo "SKIP_TRIAL=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Set up Python
+        if: env.SKIP_TRIAL != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        if: env.SKIP_TRIAL != 'true'
+        run: pip install -r requirements.txt
+
+      - name: Ensure ffmpeg is available
+        if: env.SKIP_TRIAL != 'true'
+        shell: bash
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+          ffmpeg -version | head -n 1
+
+      - name: Build trial Reel
+        if: env.SKIP_TRIAL != 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AI_IMAGE_MODEL: "gpt-image-2"
+          AI_IMAGE_QUALITY: "medium"
+        shell: bash
+        run: |
+          set -euo pipefail
+          export DAY_NUMBER="$TRIAL_DAY"
+
+          if [ "$STREAM" = "women" ]; then
+            AI_VISUAL_REQUIRED="$SHOULD_PUBLISH" python build_women.py
+          else
+            AI_VISUAL_REQUIRED="$SHOULD_PUBLISH" python build_men.py
+          fi
+
+          mkdir -p "$(dirname "$TRIAL_MEDIA_PATH")"
+          mkdir -p "$(dirname "$RESULT_FILE")"
+          cp "$SOURCE_MEDIA" "$TRIAL_MEDIA_PATH"
+
+          test -s "$TRIAL_MEDIA_PATH"
+          test -s "$CAPTION_FILE"
+          echo "Trial Reel prepared at $TRIAL_MEDIA_PATH"
+
+      - name: Commit trial Reel so Instagram can fetch it publicly
+        if: env.SKIP_TRIAL != 'true' && env.SHOULD_PUBLISH == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "talksnwalks-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$TRIAL_MEDIA_PATH"
+          git commit -m "Add $STREAM trial Reel for $RUN_DATE" || echo "Trial media already committed"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "MEDIA_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Build public trial Reel URL
+        if: env.SKIP_TRIAL != 'true' && env.SHOULD_PUBLISH == 'true'
+        shell: bash
+        run: |
+          VIDEO_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/${TRIAL_MEDIA_PATH}"
+          echo "VIDEO_URL=$VIDEO_URL" >> "$GITHUB_ENV"
+          echo "Trial media URL prepared."
+
+      - name: Verify trial Reel is publicly reachable
+        if: env.SKIP_TRIAL != 'true' && env.SHOULD_PUBLISH == 'true'
+        shell: bash
+        run: |
+          curl --fail --location --silent --show-error             --retry 8 --retry-delay 5 --retry-all-errors             --output /dev/null "$VIDEO_URL"
+
+      - name: Publish as Instagram Trial Reel
+        if: env.SKIP_TRIAL != 'true' && env.SHOULD_PUBLISH == 'true'
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          VIDEO_URL: ${{ env.VIDEO_URL }}
+          CAPTION_FILE: ${{ env.CAPTION_FILE }}
+          RESULT_FILE: ${{ env.RESULT_FILE }}
+          SHARE_TO_FEED: "false"
+          TRIAL_REEL: "true"
+          TRIAL_GRADUATION_STRATEGY: ${{ env.GRADUATION_STRATEGY }}
+        run: python publish_instagram.py
+
+      - name: Add trial audit metadata
+        if: env.SKIP_TRIAL != 'true' && env.SHOULD_PUBLISH == 'true' && success()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          path = Path(os.environ["RESULT_FILE"])
+          data = json.loads(path.read_text(encoding="utf-8"))
+          data.update(
+              {
+                  "trial_stream": os.environ["STREAM"],
+                  "trial_source_day": int(os.environ["TRIAL_DAY"]),
+                  "trial_date": os.environ["RUN_DATE"],
+                  "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              }
+          )
+          path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+          PY
+
+      - name: Save trial publishing audit log
+        if: env.SKIP_TRIAL != 'true' && env.SHOULD_PUBLISH == 'true' && success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "$AUDIT_FILE")"
+          cp "$RESULT_FILE" "$AUDIT_FILE"
+
+          git config user.name "talksnwalks-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$AUDIT_FILE"
+          git commit -m "Log $STREAM trial Reel for $RUN_DATE" || true
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Upload trial build artifact
+        if: env.SKIP_TRIAL != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: talksnwalks-trial-${{ env.RUN_DATE }}-${{ env.STREAM }}
+          path: |
+            ${{ env.TRIAL_MEDIA_PATH }}
+            ${{ env.CAPTION_FILE }}
+            outputs/trials/
+          retention-days: 14
+          if-no-files-found: warn
