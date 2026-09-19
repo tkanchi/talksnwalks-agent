@@ -306,7 +306,7 @@ WOMEN_QUOTE_OVERRIDES: dict[str, str] = {
     "SG115": "If something is not important, say no and make room for what is.",
     "SG273": "Use the first part of the day to get ready for what comes next.",
     "WEMP199": "Before trusting a solution for everyone, ask who was included when it was made.",
-    "SG130": "A confusing task feels harder. Decide the next clear step.",
+    "SG130": "When a task feels confusing, ask what you need to do next. Start there.",
     "WEMP108": "Judge women leaders by their choices, not by whether everyone likes them.",
     "WEMP356": "Show girls many examples of women living good lives in different ways.",
     "SG040": "Do not let yesterday and tomorrow steal all of today.",
