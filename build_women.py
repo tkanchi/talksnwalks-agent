@@ -84,6 +84,11 @@ if __name__ == "__main__":
         require_book_author=True,
         row_transform=apply_women_quote_clarity,
         row_filter=is_clear_women_quote,
+        fixed_quote_ids_by_day={
+            29: "SG094",
+            30: "SG339",
+            31: "WEMP166",
+        },
     )
     _apply_visuals()
     build_reel.main()
