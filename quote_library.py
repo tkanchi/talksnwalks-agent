@@ -158,6 +158,7 @@ def build_curated_runtime_quote_file(
     row_transform: Callable[[dict[str, str]], dict[str, str]] | None = None,
     row_filter: Callable[[dict[str, str]], bool] | None = None,
     fixed_quote_ids_by_day: dict[int, str] | None = None,
+    score_before_transform: bool = False,
 ) -> Path:
     """Create a varied high-impact pool, with optional source/attribution filters."""
     raw_rows = _load_rows(parts)
@@ -165,6 +166,11 @@ def build_curated_runtime_quote_file(
     seen: set[str] = set()
     rows: list[dict[str, str]] = []
     for row in raw_rows:
+        selection_score = (
+            _impact_score(row, source_weights)
+            if score_before_transform
+            else None
+        )
         if row_transform is not None:
             row = row_transform(dict(row))
         if row_filter is not None and not row_filter(row):
@@ -186,6 +192,8 @@ def build_curated_runtime_quote_file(
         if not normalised or normalised in seen:
             continue
         seen.add(normalised)
+        if selection_score is not None:
+            row["_selection_score"] = str(selection_score)
         rows.append(row)
 
     preserved = [
@@ -199,7 +207,12 @@ def build_curated_runtime_quote_file(
     groups: dict[str, list[dict[str, str]]] = defaultdict(list)
     for row in candidates:
         row = dict(row)
-        row["_score"] = str(_impact_score(row, source_weights))
+        selection_score = row.pop("_selection_score", None)
+        row["_score"] = (
+            selection_score
+            if selection_score is not None
+            else str(_impact_score(row, source_weights))
+        )
         key = row.get("Topic", "").strip() or row.get("Theme", "").strip() or "Other"
         groups[key].append(row)
 
