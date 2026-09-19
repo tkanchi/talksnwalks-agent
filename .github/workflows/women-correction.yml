@@ -1,0 +1,176 @@
+name: Women Corrected Reel
+
+on:
+  workflow_dispatch:
+    inputs:
+      day:
+        description: "Previously published Women day to correct (1-365)"
+        required: true
+        default: "31"
+        type: string
+      publish:
+        description: "Publish corrected Reel as a new Instagram post"
+        required: true
+        default: false
+        type: boolean
+      reason:
+        description: "Why this correction is being published"
+        required: true
+        default: "Corrected quote wording"
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish-correction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      META_API_VERSION: "v26.0"
+      META_GRAPH_HOST: "https://graph.instagram.com"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set correction parameters
+        shell: bash
+        run: |
+          DAY_NUMBER="${{ inputs.day }}"
+          if ! [[ "$DAY_NUMBER" =~ ^[0-9]+$ ]] || [ "$DAY_NUMBER" -lt 1 ] || [ "$DAY_NUMBER" -gt 365 ]; then
+            echo "Day must be an integer from 1 to 365."
+            exit 1
+          fi
+
+          DAY_PADDED="$(printf "%03d" "$DAY_NUMBER")"
+          echo "DAY_NUMBER=$DAY_NUMBER" >> "$GITHUB_ENV"
+          echo "DAY_PADDED=$DAY_PADDED" >> "$GITHUB_ENV"
+          echo "CORRECTION_REASON=${{ inputs.reason }}" >> "$GITHUB_ENV"
+
+          if [ "${{ inputs.publish }}" = "true" ]; then
+            echo "Correction publish explicitly enabled."
+            echo "SHOULD_PUBLISH=true" >> "$GITHUB_ENV"
+          else
+            echo "Correction build-only run. Instagram publishing disabled."
+            echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Require original Day audit
+        shell: bash
+        run: |
+          ORIGINAL_AUDIT="published_logs/day_${DAY_PADDED}.json"
+          if [ ! -f "$ORIGINAL_AUDIT" ]; then
+            echo "No original publish audit exists for Day ${DAY_NUMBER}."
+            echo "Use the normal Daily Instagram Reel workflow for an unpublished day."
+            exit 1
+          fi
+          echo "Original Day ${DAY_NUMBER} audit found. Correction path is allowed."
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Ensure ffmpeg is available
+        shell: bash
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+          ffmpeg -version | head -n 1
+
+      - name: Build corrected Women Reel
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AI_IMAGE_MODEL: "gpt-image-2"
+          AI_IMAGE_QUALITY: "medium"
+        run: AI_VISUAL_REQUIRED="$SHOULD_PUBLISH" python build_women.py
+
+      - name: Load build metadata
+        shell: bash
+        run: cat outputs/publish.env >> "$GITHUB_ENV"
+
+      - name: Commit corrected Reel so Instagram can fetch it publicly
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true'
+        shell: bash
+        run: |
+          git config user.name "talksnwalks-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add "public/day_${DAY_PADDED}.mp4"
+          git commit -m "Add corrected Day ${DAY_NUMBER} Women Reel" || echo "Corrected media already committed"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "MEDIA_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Build corrected public Reel URL
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true'
+        shell: bash
+        run: |
+          VIDEO_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/public/day_${DAY_PADDED}.mp4"
+          echo "VIDEO_URL=$VIDEO_URL" >> "$GITHUB_ENV"
+          echo "Corrected Instagram media URL prepared."
+
+      - name: Verify corrected Reel is publicly reachable
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true'
+        shell: bash
+        run: |
+          curl --fail --location --silent --show-error \
+            --retry 8 --retry-delay 5 --retry-all-errors \
+            --output /dev/null "$VIDEO_URL"
+
+      - name: Publish corrected Reel through Instagram API
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true'
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          VIDEO_URL: ${{ env.VIDEO_URL }}
+          CAPTION_FILE: outputs/caption.txt
+        run: python publish_instagram.py
+
+      - name: Save separate correction audit log
+        if: env.SKIP == 'false' && env.SHOULD_PUBLISH == 'true' && success()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          path = Path("outputs/publish_result.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          data["correction_of_day"] = int(os.environ["DAY_NUMBER"])
+          data["correction_reason"] = os.environ["CORRECTION_REASON"]
+          data["workflow_run_id"] = os.environ["GITHUB_RUN_ID"]
+          data["original_audit"] = f"published_logs/day_{os.environ['DAY_PADDED']}.json"
+          path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+          PY
+
+          mkdir -p published_logs/corrections
+          CORRECTION_LOG="published_logs/corrections/day_${DAY_PADDED}_run_${GITHUB_RUN_ID}.json"
+          cp outputs/publish_result.json "$CORRECTION_LOG"
+
+          git config user.name "talksnwalks-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$CORRECTION_LOG"
+          git commit -m "Log corrected Day ${DAY_NUMBER} Instagram publish"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Upload correction build artifact
+        if: env.SKIP == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: talksnwalks-correction-day-${{ env.DAY_PADDED }}
+          path: |
+            outputs/
+            public/*.mp4
+          retention-days: 14
+          if-no-files-found: warn
