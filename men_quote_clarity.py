@@ -33,7 +33,7 @@ MEN_QUOTE_OVERRIDES: dict[str, str] = {
     "SG020": "People learn more when you correct them with respect.",
     "SG021": "A thank-you means more when you say exactly what you are thankful for.",
     "SG022": "People listen better when they feel heard first.",
-    "SG023": "Correct them without making them feel small.",
+    "SG023": "Help them learn without making them feel small.",
     "SG024": "Good talks are less about showing off and more about making room for others.",
     "SG025": "A wish gets stronger when you decide exactly what you want.",
     "SG026": "Keep showing up even after the excitement wears off.",
