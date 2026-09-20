@@ -818,6 +818,47 @@
         "confidence"
       ],
       "hashtags": []
+    },
+    {
+      "selection_date": "2026-09-25",
+      "quote_id": "SG297",
+      "audience": "All",
+      "topic_category": "Relationships",
+      "topic": "Relationships",
+      "book": "The Courage to Be Disliked",
+      "author": "Ichiro Kishimi & Fumitake Koga",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ005",
+      "illustration": "open_door_01.png",
+      "illustration_score": 430,
+      "illustration_tags": [
+        "change",
+        "door",
+        "new-chapter",
+        "opportunity"
+      ],
+      "placement": "bottom_left",
+      "background": "lavender",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-25_SG297",
+      "caption_category": "Mindset",
+      "caption": "A useful place to start is by noticing relationships.\n\nSometimes noticing the pattern is already useful progress.\n\nIf you're exploring relationships, mindset, motivation, self belief, personal growth, self improvement, confidence, resilience, and positive thinking, save this reminder and share it with someone who may need it.\n\nInspired by The Courage to Be Disliked by Ichiro Kishimi & Fumitake Koga.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "relationships",
+        "mindset",
+        "motivation",
+        "self belief",
+        "personal growth",
+        "self improvement",
+        "confidence",
+        "resilience",
+        "positive thinking"
+      ],
+      "hashtags": []
     }
   ]
 }
