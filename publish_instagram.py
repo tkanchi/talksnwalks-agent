@@ -17,6 +17,7 @@ RESULT_FILE = Path(os.getenv("RESULT_FILE", "outputs/publish_result.json"))
 SHARE_TO_FEED = os.getenv("SHARE_TO_FEED", "true").lower() == "true"
 TRIAL_REEL = os.getenv("TRIAL_REEL", "false").lower() == "true"
 TRIAL_GRADUATION_STRATEGY = os.getenv("TRIAL_GRADUATION_STRATEGY", "MANUAL").strip().upper()
+ILLUSTRATION = os.getenv("ILLUSTRATION", "").strip()
 
 
 def require(name, value):
@@ -150,6 +151,8 @@ def main():
         result["trial_reel"] = TRIAL_REEL
         if TRIAL_REEL:
             result["trial_graduation_strategy"] = TRIAL_GRADUATION_STRATEGY
+    if ILLUSTRATION:
+        result["illustration"] = ILLUSTRATION
     if IMAGE_URL:
         result["image_url"] = media_url
     else:
