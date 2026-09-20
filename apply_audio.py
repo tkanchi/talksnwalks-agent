@@ -14,8 +14,6 @@ from audio_engine import prepare_audio, replace_reel_audio, resolve_mood
 RIGHTS_AUDIO_FILE = Path("data/rights_cleared_audio.csv")
 STREAM_OFFSETS = {"women": 0, "men": 1, "children": 2, "kids": 2, "teens": 2}
 RIGHTS_SHORTLIST = 4
-PEACEFUL_STREAMS = {"women", "men"}
-PEACEFUL_THEME = "Peace"
 
 
 def read_env_file(path: Path) -> dict[str, str]:
@@ -194,17 +192,7 @@ def apply_audio_to_build(
     if day < 1 or day > len(contexts):
         raise ValueError(f"Day {day} is outside {quotes_file} range 1-{len(contexts)}")
 
-    stream_key = stream.strip().lower()
-    peaceful_audio = stream_key in PEACEFUL_STREAMS
     audio_contexts = contexts
-    if peaceful_audio:
-        # Women/Men posts use the calm profile regardless of quote theme. Keep the
-        # real Topic for semantic variation while preventing energetic/bold music.
-        audio_contexts = [
-            {"Theme": PEACEFUL_THEME, "Topic": context.get("Topic", "")}
-            for context in contexts
-        ]
-
     theme = audio_contexts[day - 1]["Theme"]
     topic = contexts[day - 1]["Topic"]
     generated_audio = Path(output_dir) / f"day_{day_padded}_audio.wav"
@@ -220,17 +208,15 @@ def apply_audio_to_build(
         history_contexts=audio_contexts[:day],
     )
 
-    # Prefer a real rights-cleared stock track when available, except for the
-    # peaceful Women/Men lanes. Their current remote catalog is mostly hip-hop,
-    # energy and bold music, so it would override the requested calm soundtrack.
-    rights_row = None
-    if not peaceful_audio:
-        rights_row = choose_rights_track(
-            load_rights_audio(),
-            contexts=contexts[:day],
-            day=day,
-            stream=stream,
-        )
+    # Prefer a real rights-cleared stock track when available. Women and Men
+    # use their active Modern Hip-Hop catalog; other streams keep their own
+    # audience-specific active catalog.
+    rights_row = choose_rights_track(
+        load_rights_audio(),
+        contexts=contexts[:day],
+        day=day,
+        stream=stream,
+    )
     if rights_row:
         try:
             rights_path = download_rights_track(rights_row, Path(output_dir), day_padded)
