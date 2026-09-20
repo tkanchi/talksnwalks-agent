@@ -4,6 +4,7 @@ Builds a fresh Day-1 production pool from the quote libraries and adds
 stream-aware illustrations plus topic-aware audio.
 """
 
+import json
 import shutil
 from pathlib import Path
 
@@ -15,6 +16,8 @@ from watercolor_background_theme import apply_visual_theme
 from women_quote_clarity import apply_women_quote_clarity, is_clear_women_quote
 from quote_library import build_curated_runtime_quote_file
 
+
+RECENT_ILLUSTRATION_WINDOW = 12
 
 WOMEN_QUOTE_PARTS = [
     Path("data/library/women_motivating_part_01.csv"),
@@ -62,12 +65,35 @@ def _live_illustration_dir(stream: str) -> Path:
     return target
 
 
+def _recent_published_illustrations() -> list[str]:
+    recent: list[str] = []
+    for path in sorted(Path("published_logs").glob("day_*.json"), reverse=True):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        illustration = (data.get("illustration") or "").strip()
+        if illustration and illustration not in recent:
+            recent.append(illustration)
+        if len(recent) >= RECENT_ILLUSTRATION_WINDOW:
+            break
+    return recent
+
+
 def _apply_visuals() -> None:
+    day = build_reel.resolve_day(build_reel.load_quotes())
+    blocked_names_by_day: dict[int, set[str]] = {}
+    recent = _recent_published_illustrations()
+    if day is not None and recent:
+        blocked_names_by_day[day] = set(recent)
+        print(f"Avoiding {len(recent)} recently published Women illustrations.")
+
     apply_illustration_pool(
         build_reel,
         _live_illustration_dir("women"),
         stream="women",
         quote_file=build_reel.QUOTES_FILE,
+        blocked_names_by_day=blocked_names_by_day,
     )
     apply_visual_theme(build_reel, stream="women")
     print("Approved watercolor-background women/general visuals enabled.")
