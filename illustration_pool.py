@@ -398,6 +398,7 @@ def matched_illustration_names(
     *,
     stream: str,
     topics_file: Path = Path("data/topics.csv"),
+    blocked_names_by_day: dict[int, set[str]] | None = None,
 ) -> list[str]:
     """Return one topic-aware illustration assignment per quote row.
 
@@ -426,7 +427,9 @@ def matched_illustration_names(
     selected: list[str] = []
     last_name: str | None = None
 
-    for row in rows:
+    blocked_names_by_day = blocked_names_by_day or {}
+
+    for day, row in enumerate(rows, start=1):
         pet_related = _is_pet_related_quote(row)
 
         if pet_related and animal_pool:
@@ -447,6 +450,11 @@ def matched_illustration_names(
                 path.name.lower(),
             ),
         )
+
+        blocked = blocked_names_by_day.get(day, set())
+        unblocked = [path for path in ranked if path.name not in blocked]
+        if unblocked:
+            ranked = unblocked
 
         chosen = ranked[0]
         # Avoid an immediate repeat across cycle boundaries when possible.
@@ -533,6 +541,7 @@ def apply_illustration_pool(
     stream: str | None = None,
     quote_file: Path | None = None,
     topics_file: Path = Path("data/topics.csv"),
+    blocked_names_by_day: dict[int, set[str]] | None = None,
 ) -> list[str]:
     """Apply topic-aware assignments, or legacy topic-spread rotation."""
     target = Path(directory or build_reel.ILLUSTRATION_DIR)
@@ -545,6 +554,7 @@ def apply_illustration_pool(
             quote_file,
             stream=stream,
             topics_file=topics_file,
+            blocked_names_by_day=blocked_names_by_day,
         )
         unique_count = len(_unique_paths(target, stream=stream))
         print(
