@@ -1,8 +1,9 @@
-name: Daily Instagram Reel
+name: Women Instagram Reel
 
 on:
   schedule:
-    - cron: "13 2 * * *" # 07:43 IST
+    - cron: "43 13 * * 3" # Wednesday 19:13 IST
+    - cron: "47 10 * * 4" # Thursday 16:17 IST
   workflow_dispatch:
     inputs:
       day:
@@ -38,16 +39,17 @@ jobs:
         shell: bash
         run: |
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            TODAY="$(date -u +%F)"
-            START_EPOCH="$(date -u -d "$START_DATE" +%s)"
-            TODAY_EPOCH="$(date -u -d "$TODAY" +%s)"
-            SCHEDULED_DAY=$(( (TODAY_EPOCH - START_EPOCH) / 86400 + 1 ))
+            LAST_DAY="$(
+              find published_logs -maxdepth 1 -type f -name 'day_[0-9][0-9][0-9].json' -printf '%f\n' 2>/dev/null                 | sed -E 's/day_([0-9]{3})\.json/\1/'                 | sort -n                 | tail -n 1
+            )"
 
-            if [ "$SCHEDULED_DAY" -lt 1 ]; then
-              echo "Women schedule starts on $START_DATE. This pre-start run will build only."
-              echo "DAY_NUMBER=1" >> "$GITHUB_ENV"
-              echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
-            elif [ "$SCHEDULED_DAY" -gt 365 ]; then
+            if [ -z "$LAST_DAY" ]; then
+              SCHEDULED_DAY=1
+            else
+              SCHEDULED_DAY=$((10#$LAST_DAY + 1))
+            fi
+
+            if [ "$SCHEDULED_DAY" -gt 365 ]; then
               echo "Women 365-day pool is exhausted. Publishing disabled."
               echo "DAY_NUMBER=365" >> "$GITHUB_ENV"
               echo "SHOULD_PUBLISH=false" >> "$GITHUB_ENV"
