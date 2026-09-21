@@ -1,9 +1,8 @@
-name: Trial Reels - 2 Daily
+name: Trial Reels - Daily
 
 on:
   schedule:
-    - cron: "53 4 * * *" # 10:23 IST - women/general trial
-    - cron: "7 10 * * *" # 15:37 IST - men trial
+    - cron: "7 10 * * *" # 15:37 IST - one trial Reel daily
   workflow_dispatch:
     inputs:
       stream:
@@ -60,20 +59,16 @@ jobs:
           set -euo pipefail
 
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            case "${{ github.event.schedule }}" in
-              "53 4 * * *")
-                STREAM="women"
-                START_DATE="2026-08-20"
-                ;;
-              "7 10 * * *")
-                STREAM="men"
-                START_DATE="2026-08-21"
-                ;;
-              *)
-                echo "Unknown trial schedule: ${{ github.event.schedule }}"
-                exit 1
-                ;;
-            esac
+            # Alternate Women and Men so exactly one Trial Reel is scheduled
+            # each day while keeping both streams represented over time.
+            DAY_INDEX=$(( $(date -u +%s) / 86400 ))
+            if [ $((DAY_INDEX % 2)) -eq 0 ]; then
+              STREAM="women"
+              START_DATE="2026-08-20"
+            else
+              STREAM="men"
+              START_DATE="2026-08-21"
+            fi
 
             TODAY="$(date -u +%F)"
             START_EPOCH="$(date -u -d "$START_DATE" +%s)"
