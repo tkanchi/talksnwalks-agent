@@ -901,6 +901,48 @@
         "confidence"
       ],
       "hashtags": []
+    },
+    {
+      "selection_date": "2026-09-27",
+      "quote_id": "WEMP186",
+      "audience": "Women",
+      "topic_category": "Wellness",
+      "topic": "Rest & Recovery",
+      "book": "Buy Yourself the F*cking Lilies",
+      "author": "Tara Schuster",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ027",
+      "illustration": "water_bottle_01.png",
+      "illustration_score": 560,
+      "illustration_tags": [
+        "fitness",
+        "health",
+        "recovery",
+        "self-care",
+        "water"
+      ],
+      "placement": "bottom_left",
+      "background": "ice",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-27_WEMP186",
+      "caption_category": "Wellness",
+      "caption": "The message gets clearer when you name rest and recovery.\n\nSometimes the smallest steady practice is the one worth keeping.\n\nIf you're exploring rest & recovery, women empowerment, confidence for women, wellness, self care, mental health, fitness, healthy lifestyle, and body confidence, save this reminder and share it with someone who may need it.\n\nInspired by Buy Yourself the F*cking Lilies by Tara Schuster.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "rest & recovery",
+        "women empowerment",
+        "confidence for women",
+        "wellness",
+        "self care",
+        "mental health",
+        "fitness",
+        "healthy lifestyle",
+        "body confidence"
+      ],
+      "hashtags": []
     }
   ]
 }
