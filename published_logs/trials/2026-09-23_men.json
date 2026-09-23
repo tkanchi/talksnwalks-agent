@@ -1,0 +1,13 @@
+{
+  "status": "PUBLISHED",
+  "media_type": "REELS",
+  "container_id": "18099308204231168",
+  "media_id": "18136659994626028",
+  "trial_reel": true,
+  "trial_graduation_strategy": "MANUAL",
+  "video_url": "https://raw.githubusercontent.com/tkanchi/talksnwalks-agent/00ef2d4454654fb01262925b1eef302505cf42ec/public/trials/men/2026-09-23_men.mp4",
+  "trial_stream": "men",
+  "trial_source_day": 214,
+  "trial_date": "2026-09-23",
+  "workflow_run_id": "35877955382"
+}
