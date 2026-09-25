@@ -1029,6 +1029,48 @@
         "execution"
       ],
       "hashtags": []
+    },
+    {
+      "selection_date": "2026-09-30",
+      "quote_id": "WEMP083",
+      "audience": "Women",
+      "topic_category": "Mindset",
+      "topic": "Authenticity & Identity",
+      "book": "Braving the Wilderness",
+      "author": "Bren\u00e9 Brown",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ008",
+      "illustration": "journal_01.png",
+      "illustration_score": 220,
+      "illustration_tags": [
+        "identity",
+        "journal",
+        "reflection",
+        "self-talk",
+        "writing"
+      ],
+      "placement": "bottom_left",
+      "background": "sky",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-09-30_WEMP083",
+      "caption_category": "Mindset",
+      "caption": "At heart, this is about authenticity and identity.\n\nWorth keeping nearby for the harder days.\n\nIf you're exploring authenticity & identity, women empowerment, confidence for women, mindset, motivation, self belief, personal growth, self improvement, and confidence, save this reminder and share it with someone who may need it.\n\nInspired by Braving the Wilderness by Bren\u00e9 Brown.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "authenticity & identity",
+        "women empowerment",
+        "confidence for women",
+        "mindset",
+        "motivation",
+        "self belief",
+        "personal growth",
+        "self improvement",
+        "confidence"
+      ],
+      "hashtags": []
     }
   ]
 }
