@@ -1071,6 +1071,51 @@
         "confidence"
       ],
       "hashtags": []
+    },
+    {
+      "selection_date": "2026-10-01",
+      "quote_id": "WEMP317",
+      "audience": "Women",
+      "topic_category": "Business",
+      "topic": "Career",
+      "book": "How Women Rise",
+      "author": "Sally Helgesen & Marshall Goldsmith",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ023",
+      "illustration": "laptop_01.png",
+      "illustration_score": 430,
+      "illustration_tags": [
+        "business",
+        "digital",
+        "execution",
+        "laptop",
+        "learning",
+        "screen",
+        "technology",
+        "work"
+      ],
+      "placement": "bottom_right",
+      "background": "vanilla",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-10-01_WEMP317",
+      "caption_category": "Business",
+      "caption": "The point gets clearer when you name career.\n\nA useful thought to carry into the next decision.\n\nIf you're exploring career, women empowerment, confidence for women, success, entrepreneurship, leadership, career growth, discipline, and execution, save this reminder and share it with someone who may need it.\n\nInspired by How Women Rise by Sally Helgesen & Marshall Goldsmith.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "career",
+        "women empowerment",
+        "confidence for women",
+        "success",
+        "entrepreneurship",
+        "leadership",
+        "career growth",
+        "discipline",
+        "execution"
+      ],
+      "hashtags": []
     }
   ]
 }
