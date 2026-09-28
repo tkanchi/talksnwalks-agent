@@ -1160,6 +1160,48 @@
         "connection"
       ],
       "hashtags": []
+    },
+    {
+      "selection_date": "2026-10-03",
+      "quote_id": "SG145",
+      "audience": "All",
+      "topic_category": "Mindset",
+      "topic": "Courage",
+      "book": "Daring Greatly",
+      "author": "Bren\u00e9 Brown",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ011",
+      "illustration": "candle_01.png",
+      "illustration_score": 430,
+      "illustration_tags": [
+        "calm",
+        "candle",
+        "hope",
+        "light",
+        "reflection"
+      ],
+      "placement": "bottom_right",
+      "background": "powder",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-10-03_SG145",
+      "caption_category": "Wellness",
+      "caption": "Safe conversations can shrink the power of hidden shame.\n\nSometimes the smallest steady practice is the one worth keeping.\n\nIf you're exploring courage, wellness, self care, mental health, fitness, healthy lifestyle, body confidence, rest, and wellbeing, save this reminder and share it with someone who may need it.\n\nInspired by Daring Greatly by Bren\u00e9 Brown.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "courage",
+        "wellness",
+        "self care",
+        "mental health",
+        "fitness",
+        "healthy lifestyle",
+        "body confidence",
+        "rest",
+        "wellbeing"
+      ],
+      "hashtags": []
     }
   ]
 }
