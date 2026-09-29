@@ -11,12 +11,15 @@ from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
 import build_feed_preview
 from background_generator import generate_background
+from illustration_pool import matched_illustration_names
 
 ROOT = Path(__file__).resolve().parent
 PLAN = ROOT / "data" / "content_plan_month_01.csv"
 OUTPUT_DIR = ROOT / "outputs" / "unified"
 PUBLIC_DIR = ROOT / "public" / "unified"
 RUNTIME_QUOTES = OUTPUT_DIR / "quotes_runtime.csv"
+ROOT_ILLUSTRATIONS = ROOT / "illustrations"
+TOPICS_FILE = ROOT / "data" / "topics.csv"
 HANDLE = "@talksnwalks101"
 REEL_W = 1080
 REEL_H = 1920
@@ -220,6 +223,52 @@ def stream_for_audience(audience: str) -> str:
     return "women"
 
 
+def select_reel_illustration(
+    rows: list[dict[str, str]],
+    post_number: int,
+) -> tuple[Path, str]:
+    """Select a colored topic-aware illustration from the approved root library."""
+    current_index = post_number - 1
+    current_row = rows[current_index]
+    stream = stream_for_audience(current_row.get("Audience", ""))
+
+    stream_rows: list[tuple[int, dict[str, str]]] = [
+        (index, row)
+        for index, row in enumerate(rows)
+        if stream_for_audience(row.get("Audience", "")) == stream
+    ]
+    position = next(
+        pos for pos, (index, _) in enumerate(stream_rows)
+        if index == current_index
+    )
+
+    runtime_file = OUTPUT_DIR / f"illustration_runtime_{stream}.csv"
+    fieldnames = list(rows[0].keys())
+    if "Theme" not in fieldnames:
+        fieldnames.append("Theme")
+
+    with runtime_file.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for _, row in stream_rows:
+            item = dict(row)
+            item["Theme"] = (item.get("Topic") or item.get("TopicCategory") or "Mindset").strip()
+            writer.writerow(item)
+
+    assignments = matched_illustration_names(
+        ROOT_ILLUSTRATIONS,
+        runtime_file,
+        stream=stream,
+        topics_file=TOPICS_FILE,
+    )
+    illustration_name = assignments[position]
+    illustration_path = ROOT_ILLUSTRATIONS / illustration_name
+    if not illustration_path.exists():
+        raise FileNotFoundError(illustration_path)
+
+    return illustration_path, illustration_name
+
+
 def write_audio_runtime(rows: list[dict[str, str]]) -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     fieldnames = list(rows[0].keys())
@@ -295,7 +344,12 @@ def fit_source_font(draw, text: str, max_width: int = 900):
     return font, draw.textbbox((0, 0), text, font=font)
 
 
-def compose_reel_image(row: dict[str, str], output_path: Path, index: int = 0) -> None:
+def compose_reel_image(
+    row: dict[str, str],
+    art_path: Path,
+    output_path: Path,
+    index: int = 0,
+) -> None:
     """Render the Month-1 Reel in the proven clean editorial control format."""
     canvas = build_reel_background(row, index)
     draw = ImageDraw.Draw(canvas)
@@ -306,10 +360,6 @@ def compose_reel_image(row: dict[str, str], output_path: Path, index: int = 0) -
     source_type = (row.get("SourceType") or "").strip().lower()
     book = (row.get("InspiredBy") or "").strip()
     author = (row.get("Author") or "").strip()
-
-    art_path = build_feed_preview.ILLUSTRATION_DIR / (row.get("Illustration") or "").strip()
-    if not art_path.exists():
-        raise FileNotFoundError(art_path)
 
     quote_wrapped, quote_font, quote_h = build_feed_preview.fit_char_wrapped(
         draw,
@@ -445,8 +495,15 @@ def main() -> None:
     caption_file = OUTPUT_DIR / "caption.txt"
     env_file = OUTPUT_DIR / "publish.env"
 
+    reel_art_path, reel_illustration = select_reel_illustration(rows, post_number)
+
     build_feed_preview.compose(row, feed_png, index=post_number - 1)
-    compose_reel_image(row, reel_jpg, index=post_number - 1)
+    compose_reel_image(
+        row,
+        reel_art_path,
+        reel_jpg,
+        index=post_number - 1,
+    )
     build_reel.write_fallback_audio(fallback_wav, duration=build_reel.REEL_SECONDS)
     build_reel.make_mp4(reel_jpg, fallback_wav, reel_mp4)
     caption_file.write_text(build_caption(row), encoding="utf-8")
@@ -465,7 +522,8 @@ def main() -> None:
                 f"IMAGE_FILE={reel_jpg.as_posix()}",
                 f"REEL_FRAME={reel_jpg.as_posix()}",
                 f"FEED_PREVIEW_FILE={feed_png.as_posix()}",
-                f"ILLUSTRATION={(row.get('Illustration') or '').strip()}",
+                f"ILLUSTRATION={reel_illustration}",
+                f"FEED_PREVIEW_ILLUSTRATION={(row.get('Illustration') or '').strip()}",
             ]
         )
         + "\n",
@@ -485,7 +543,8 @@ def main() -> None:
 
     print(f"Built unified Post {post_number}: {(row.get('QuoteID') or '').strip()}")
     print(f"Audience: {(row.get('Audience') or '').strip()} | Topic: {(row.get('Topic') or '').strip()}")
-    print(f"Feed image: {feed_png}")
+    print(f"Colored Reel illustration: {reel_illustration}")
+    print(f"Feed preview image: {feed_png}")
     print(f"Reel: {reel_mp4}")
 
 
