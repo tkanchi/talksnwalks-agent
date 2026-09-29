@@ -4,12 +4,13 @@ import csv
 import os
 from pathlib import Path
 
-from PIL import Image
+from PIL import ImageDraw
 
 import build_reel
 from apply_audio import apply_audio_to_build
 from audio_quality_gate import require_real_audio
-from build_feed_preview import BACKGROUND_RGB, compose as compose_feed_post
+import build_feed_preview
+from background_generator import generate_background
 
 ROOT = Path(__file__).resolve().parent
 PLAN = ROOT / "data" / "content_plan_month_01.csv"
@@ -193,18 +194,87 @@ def write_audio_runtime(rows: list[dict[str, str]]) -> None:
             writer.writerow(item)
 
 
-def make_reel_frame(feed_image: Path, row: dict[str, str], output_path: Path) -> None:
-    family = (row.get("BackgroundFamily") or "vanilla").strip()
-    bg = BACKGROUND_RGB.get(family, BACKGROUND_RGB["vanilla"])
-    card = Image.open(feed_image).convert("RGB")
-    if card.size != (1080, 1350):
-        raise ValueError(f"Expected 1080x1350 feed card, got {card.size}")
+def compose_reel_image(row: dict[str, str], output_path: Path, index: int = 0) -> None:
+    """Render the Month-1 creative directly on a full 1080x1920 canvas."""
+    family = (row.get("BackgroundFamily") or "vanilla").strip().lower()
+    canvas = generate_background(
+        REEL_W,
+        REEL_H,
+        family=family,
+        index=index,
+    )
+    draw = ImageDraw.Draw(canvas)
 
-    frame = Image.new("RGB", (REEL_W, REEL_H), bg)
-    frame.paste(card, (0, (REEL_H - card.height) // 2))
+    quote = (row.get("Quote") or "").strip()
+    build_feed_preview.validate_quote_585(quote)
+
+    source_type = (row.get("SourceType") or "").strip().lower()
+    book = (row.get("InspiredBy") or "").strip()
+    author = (row.get("Author") or "").strip()
+
+    art_path = build_feed_preview.ILLUSTRATION_DIR / (row.get("Illustration") or "").strip()
+    if not art_path.exists():
+        raise FileNotFoundError(art_path)
+
+    quote_wrapped, quote_font, quote_h = build_feed_preview.fit_char_wrapped(
+        draw,
+        quote,
+        char_width=40,
+        max_width=900,
+        max_height=420,
+        max_size=48,
+        min_size=36,
+        spacing=12,
+    )
+    highlight_words = build_feed_preview.choose_highlight_words(quote)
+    art = build_feed_preview.fit_art(art_path)
+
+    handle_font = build_feed_preview.find_font(22)
+    handle_w, handle_h = build_feed_preview.text_size(draw, HANDLE, handle_font)
+
+    has_source = source_type == "inspired_by" and book and author
+    source_h = (
+        build_feed_preview.measure_attribution_height(draw, book, author, size=25)
+        if has_source
+        else 0
+    )
+
+    total_h = quote_h + build_feed_preview.GAP_QUOTE_TO_ART + art.height
+    if has_source:
+        total_h += build_feed_preview.GAP_ART_TO_SOURCE + source_h
+    total_h += build_feed_preview.GAP_SOURCE_TO_HANDLE + handle_h
+
+    y = max(80, (REEL_H - total_h) // 2)
+
+    y += build_feed_preview.draw_highlighted_multiline(
+        draw,
+        quote_wrapped,
+        y,
+        quote_font,
+        spacing=12,
+        highlight_words=highlight_words,
+    )
+
+    art_y = y + build_feed_preview.GAP_QUOTE_TO_ART
+    placement = (row.get("Placement") or "bottom_center").strip().lower()
+    art_x = build_feed_preview.illustration_x(placement, art.width)
+    canvas.paste(art, (art_x, art_y), art)
+    y = art_y + art.height
+
+    if has_source:
+        y += build_feed_preview.GAP_ART_TO_SOURCE
+        y += build_feed_preview.draw_attribution(draw, book, author, y, size=25)
+
+    handle_y = y + build_feed_preview.GAP_SOURCE_TO_HANDLE
+    draw.text(
+        ((REEL_W - handle_w) / 2, handle_y),
+        HANDLE,
+        font=handle_font,
+        fill=build_feed_preview.BROWN,
+    )
+
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    frame.save(output_path, "JPEG", quality=95, optimize=True, progressive=True)
-
+    canvas.save(output_path, "JPEG", quality=95, optimize=True, progressive=True)
 
 def hashtag_token(value: str) -> str:
     return "".join(ch for ch in value.title() if ch.isalnum())
@@ -255,8 +325,8 @@ def main() -> None:
     caption_file = OUTPUT_DIR / "caption.txt"
     env_file = OUTPUT_DIR / "publish.env"
 
-    compose_feed_post(row, feed_png, index=post_number - 1)
-    make_reel_frame(feed_png, row, reel_jpg)
+    build_feed_preview.compose(row, feed_png, index=post_number - 1)
+    compose_reel_image(row, reel_jpg, index=post_number - 1)
     build_reel.write_fallback_audio(fallback_wav, duration=build_reel.REEL_SECONDS)
     build_reel.make_mp4(reel_jpg, fallback_wav, reel_mp4)
     caption_file.write_text(build_caption(row), encoding="utf-8")
@@ -272,8 +342,9 @@ def main() -> None:
                 f"AUDIENCE={(row.get('Audience') or '').strip()}",
                 f"TOPIC={(row.get('Topic') or '').strip()}",
                 f"VIDEO_FILE={reel_mp4.as_posix()}",
-                f"IMAGE_FILE={feed_png.as_posix()}",
+                f"IMAGE_FILE={reel_jpg.as_posix()}",
                 f"REEL_FRAME={reel_jpg.as_posix()}",
+                f"FEED_PREVIEW_FILE={feed_png.as_posix()}",
                 f"ILLUSTRATION={(row.get('Illustration') or '').strip()}",
             ]
         )
