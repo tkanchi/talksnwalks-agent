@@ -20,6 +20,8 @@ RUNTIME_QUOTES = OUTPUT_DIR / "quotes_runtime.csv"
 HANDLE = "@talksnwalks101"
 REEL_W = 1080
 REEL_H = 1920
+REEL_ART_MAX_W = 520
+REEL_ART_MAX_H = 520
 
 SEO_BY_TOPIC = {
     # Caption copy deliberately uses natural Instagram-search keywords.
@@ -227,7 +229,7 @@ def compose_reel_image(row: dict[str, str], output_path: Path, index: int = 0) -
         spacing=12,
     )
     highlight_words = build_feed_preview.choose_highlight_words(quote)
-    art = build_feed_preview.fit_art(art_path)
+    art = build_feed_preview.fit_art(art_path, max_w=REEL_ART_MAX_W, max_h=REEL_ART_MAX_H)
 
     handle_font = build_feed_preview.find_font(22)
     handle_w, handle_h = build_feed_preview.text_size(draw, HANDLE, handle_font)
