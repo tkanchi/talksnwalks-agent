@@ -4,7 +4,7 @@ import csv
 import os
 from pathlib import Path
 
-from PIL import ImageDraw
+from PIL import Image, ImageDraw
 
 import build_reel
 from apply_audio import apply_audio_to_build
@@ -22,6 +22,45 @@ REEL_W = 1080
 REEL_H = 1920
 REEL_ART_MAX_W = 520
 REEL_ART_MAX_H = 520
+REEL_TEXT_PRIMARY = (79, 61, 52)
+REEL_TEXT_SECONDARY = (112, 91, 80)
+REEL_HANDLE_FILL = (110, 92, 82)
+
+# Proven-Reel control palette: warm, soft, and visually quiet.
+REEL_PALETTES = {
+    "vanilla": (255, 239, 214),
+    "powder": (237, 245, 252),
+    "blush": (252, 226, 214),
+    "seafoam": (232, 246, 238),
+    "lavender": (242, 236, 250),
+    "apricot": (252, 229, 207),
+}
+
+REEL_TOPIC_PALETTE = {
+    "Authenticity & Identity": "blush",
+    "Career": "powder",
+    "Communication & Social Skills": "blush",
+    "Courage": "apricot",
+    "Digital Responsibility": "seafoam",
+    "Discipline": "vanilla",
+    "Execution": "powder",
+    "Fitness": "seafoam",
+    "Friendship": "blush",
+    "Goals": "apricot",
+    "Growth": "powder",
+    "Happiness": "apricot",
+    "Integrity & Character": "vanilla",
+    "Justice & Equality": "blush",
+    "Kindness": "blush",
+    "Leadership": "powder",
+    "Money Mindset": "vanilla",
+    "Peace": "seafoam",
+    "Purpose & Meaning": "lavender",
+    "Resilience": "lavender",
+    "Self-Belief": "lavender",
+    "Strategy & Decision-Making": "powder",
+    "Study & Learning": "powder",
+}
 
 SEO_BY_TOPIC = {
     # Caption copy deliberately uses natural Instagram-search keywords.
@@ -196,15 +235,69 @@ def write_audio_runtime(rows: list[dict[str, str]]) -> None:
             writer.writerow(item)
 
 
-def compose_reel_image(row: dict[str, str], output_path: Path, index: int = 0) -> None:
-    """Render the Month-1 creative directly on a full 1080x1920 canvas."""
-    family = (row.get("BackgroundFamily") or "vanilla").strip().lower()
-    canvas = generate_background(
-        REEL_W,
-        REEL_H,
-        family=family,
-        index=index,
+def _lighten(rgb: tuple[int, int, int], amount: float) -> tuple[int, int, int]:
+    amount = max(0.0, min(1.0, amount))
+    return tuple(round(channel + (255 - channel) * amount) for channel in rgb)
+
+
+def reel_palette_name(row: dict[str, str]) -> str:
+    topic = (row.get("Topic") or "").strip()
+    return REEL_TOPIC_PALETTE.get(topic, "vanilla")
+
+
+def build_reel_background(row: dict[str, str], index: int) -> Image.Image:
+    """
+    Control format from proven Reels:
+    - 70% plain pastel
+    - 20% almost-invisible vertical tonal movement
+    - 10% soft radial glow experiment
+    """
+    palette_name = reel_palette_name(row)
+    base = REEL_PALETTES[palette_name]
+    bucket = index % 10
+
+    if bucket < 7:
+        return Image.new("RGB", (REEL_W, REEL_H), base)
+
+    lighter = _lighten(base, 0.20)
+
+    if bucket < 9:
+        mask = Image.new("L", (1, REEL_H))
+        px = mask.load()
+        for y in range(REEL_H):
+            px[0, y] = round(34 * y / max(1, REEL_H - 1))
+        mask = mask.resize((REEL_W, REEL_H), Image.Resampling.BILINEAR)
+        return Image.composite(
+            Image.new("RGB", (REEL_W, REEL_H), lighter),
+            Image.new("RGB", (REEL_W, REEL_H), base),
+            mask,
+        )
+
+    radial = Image.radial_gradient("L").resize(
+        (REEL_W, REEL_H),
+        Image.Resampling.BILINEAR,
     )
+    radial = radial.point(lambda value: round(30 * (255 - value) / 255))
+    return Image.composite(
+        Image.new("RGB", (REEL_W, REEL_H), lighter),
+        Image.new("RGB", (REEL_W, REEL_H), base),
+        radial,
+    )
+
+
+def fit_source_font(draw, text: str, max_width: int = 900):
+    for size in range(19, 13, -1):
+        font = build_feed_preview.find_font(size)
+        box = draw.textbbox((0, 0), text, font=font)
+        if box[2] - box[0] <= max_width:
+            return font, box
+    font = build_feed_preview.find_font(13)
+    return font, draw.textbbox((0, 0), text, font=font)
+
+
+def compose_reel_image(row: dict[str, str], output_path: Path, index: int = 0) -> None:
+    """Render the Month-1 Reel in the proven clean editorial control format."""
+    canvas = build_reel_background(row, index)
     draw = ImageDraw.Draw(canvas)
 
     quote = (row.get("Quote") or "").strip()
@@ -228,51 +321,76 @@ def compose_reel_image(row: dict[str, str], output_path: Path, index: int = 0) -
         min_size=36,
         spacing=12,
     )
-    highlight_words = build_feed_preview.choose_highlight_words(quote)
-    art = build_feed_preview.fit_art(art_path, max_w=REEL_ART_MAX_W, max_h=REEL_ART_MAX_H)
+    quote_box = draw.multiline_textbbox(
+        (0, 0),
+        quote_wrapped,
+        font=quote_font,
+        spacing=12,
+        align="center",
+    )
+    quote_w = quote_box[2] - quote_box[0]
 
-    handle_font = build_feed_preview.find_font(22)
+    art = build_feed_preview.fit_art(
+        art_path,
+        max_w=REEL_ART_MAX_W,
+        max_h=REEL_ART_MAX_H,
+    )
+
+    handle_font = build_feed_preview.find_font(20)
     handle_w, handle_h = build_feed_preview.text_size(draw, HANDLE, handle_font)
 
     has_source = source_type == "inspired_by" and book and author
-    source_h = (
-        build_feed_preview.measure_attribution_height(draw, book, author, size=25)
-        if has_source
-        else 0
-    )
-
-    total_h = quote_h + build_feed_preview.GAP_QUOTE_TO_ART + art.height
+    source_text = f"Inspired by Book: {book} — {author}" if has_source else ""
     if has_source:
-        total_h += build_feed_preview.GAP_ART_TO_SOURCE + source_h
-    total_h += build_feed_preview.GAP_SOURCE_TO_HANDLE + handle_h
+        source_font, source_box = fit_source_font(draw, source_text)
+        source_w = source_box[2] - source_box[0]
+        source_h = source_box[3] - source_box[1]
+    else:
+        source_font = None
+        source_w = source_h = 0
 
-    y = max(80, (REEL_H - total_h) // 2)
+    quote_to_source = 22 if has_source else 0
+    source_to_art = 54 if has_source else 48
+    art_to_handle = 38
 
-    y += build_feed_preview.draw_highlighted_multiline(
-        draw,
+    total_h = quote_h
+    if has_source:
+        total_h += quote_to_source + source_h
+    total_h += source_to_art + art.height + art_to_handle + handle_h
+
+    # Keep the visual block slightly above exact centre, matching the proven Reels.
+    y = max(210, int((REEL_H - total_h) / 2) - 35)
+
+    draw.multiline_text(
+        ((REEL_W - quote_w) / 2 - quote_box[0], y - quote_box[1]),
         quote_wrapped,
-        y,
-        quote_font,
+        font=quote_font,
+        fill=REEL_TEXT_PRIMARY,
         spacing=12,
-        highlight_words=highlight_words,
+        align="center",
     )
-
-    art_y = y + build_feed_preview.GAP_QUOTE_TO_ART
-    placement = (row.get("Placement") or "bottom_center").strip().lower()
-    art_x = build_feed_preview.illustration_x(placement, art.width)
-    canvas.paste(art, (art_x, art_y), art)
-    y = art_y + art.height
+    y += quote_h
 
     if has_source:
-        y += build_feed_preview.GAP_ART_TO_SOURCE
-        y += build_feed_preview.draw_attribution(draw, book, author, y, size=25)
+        y += quote_to_source
+        draw.text(
+            ((REEL_W - source_w) / 2 - source_box[0], y - source_box[1]),
+            source_text,
+            font=source_font,
+            fill=REEL_TEXT_SECONDARY,
+        )
+        y += source_h
 
-    handle_y = y + build_feed_preview.GAP_SOURCE_TO_HANDLE
+    art_y = y + source_to_art
+    art_x = (REEL_W - art.width) // 2
+    canvas.paste(art, (art_x, art_y), art)
+
+    handle_y = art_y + art.height + art_to_handle
     draw.text(
         ((REEL_W - handle_w) / 2, handle_y),
         HANDLE,
         font=handle_font,
-        fill=build_feed_preview.BROWN,
+        fill=REEL_HANDLE_FILL,
     )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
