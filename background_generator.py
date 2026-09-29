@@ -4,8 +4,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-# Standalone 4:5 background generator for Talk N Walks feed posts.
-# Patterns stay intentionally very light so quote text and illustrations remain the focus.
+# Shared background generator for Talk N Walks feed previews and 9:16 Reels.
+# Soft gradients are the default. Patterns remain available only when explicitly requested.
 DEFAULT_SIZE = (1080, 1350)
 
 PALETTES: dict[str, dict[str, tuple[int, int, int]]] = {
@@ -21,12 +21,75 @@ PALETTES: dict[str, dict[str, tuple[int, int, int]]] = {
     "sky": {"base": (253, 254, 255), "ink": (224, 233, 244), "accent": (239, 245, 252)},
 }
 
+GRADIENT_STYLES = (
+    "vertical_soft",
+    "diagonal_soft",
+    "radial_soft",
+    "top_glow",
+)
+
 PATTERNS = (
     "grid",
     "dots",
     "notebook",
     "waves",
 )
+
+
+def _mix_rgb(
+    start: tuple[int, int, int],
+    end: tuple[int, int, int],
+    amount: float,
+) -> tuple[int, int, int]:
+    t = max(0.0, min(1.0, amount))
+    return tuple(round(a + (b - a) * t) for a, b in zip(start, end))
+
+
+def _gradient_mask(width: int, height: int, style: str) -> Image.Image:
+    if style in {"vertical_soft", "top_glow"}:
+        mask = Image.new("L", (1, height))
+        px = mask.load()
+        for y in range(height):
+            t = y / max(1, height - 1)
+            if style == "top_glow":
+                t = 1.0 - t
+            px[0, y] = round(255 * t)
+        return mask.resize((width, height), Image.Resampling.BILINEAR)
+
+    if style == "radial_soft":
+        radial = Image.radial_gradient("L")
+        return radial.resize((width, height), Image.Resampling.BILINEAR)
+
+    # Small mask keeps diagonal generation fast even for 1080x1920 Reel canvases.
+    small_w, small_h = 64, 96
+    mask = Image.new("L", (small_w, small_h))
+    px = mask.load()
+    denom = max(1, small_w + small_h - 2)
+    for y in range(small_h):
+        for x in range(small_w):
+            px[x, y] = round(255 * (x + y) / denom)
+    return mask.resize((width, height), Image.Resampling.BILINEAR)
+
+
+def _gradient_background(
+    width: int,
+    height: int,
+    *,
+    base: tuple[int, int, int],
+    accent: tuple[int, int, int],
+    style: str,
+) -> Image.Image:
+    # Keep the tonal change restrained: the quote and illustration stay dominant.
+    soft_accent = _mix_rgb(base, accent, 0.42)
+    mask = _gradient_mask(width, height, style)
+
+    # Compress the mask contrast so the gradient never becomes dramatic.
+    low, high = 24, 92
+    mask = mask.point(lambda value: low + round((high - low) * value / 255))
+
+    base_layer = Image.new("RGB", (width, height), base)
+    accent_layer = Image.new("RGB", (width, height), soft_accent)
+    return Image.composite(accent_layer, base_layer, mask)
 
 
 def _grid(draw: ImageDraw.ImageDraw, size: tuple[int, int], ink, spacing: int = 52) -> None:
@@ -102,13 +165,20 @@ def generate_background(
     index: int = 0,
     pattern: str | None = None,
 ) -> Image.Image:
-    """Return a deterministic, subtle patterned RGB background."""
+    """Return a deterministic premium background with gradients by default."""
     family_key = (family or "vanilla").strip().lower()
     palette = PALETTES.get(family_key, PALETTES["vanilla"])
 
     if pattern is None:
-        # Guaranteed visual rotation: consecutive posts use different pattern styles.
-        pattern = PATTERNS[index % len(PATTERNS)]
+        style = GRADIENT_STYLES[index % len(GRADIENT_STYLES)]
+        return _gradient_background(
+            width,
+            height,
+            base=palette["base"],
+            accent=palette["accent"],
+            style=style,
+        )
+
     pattern = pattern.strip().lower()
     if pattern not in PATTERNS:
         raise ValueError(f"Unknown background pattern: {pattern}")
@@ -162,11 +232,10 @@ def save_background(
 if __name__ == "__main__":
     preview_dir = Path("outputs/background_preview")
     families = list(PALETTES)
-    for i, name in enumerate(PATTERNS):
+    for i, name in enumerate(GRADIENT_STYLES):
         output = save_background(
             preview_dir / f"{i + 1:02d}_{name}.png",
             family=families[i % len(families)],
             index=i,
-            pattern=name,
         )
         print(output)
