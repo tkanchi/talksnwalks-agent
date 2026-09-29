@@ -95,7 +95,7 @@ jobs:
           fi
           ffmpeg -version | head -n 1
 
-      - name: Build finalized feed card
+      - name: Build unified Reel and feed preview
         env:
           REQUIRE_REAL_AUDIO: "false"
         run: python build_month1_pipeline.py
@@ -104,7 +104,7 @@ jobs:
         shell: bash
         run: cat outputs/unified/publish.env >> "$GITHUB_ENV"
 
-      - name: Verify feed post output
+      - name: Verify 4:5 feed preview
         shell: bash
         run: |
           python - <<'PY'
@@ -116,9 +116,26 @@ jobs:
           feed = Path(f'outputs/unified/day_{padded}_feed.png')
           with Image.open(feed) as im:
               assert im.size == (1080, 1350), im.size
-          print('Verified finalized 4:5 Instagram feed post')
+          print('Verified 1080x1350 feed preview')
           PY
 
+
+      - name: Verify 9:16 Reel output
+        shell: bash
+        run: |
+          set -euo pipefail
+          REEL="public/unified/day_${DAY_PADDED}.mp4"
+          test -s "$REEL"
+
+          DIMENSIONS="$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$REEL")"
+          CODEC="$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=nw=1:nk=1 "$REEL")"
+          PIX_FMT="$(ffprobe -v error -select_streams v:0 -show_entries stream=pix_fmt -of default=nw=1:nk=1 "$REEL")"
+
+          test "$DIMENSIONS" = "1080x1920"
+          test "$CODEC" = "h264"
+          test "$PIX_FMT" = "yuv420p"
+
+          echo "Verified Instagram Reel: $DIMENSIONS, $CODEC, $PIX_FMT"
       - name: Prevent duplicate publishing
         if: env.SHOULD_PUBLISH == 'true'
         shell: bash
@@ -130,43 +147,43 @@ jobs:
             echo "ALREADY_PUBLISHED=false" >> "$GITHUB_ENV"
           fi
 
-      - name: Commit image so Instagram can fetch it publicly
+      - name: Commit Reel so Instagram can fetch it publicly
         if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         shell: bash
         run: |
-          mkdir -p public/unified
-          cp "outputs/unified/day_${DAY_PADDED}_feed.png" "public/unified/day_${DAY_PADDED}_feed.png"
           git config user.name "talksnwalks-agent"
           git config user.email "actions@users.noreply.github.com"
-          git add "public/unified/day_${DAY_PADDED}_feed.png"
-          git commit -m "Add Unified Post ${DAY_NUMBER} feed image" || echo "Image already committed"
+          git add "public/unified/day_${DAY_PADDED}.mp4"
+          git commit -m "Add Unified Post ${DAY_NUMBER} Reel media" || echo "Reel already committed"
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
           echo "MEDIA_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
-      - name: Build public image URL
+      - name: Build public Reel URL
         if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         shell: bash
         run: |
-          IMAGE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/public/unified/day_${DAY_PADDED}_feed.png"
-          echo "IMAGE_URL=$IMAGE_URL" >> "$GITHUB_ENV"
+          VIDEO_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${MEDIA_COMMIT}/public/unified/day_${DAY_PADDED}.mp4"
+          echo "VIDEO_URL=$VIDEO_URL" >> "$GITHUB_ENV"
+          echo "Unified Reel media URL prepared."
 
-      - name: Verify image is publicly reachable
+      - name: Verify Reel is publicly reachable
         if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         shell: bash
         run: |
           curl --fail --location --silent --show-error \
             --retry 8 --retry-delay 5 --retry-all-errors \
-            --output /dev/null "$IMAGE_URL"
+            --output /dev/null "$VIDEO_URL"
 
-      - name: Publish Instagram feed post
+      - name: Publish Instagram Reel
         if: env.SHOULD_PUBLISH == 'true' && env.ALREADY_PUBLISHED != 'true'
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
-          IMAGE_URL: ${{ env.IMAGE_URL }}
+          VIDEO_URL: ${{ env.VIDEO_URL }}
           CAPTION_FILE: outputs/unified/caption.txt
           RESULT_FILE: outputs/unified/publish_result.json
+          SHARE_TO_FEED: "true"
         run: python publish_instagram.py
 
       - name: Save publishing audit log
@@ -186,6 +203,6 @@ jobs:
           name: month1-unified-post-${{ env.DAY_PADDED }}
           path: |
             outputs/unified/
-            public/unified/day_*_feed.png
+            public/unified/day_*.mp4
           retention-days: 14
           if-no-files-found: error
