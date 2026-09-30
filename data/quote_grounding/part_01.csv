@@ -1,0 +1,586 @@
+QuoteID,ApprovedQuote,InspiredBy,Author,ReviewStatus,SourceFile
+MB001,Good habits become easier when your surroundings support them. Set things up so the right choice is easier to repeat.,Atomic Habits,James Clear,approved_grounded_paraphrase,data/library/men_books_part_01.csv
+MB002,Your mind will offer excuses when work gets hard. Growth begins when you keep going anyway.,Can't Hurt Me,David Goggins,approved_grounded_paraphrase,data/library/men_books_part_01.csv
+MB003,Finish one small task well at the start of your day. That first win can build momentum.,Make Your Bed,William H. McRaven,approved_grounded_paraphrase,data/library/men_books_part_01.csv
+MB004,Success can feed ego if you stop learning. Stay humble enough to keep being taught.,Ego Is the Enemy,Ryan Holiday,approved_grounded_paraphrase,data/library/men_books_part_01.csv
+MB005,Money is valuable because it can give you more control over how you spend your time.,The Psychology of Money,Morgan Housel,approved_grounded_paraphrase,data/library/men_books_part_01.csv
+MB006,Protect uninterrupted time for important work. Constant noise and small requests can drain your best attention.,Deep Work,Cal Newport,approved_grounded_paraphrase,data/library/men_books_part_01.csv
+MB007,Not everything deserves your time and energy. Strength also means choosing what matters most and letting less important things go.,Essentialism,Greg McKeown,approved_grounded_paraphrase,data/library/men_books_part_01.csv
+MB008,A strong reason to keep going can help you endure a hard season that comfort cannot remove.,Man's Search for Meaning,Viktor E. Frankl,approved_grounded_paraphrase,data/library/men_books_part_01.csv
+MB009,"When something goes wrong, own what you can control and turn that responsibility into your next action.",Extreme Ownership,Jocko Willink & Leif Babin,approved_grounded_paraphrase,data/library/men_books_part_01.csv
+MB010,Stillness is not laziness. Quiet gives your mind enough space to think clearly before pressure makes you react.,Stillness Is the Key,Ryan Holiday,approved_grounded_paraphrase,data/library/men_books_part_01.csv
+SG001,"Small choices may look unimportant, but repeated choices shape your habits, and your habits slowly shape the person you become.",Atomic Habits,James Clear,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG002,Make good habits easier to start so you do not need willpower for every good choice.,Atomic Habits,James Clear,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG003,Arrange your environment so good habits are easier to repeat and bad habits are harder to start.,Atomic Habits,James Clear,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG004,Lasting change becomes easier when your habits support the person you want to become.,Atomic Habits,James Clear,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG005,Missing once does not erase progress. Return to the habit before one miss becomes a pattern.,Atomic Habits,James Clear,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG006,Improve the system that produces your results instead of obsessing over one result.,Atomic Habits,James Clear,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG007,Reduce the friction around good habits and increase it around the ones you want to leave.,Atomic Habits,James Clear,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG008,Tiny improvements look insignificant until time begins multiplying them.,Atomic Habits,James Clear,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG009,Your response is often the first place where personal power begins.,The 7 Habits of Highly Effective People,Stephen R. Covey,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG010,Decide what matters most before the urgent starts writing your schedule.,The 7 Habits of Highly Effective People,Stephen R. Covey,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG011,A clear destination makes daily decisions easier to judge.,The 7 Habits of Highly Effective People,Stephen R. Covey,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG012,Strong relationships grow when both sides are treated as capable of winning.,The 7 Habits of Highly Effective People,Stephen R. Covey,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG013,Listen to understand the other person before you prepare your own reply.,The 7 Habits of Highly Effective People,Stephen R. Covey,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG014,Different strengths become an advantage when ego stops demanding sameness.,The 7 Habits of Highly Effective People,Stephen R. Covey,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG015,Renew your energy before exhaustion turns every priority into a burden.,The 7 Habits of Highly Effective People,Stephen R. Covey,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG016,Character creates a form of success that techniques alone cannot sustain.,The 7 Habits of Highly Effective People,Stephen R. Covey,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG017,Genuine interest builds connection. Listen well and make the other person feel important.,How to Win Friends and Influence People,Dale Carnegie,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG018,Winning an argument is not worth humiliating someone. Respect keeps difficult conversations open.,How to Win Friends and Influence People,Dale Carnegie,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG019,"Remembering a person’s name, story, or small detail tells them something important: you cared enough to notice and remember.",How to Win Friends and Influence People,Dale Carnegie,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG020,Criticism often makes people defensive. Correct them without taking away their dignity.,How to Win Friends and Influence People,Dale Carnegie,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG021,Appreciation is most powerful when it is specific and sincere.,How to Win Friends and Influence People,Dale Carnegie,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG022,Influence improves when people feel heard before they feel advised.,How to Win Friends and Influence People,Dale Carnegie,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG023,Let another person keep dignity even when correction is necessary.,How to Win Friends and Influence People,Dale Carnegie,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG024,Good conversation is less about performing and more about making room for someone else.,How to Win Friends and Influence People,Dale Carnegie,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG025,A goal becomes stronger when you define it clearly and give your effort a specific direction.,Think and Grow Rich,Napoleon Hill,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG026,Persistence means continuing after the excitement fades and the work becomes ordinary.,Think and Grow Rich,Napoleon Hill,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG027,Choose people who strengthen your thinking and challenge you to grow.,Think and Grow Rich,Napoleon Hill,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG028,"Fear can delay good decisions. Notice it, then choose your direction deliberately.",Think and Grow Rich,Napoleon Hill,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG029,"Focused desire needs a plan, and plans need the courage to be revised.",Think and Grow Rich,Napoleon Hill,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG030,Opportunity is easier to recognize when you are already preparing for it.,Think and Grow Rich,Napoleon Hill,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG031,Belief matters when it strengthens the action you are willing to keep taking.,Think and Grow Rich,Napoleon Hill,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG032,"Success grows when intention, planning, learning, and persistence begin moving in the same direction.",Think and Grow Rich,Napoleon Hill,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG033,Much of anxiety lives in a future your body has not actually entered.,The Power of Now,Eckhart Tolle,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG034,Return attention to this moment before your mind turns one problem into ten.,The Power of Now,Eckhart Tolle,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG035,You can observe a thought without allowing it to become your identity.,The Power of Now,Eckhart Tolle,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG036,Peace grows when you stop demanding that the present be different before you can inhabit it.,The Power of Now,Eckhart Tolle,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG037,"Your life is always being experienced now, even when your mind keeps leaving the room.",The Power of Now,Eckhart Tolle,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG038,"Awareness creates a small space between emotion and reaction, and that space can change everything.",The Power of Now,Eckhart Tolle,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG039,Being present does not mean doing nothing. It means seeing clearly before you act.,The Power of Now,Eckhart Tolle,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG040,Do not let yesterday and tomorrow consume the only moment you can actually use.,The Power of Now,Eckhart Tolle,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG041,Use words in ways that leave less damage behind you.,The Four Agreements,Don Miguel Ruiz,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG042,Other people's reactions often reveal their inner world more than your worth.,The Four Agreements,Don Miguel Ruiz,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG043,Questions prevent many of the wounds created by assumptions.,The Four Agreements,Don Miguel Ruiz,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG044,"Doing your best means giving what you honestly can today, even when today's best looks different.",The Four Agreements,Don Miguel Ruiz,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG045,Freedom grows when you stop building your identity from other people's opinions.,The Four Agreements,Don Miguel Ruiz,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG046,Speak clearly enough that imagination does not have to fill every gap.,The Four Agreements,Don Miguel Ruiz,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG047,Personal peace improves when you take responsibility for your conduct without claiming responsibility for everyone else's.,The Four Agreements,Don Miguel Ruiz,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG048,Simple principles become life-changing only when they survive difficult moments.,The Four Agreements,Don Miguel Ruiz,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG049,"Even when circumstances narrow your options, your attitude can remain a place of choice.",Man's Search for Meaning,Viktor E. Frankl,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG050,Meaning can carry a person through pain that comfort alone cannot explain.,Man's Search for Meaning,Viktor E. Frankl,approved_grounded_paraphrase,data/library/self_growth_part_01.csv
+SG051,"A difficult life can still contain responsibility, love, and purpose.",Man's Search for Meaning,Viktor E. Frankl,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG052,"When you cannot change the situation, ask how you can change the way you meet it.",Man's Search for Meaning,Viktor E. Frankl,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG053,Hope becomes stronger when it is connected to someone or something beyond immediate suffering.,Man's Search for Meaning,Viktor E. Frankl,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG054,"Pain should never be romanticized, but it can still be met with dignity.",Man's Search for Meaning,Viktor E. Frankl,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG055,A reason to continue can change how a person carries what cannot immediately be changed.,Man's Search for Meaning,Viktor E. Frankl,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG056,Your freedom is most visible in the way you choose to meet what you did not choose.,Man's Search for Meaning,Viktor E. Frankl,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG057,"Your current ability is a starting point. Effort, strategy, and learning can expand what you are able to do.",Mindset,Carol S. Dweck,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG058,Trying to look naturally talented can stop you from learning. Choose growth over protecting an image.,Mindset,Carol S. Dweck,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG059,"Feedback is information, not your identity. Use what helps you improve and leave the rest.",Mindset,Carol S. Dweck,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG060,Struggle does not automatically mean failure. Difficult work can be part of learning a new skill.,Mindset,Carol S. Dweck,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG061,Do not turn one poor performance into a permanent description of yourself.,Mindset,Carol S. Dweck,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG062,Effort becomes more intelligent when you study what is and is not working.,Mindset,Carol S. Dweck,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG063,Mistakes help you improve when you study them instead of treating them as proof you are not capable.,Mindset,Carol S. Dweck,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG064,What you can do today does not decide what you may learn to do tomorrow.,Mindset,Carol S. Dweck,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG065,You cannot care deeply about everything. Choose the problems that are worth your limited time and energy.,The Subtle Art of Not Giving a F*ck,Mark Manson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG066,A good life still has problems. The difference is choosing problems that are worth solving.,The Subtle Art of Not Giving a F*ck,Mark Manson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG067,Choose values you respect even when nobody is watching or applauding.,The Subtle Art of Not Giving a F*ck,Mark Manson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG068,"Your time and energy are limited, so choose carefully what deserves your attention.",The Subtle Art of Not Giving a F*ck,Mark Manson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG069,"Responsibility begins when you decide what you will do with what happened, even if you did not cause it.",The Subtle Art of Not Giving a F*ck,Mark Manson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG070,Comfort is a poor compass for every important decision.,The Subtle Art of Not Giving a F*ck,Mark Manson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG071,Saying no to trivial battles creates room for meaningful ones.,The Subtle Art of Not Giving a F*ck,Mark Manson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG072,Better questions often improve life faster than louder positive thinking.,The Subtle Art of Not Giving a F*ck,Mark Manson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG073,What you focus on shapes what you notice. Train your attention to see possibilities as well as problems.,The Secret,Rhonda Byrne,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG074,Picture the future you want clearly enough that your attention has a direction.,The Secret,Rhonda Byrne,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG075,"Gratitude begins by noticing what is already good, even on an ordinary day.",The Secret,Rhonda Byrne,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG076,"Expectations can shape what you notice. If you expect only failure, you may miss possible opportunities.",The Secret,Rhonda Byrne,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG077,Keep your attention on the outcome you want instead of feeding only the outcome you fear.,The Secret,Rhonda Byrne,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG078,Focus can turn scattered desire into a clearer direction.,The Secret,Rhonda Byrne,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG079,Keep your desired future present in your mind instead of rehearsing only what could go wrong.,The Secret,Rhonda Byrne,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG080,Positive expectation can change what you notice and how you approach the day.,The Secret,Rhonda Byrne,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG081,Change becomes more painful when you keep negotiating with a reality that has already changed.,Who Moved My Cheese?,Spencer Johnson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG082,Notice small shifts early so adaptation does not have to begin in panic.,Who Moved My Cheese?,Spencer Johnson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG083,Yesterday's solution can become tomorrow's obstacle if you refuse to update it.,Who Moved My Cheese?,Spencer Johnson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG084,Move toward what is next before resentment makes the old situation your identity.,Who Moved My Cheese?,Spencer Johnson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG085,Fear becomes smaller when you start exploring instead of only imagining.,Who Moved My Cheese?,Spencer Johnson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG086,Adaptability is often more valuable than being right about how things used to work.,Who Moved My Cheese?,Spencer Johnson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG087,What feels familiar is not always what is safest or best for you.,Who Moved My Cheese?,Spencer Johnson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG088,Learning to move again is part of surviving every changing season.,Who Moved My Cheese?,Spencer Johnson,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG089,"Income matters, but ownership changes the long-term game.",Rich Dad Poor Dad,Robert T. Kiyosaki,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG090,Learn the difference between something that looks valuable and something that actually produces value.,Rich Dad Poor Dad,Robert T. Kiyosaki,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG091,Financial education can turn a paycheck into choices instead of obligations.,Rich Dad Poor Dad,Robert T. Kiyosaki,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG092,Buying more whenever you earn more can keep freedom permanently out of reach.,Rich Dad Poor Dad,Robert T. Kiyosaki,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG093,Study cash flow before you celebrate the purchase.,Rich Dad Poor Dad,Robert T. Kiyosaki,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG094,Build assets that can support your life when your time is not available.,Rich Dad Poor Dad,Robert T. Kiyosaki,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG095,Money becomes easier to manage when you learn its language instead of avoiding it.,Rich Dad Poor Dad,Robert T. Kiyosaki,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG096,Financial independence grows when consumption stops winning every raise.,Rich Dad Poor Dad,Robert T. Kiyosaki,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG097,Good money decisions depend as much on behaviour as they do on intelligence.,The Psychology of Money,Morgan Housel,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG098,Wealth is often invisible because it is the money that was not spent.,The Psychology of Money,Morgan Housel,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG099,Enough is a powerful number when comparison keeps trying to move the finish line.,The Psychology of Money,Morgan Housel,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG100,"Long-term success needs room for bad luck, mistakes, and unexpected years.",The Psychology of Money,Morgan Housel,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG101,Compounding rewards patience more reliably than excitement.,The Psychology of Money,Morgan Housel,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG102,"Your financial plan should fit your temperament, not someone else's personality.",The Psychology of Money,Morgan Housel,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG103,Being reasonable and consistent can beat being brilliant and unstable.,The Psychology of Money,Morgan Housel,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG104,The best financial freedom is the ability to control more of your time.,The Psychology of Money,Morgan Housel,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG105,Focused work is an advantage in a distracted world. Protect time when your full attention can stay on one important task.,Deep Work,Cal Newport,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG106,"If every small request gets your best attention, important work gets what is left. Protect focused time first.",Deep Work,Cal Newport,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG107,Your best work needs uninterrupted time for your mind to stay with one difficult problem.,Deep Work,Cal Newport,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG108,A packed schedule can look productive while important work stays unfinished. Make room for work that creates real value.,Deep Work,Cal Newport,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG109,Train focus like a skill instead of waiting for perfect concentration.,Deep Work,Cal Newport,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG110,Every unnecessary interruption has a recovery cost.,Deep Work,Cal Newport,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG111,Depth creates value that constant responsiveness rarely matches.,Deep Work,Cal Newport,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG112,One uninterrupted hour of focused work can accomplish more than several hours broken by constant switching.,Deep Work,Cal Newport,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG113,Every yes spends a piece of your finite life.,Essentialism,Greg McKeown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG114,Do fewer things deliberately instead of many things resentfully.,Essentialism,Greg McKeown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG115,"If a commitment is not important enough, make room by declining it.",Essentialism,Greg McKeown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG116,Clarity comes from separating what truly matters from what only feels urgent or noisy.,Essentialism,Greg McKeown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG117,Protect the few priorities that matter most from the many tasks competing for your attention.,Essentialism,Greg McKeown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG118,Open space in your schedule is not wasted time. It gives important things room to breathe.,Essentialism,Greg McKeown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG119,A disciplined no can preserve a more meaningful yes.,Essentialism,Greg McKeown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG120,Simplicity becomes powerful when it is guided by purpose.,Essentialism,Greg McKeown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG121,Progress accelerates when one important action receives your best attention first.,The ONE Thing,Gary Keller & Jay Papasan,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG122,Ask which task would make the rest easier instead of treating every task equally.,The ONE Thing,Gary Keller & Jay Papasan,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG123,Big results are often built through a sequence of well-chosen priorities.,The ONE Thing,Gary Keller & Jay Papasan,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG124,Multitasking can create motion without meaningful advancement.,The ONE Thing,Gary Keller & Jay Papasan,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG125,Do your highest-impact work before low-value tasks fill your attention.,The ONE Thing,Gary Keller & Jay Papasan,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG126,Focus becomes easier when your calendar reflects your stated priority.,The ONE Thing,Gary Keller & Jay Papasan,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG127,One finished priority is worth more than several impressive beginnings.,The ONE Thing,Gary Keller & Jay Papasan,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG128,Your mind is better at creating ideas than storing every reminder.,Getting Things Done,David Allen,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG129,Capture commitments somewhere reliable so your brain can stop rehearsing them.,Getting Things Done,David Allen,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG130,A vague task creates more stress than a clearly defined next action.,Getting Things Done,David Allen,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG131,"Organize work by what can actually be done, not by what sounds important.",Getting Things Done,David Allen,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG132,Regular review turns lists into a trusted system instead of a digital junk drawer.,Getting Things Done,David Allen,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG133,Clarity reduces the mental weight of unfinished obligations.,Getting Things Done,David Allen,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG134,Decide the next physical step before a project becomes intimidating.,Getting Things Done,David Allen,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG135,Long-term effort can matter more than early brilliance.,Grit,Angela Duckworth,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG136,Passion becomes powerful when it survives boredom and repetition.,Grit,Angela Duckworth,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG137,Practice improves when it targets weaknesses instead of only repeating strengths.,Grit,Angela Duckworth,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG138,Persistence is easier when the goal connects to something larger than ego.,Grit,Angela Duckworth,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG139,"Talent may open the door, but sustained effort determines how far you develop that talent.",Grit,Angela Duckworth,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG140,A hard stretch does not automatically mean the goal is wrong. Grit includes staying with worthwhile work through difficulty.,Grit,Angela Duckworth,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG141,Consistency over years can create advantages that intensity over weeks cannot.,Grit,Angela Duckworth,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG142,Courage often looks awkward at first because being seen always carries some risk.,Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG143,Being honest about what you feel is not weakness. Vulnerability can require real courage.,Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG144,"Real connection is harder when every conversation is a performance. Let people meet the imperfect, honest version of you.",Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG145,Shame grows in secrecy. Telling the truth to someone safe can remind you that you are not alone.,Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG146,Do not wait to feel invulnerable before doing something brave.,Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG147,"Being seen honestly is riskier than being impressive, but often far more meaningful.",Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG148,Wholehearted living requires the courage to be imperfect in public.,Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG149,Leadership begins when difficult conversations stop being postponed.,Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG150,Clear expectations are kinder than avoidable confusion.,Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_02.csv
+SG151,Trust grows through small behaviours long before it becomes a big word.,Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG152,A brave leader makes room for truth that may be uncomfortable to hear.,Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG153,Vulnerability in leadership means admitting uncertainty without abandoning responsibility.,Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG154,Feedback works better when dignity survives the conversation.,Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG155,"A courageous workplace is built when people practice honest conversations, not just praise the idea of courage.",Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG156,"Belonging should not require pretending to be someone else. Real belonging includes the imperfect, authentic you.",The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG157,Your worth is not something you earn by becoming perfect. You deserve belonging while you are still growing.,The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG158,"A meaningful life is built by being true to yourself, not by looking impressive to everyone else.",The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG159,Self-compassion can help you change without using constant self-criticism as motivation.,The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG160,"Rest, play, and creativity are not rewards for finishing life.",The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG161,Authenticity is a practice of choosing honesty over approval.,The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG162,"Imperfection is part of being human, not evidence that you failed at it.",The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG163,Act before hesitation turns a small decision into a long negotiation.,The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG164,Courage becomes easier when the first step is made quickly.,The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG165,Your feelings do not need to vote on every useful action.,The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG166,Interrupt the delay pattern before your mind builds a convincing excuse.,The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG167,Momentum often begins with a tiny physical move.,The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG168,Confidence grows after action more often than before it.,The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG169,Train yourself to move when instinct says go and fear says later.,The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG170,Other people's choices become less exhausting when you stop trying to manage them.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG171,Let behaviour give you information instead of endless arguments.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG172,Freedom grows when you return attention to what is actually yours to control.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG173,People may misunderstand you. You can let them have their opinion and keep choosing your own next step.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG174,"Stop spending energy forcing closeness, approval, or agreement.",The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG175,Accepting reality does not mean approving it. It gives you a clear place from which to respond.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG176,Release control over others and become more responsible for your own next move.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG177,Some obstacles repeat because a protective pattern has outlived the danger that created it.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG178,Self-sabotage often makes sense once you understand what it is trying to protect.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG179,Growth asks you to stop choosing familiar pain over unfamiliar possibility.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG180,Your triggers can become clues instead of commands.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG181,Emotional maturity is learning to respond from the present rather than reenact the past.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG182,The person blocking your next chapter may be the version of you still loyal to an old survival strategy.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG183,Healing becomes real when insight starts changing behaviour.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG184,Your life can feel different when your interpretation of it becomes more honest.,101 Essays That Will Change the Way You Think,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG185,Not every uncomfortable emotion is evidence that something is wrong.,101 Essays That Will Change the Way You Think,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG186,Stop measuring progress only by what can be seen from the outside.,101 Essays That Will Change the Way You Think,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG187,Patterns become easier to change after you stop romanticizing them.,101 Essays That Will Change the Way You Think,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG188,Clarity often arrives when you stop forcing the answer you hoped to hear.,101 Essays That Will Change the Way You Think,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG189,Your future improves when you become curious about your recurring reactions.,101 Essays That Will Change the Way You Think,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG190,A new perspective can make an old problem easier to carry or solve.,101 Essays That Will Change the Way You Think,Brianna Wiest,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG191,"Achievement can feel empty when your career grows but your peace, health, and relationships do not.",The Monk Who Sold His Ferrari,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG192,Protect your mind with the same seriousness you protect your career.,The Monk Who Sold His Ferrari,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG193,Daily discipline can create a peaceful life without reducing ambition.,The Monk Who Sold His Ferrari,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG194,"Your calendar shows what you actually make time for, not just what you say you value.",The Monk Who Sold His Ferrari,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG195,Simple rituals can restore a person who has been living entirely for outcomes.,The Monk Who Sold His Ferrari,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG196,Possessions can improve comfort without automatically improving meaning.,The Monk Who Sold His Ferrari,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG197,Build a life you do not need to escape in order to feel alive.,The Monk Who Sold His Ferrari,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG198,Protect the start of your day so your priorities come before other people's demands.,The 5 AM Club,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG199,The early morning is valuable because fewer demands and distractions compete for your attention.,The 5 AM Club,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG200,"Use the morning to move your body, reflect, and learn before the day becomes crowded.",The 5 AM Club,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG201,"A strong morning routine cannot remove your problems, but it can help you meet them with more energy and focus.",The 5 AM Club,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG202,"The value of an early routine comes from practicing it consistently, not from simply saying you wake up early.",The 5 AM Club,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG203,Use quiet time to strengthen yourself instead of giving every spare minute to digital distractions.,The 5 AM Club,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG204,"A morning routine should improve how you live and work, not become something you use to impress people.",The 5 AM Club,Robin Sharma,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG205,Your life changes when decisions become stronger than repeated intentions.,Awaken the Giant Within,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG206,Raise the standard you are willing to accept from your own behaviour.,Awaken the Giant Within,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG207,"Questions direct attention, so ask ones that lead toward useful action.",Awaken the Giant Within,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG208,Emotional patterns can be interrupted when you change what you focus on and what you do next.,Awaken the Giant Within,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG209,Goals become more motivating when they connect to the person you want to become.,Awaken the Giant Within,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG210,Your choices are shaped by what you link to pain and pleasure. Notice which one is driving your habits.,Awaken the Giant Within,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG211,Personal power grows when you stop treating old patterns as permanent.,Awaken the Giant Within,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG212,Model useful strategies instead of assuming excellence is mysterious.,Unlimited Power,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG213,"State affects performance, so learn how body, focus, and language influence yours.",Unlimited Power,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG214,Communication improves when you pay attention to how another person actually receives meaning.,Unlimited Power,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG215,A belief can limit you until new evidence proves that another possibility is real.,Unlimited Power,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG216,"Success leaves patterns worth studying, adapting, and testing.",Unlimited Power,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG217,Flexibility creates options when one approach stops working.,Unlimited Power,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG218,"Changing your posture, breathing, and movement can help shift how confident and capable you feel.",Unlimited Power,Tony Robbins,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG219,Think beyond the limits created by habit before you accept them as reality.,The Magic of Thinking Big,David J. Schwartz,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG220,Confidence grows when you act despite uncertainty instead of waiting for certainty.,The Magic of Thinking Big,David J. Schwartz,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG221,"Excuses protect you from discomfort, but they can also cost you opportunities.",The Magic of Thinking Big,David J. Schwartz,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG222,Treat people as important. Respecting others makes you a stronger leader.,The Magic of Thinking Big,David J. Schwartz,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG223,Big goals still need practical action. Thinking bigger does not replace doing the next useful step.,The Magic of Thinking Big,David J. Schwartz,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG224,Taking action can reduce fears that grow larger when you only think about them.,The Magic of Thinking Big,David J. Schwartz,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG225,Your self-image often sets the ceiling before circumstances do.,The Magic of Thinking Big,David J. Schwartz,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG226,Hope gives effort somewhere to go when circumstances feel heavy.,The Power of Positive Thinking,Norman Vincent Peale,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG227,Expecting improvement can help you notice choices despair would ignore.,The Power of Positive Thinking,Norman Vincent Peale,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG228,Replace thoughts of defeat with thoughts that help you take useful action.,The Power of Positive Thinking,Norman Vincent Peale,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG229,Confidence becomes steadier when it is anchored beyond a single outcome.,The Power of Positive Thinking,Norman Vincent Peale,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG230,Peace grows when you stop giving worry your full attention all day.,The Power of Positive Thinking,Norman Vincent Peale,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG231,Optimism is most useful when it keeps you engaged with real problems.,The Power of Positive Thinking,Norman Vincent Peale,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG232,Practice thoughts that strengthen you rather than repeating the ones that weaken you.,The Power of Positive Thinking,Norman Vincent Peale,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG233,Repeated inner messages can influence what feels possible and familiar.,The Power of Your Subconscious Mind,Joseph Murphy,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG234,Train your imagination toward the result you want to work toward.,The Power of Your Subconscious Mind,Joseph Murphy,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG235,Beliefs deserve examination because they quietly shape behaviour.,The Power of Your Subconscious Mind,Joseph Murphy,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG236,"Before sleep, give your mind a clear, constructive idea instead of replaying the same worry.",The Power of Your Subconscious Mind,Joseph Murphy,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG237,Your inner language can become either resistance or support.,The Power of Your Subconscious Mind,Joseph Murphy,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG238,Rehearse constructive possibilities often enough that action feels less foreign.,The Power of Your Subconscious Mind,Joseph Murphy,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG239,Do not let an old belief keep making new decisions.,The Power of Your Subconscious Mind,Joseph Murphy,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG240,The thoughts you repeat influence the character and habits you build over time.,As a Man Thinketh,James Allen,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG241,Guard the ideas you rehearse because they influence the actions you normalize.,As a Man Thinketh,James Allen,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG242,"Circumstances matter, but your inner habits still shape how you meet them.",As a Man Thinketh,James Allen,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG243,A disciplined mind creates more deliberate behaviour.,As a Man Thinketh,James Allen,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG244,Character is built from thoughts translated into repeated choices.,As a Man Thinketh,James Allen,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG245,Calm thinking can create strength that emotional noise cannot imitate.,As a Man Thinketh,James Allen,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG246,Your inner thoughts eventually influence how you act and the life you create.,As a Man Thinketh,James Allen,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG247,Small choices become serious when time repeats them on your behalf.,The Compound Effect,Darren Hardy,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG248,Daily behaviour can build a future long before the results become visible.,The Compound Effect,Darren Hardy,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG249,Track what you do if you want to stop guessing about why you get certain outcomes.,The Compound Effect,Darren Hardy,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG250,Momentum is easier to maintain than to rebuild from zero.,The Compound Effect,Darren Hardy,approved_grounded_paraphrase,data/library/self_growth_part_03.csv
+SG251,Success often hides inside ordinary decisions made consistently.,The Compound Effect,Darren Hardy,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG252,Your daily habits either move you toward the life you want or quietly pull you away from it.,The Compound Effect,Darren Hardy,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG253,Do not underestimate what a year of repeated small choices can become.,The Compound Effect,Darren Hardy,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG254,The easiest useful choice to skip today may be the one that matters after hundreds of repetitions.,The Slight Edge,Jeff Olson,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG255,Simple disciplines gain power because time keeps adding to them.,The Slight Edge,Jeff Olson,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG256,Progress is often invisible before it becomes undeniable.,The Slight Edge,Jeff Olson,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG257,The same small decisions that build success can also build decline in the opposite direction.,The Slight Edge,Jeff Olson,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG258,Do not judge a habit only by today's result.,The Slight Edge,Jeff Olson,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG259,Consistency turns ordinary actions into uncommon outcomes.,The Slight Edge,Jeff Olson,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG260,Your direction matters long before the distance becomes obvious.,The Slight Edge,Jeff Olson,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG261,Do the most valuable difficult task before easier work steals your attention.,Eat That Frog!,Brian Tracy,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG262,Priorities become real only when they influence the order of your actions.,Eat That Frog!,Brian Tracy,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG263,Planning tomorrow before today ends can reduce morning confusion.,Eat That Frog!,Brian Tracy,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG264,Break large work into a next step small enough to begin immediately.,Eat That Frog!,Brian Tracy,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG265,Your busiest task is not always your most important one.,Eat That Frog!,Brian Tracy,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG266,Productivity improves when you stop polishing low-value work.,Eat That Frog!,Brian Tracy,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG267,Start with the task whose completion creates the greatest relief or progress.,Eat That Frog!,Brian Tracy,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG268,Begin the day with practices that develop you before demands consume you.,The Miracle Morning,Hal Elrod,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG269,"Silence, movement, learning, reflection, and intention can change the tone of a morning.",The Miracle Morning,Hal Elrod,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG270,Your morning does not need to be long to be deliberate.,The Miracle Morning,Hal Elrod,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG271,Wake with a reason stronger than the snooze button.,The Miracle Morning,Hal Elrod,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG272,A consistent personal ritual can create stability during unpredictable seasons.,The Miracle Morning,Hal Elrod,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG273,Use the first part of the day to become more prepared for the rest of it.,The Miracle Morning,Hal Elrod,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG274,Morning routines work best when they serve your life rather than become another performance.,The Miracle Morning,Hal Elrod,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG275,Shorter planning horizons can turn distant goals into immediate commitments.,The 12 Week Year,Brian P. Moran & Michael Lennington,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG276,Treat each week as valuable enough to measure rather than casually losing it.,The 12 Week Year,Brian P. Moran & Michael Lennington,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG277,Execution improves when goals are translated into specific weekly actions.,The 12 Week Year,Brian P. Moran & Michael Lennington,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG278,Annual ambition becomes easier to manage when the next twelve weeks have a clear finish line.,The 12 Week Year,Brian P. Moran & Michael Lennington,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG279,Track the actions you control instead of judging progress only by final results you cannot fully control.,The 12 Week Year,Brian P. Moran & Michael Lennington,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG280,Accountability becomes useful when it points to behaviour rather than shame.,The 12 Week Year,Brian P. Moran & Michael Lennington,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG281,Intensity improves when the deadline is close enough to feel real.,The 12 Week Year,Brian P. Moran & Michael Lennington,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG282,Automate good financial decisions so discipline is not required every payday.,I Will Teach You to Be Rich,Ramit Sethi,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG283,Spend generously on what you truly value and cut aggressively where you do not.,I Will Teach You to Be Rich,Ramit Sethi,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG284,Perfect investing knowledge is less useful than beginning with a sensible system.,I Will Teach You to Be Rich,Ramit Sethi,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG285,"Credit, saving, investing, and spending work better when they are designed together.",I Will Teach You to Be Rich,Ramit Sethi,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG286,"Money should support a rich life you define, not a lifestyle copied from strangers.",I Will Teach You to Be Rich,Ramit Sethi,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG287,Negotiate major expenses because small repeated savings cannot fix every large cost.,I Will Teach You to Be Rich,Ramit Sethi,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG288,Build financial systems that keep working when enthusiasm disappears.,I Will Teach You to Be Rich,Ramit Sethi,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG289,Pay your future self before your income disappears into present wants.,The Richest Man in Babylon,George S. Clason,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG290,Money kept and invested wisely can begin producing money of its own.,The Richest Man in Babylon,George S. Clason,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG291,Protect capital from opportunities you do not understand.,The Richest Man in Babylon,George S. Clason,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG292,Increase your ability to earn while learning to keep more of what you earn.,The Richest Man in Babylon,George S. Clason,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG293,Seek advice from people who are competent in the thing you are asking about.,The Richest Man in Babylon,George S. Clason,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG294,Wealth grows through discipline before it grows through abundance.,The Richest Man in Babylon,George S. Clason,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG295,Live below your means without living below your values.,The Richest Man in Babylon,George S. Clason,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG296,Not every opinion about you deserves a role in your decisions.,The Courage to Be Disliked,Ichiro Kishimi & Fumitake Koga,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG297,Freedom often requires tolerating the possibility that someone may disapprove.,The Courage to Be Disliked,Ichiro Kishimi & Fumitake Koga,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG298,Separate what belongs to your responsibility from what belongs to another person's.,The Courage to Be Disliked,Ichiro Kishimi & Fumitake Koga,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG299,"Your past influences you, but it does not have to dictate every future action.",The Courage to Be Disliked,Ichiro Kishimi & Fumitake Koga,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG300,Healthy relationships weaken when life becomes a competition for superiority.,The Courage to Be Disliked,Ichiro Kishimi & Fumitake Koga,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG301,Contribution can create meaning without requiring constant praise.,The Courage to Be Disliked,Ichiro Kishimi & Fumitake Koga,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG302,Choose how to live now instead of making your history the only explanation available.,The Courage to Be Disliked,Ichiro Kishimi & Fumitake Koga,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG303,"You are the one noticing the thought, which means the thought is not the whole of you.",The Untethered Soul,Michael A. Singer,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG304,Inner freedom grows when every emotion does not require immediate obedience.,The Untethered Soul,Michael A. Singer,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG305,Let experiences move through you instead of building a permanent home for them.,The Untethered Soul,Michael A. Singer,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG306,Notice the voice in your head without believing every argument it makes.,The Untethered Soul,Michael A. Singer,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG307,Clinging to comfort can make life smaller than necessary.,The Untethered Soul,Michael A. Singer,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG308,Noticing a difficult feeling creates space between the feeling and your next reaction.,The Untethered Soul,Michael A. Singer,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG309,Release becomes easier when you stop demanding that every event match your preferences.,The Untethered Soul,Michael A. Singer,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG310,Happiness often improves through ordinary adjustments rather than dramatic reinvention.,The Happiness Project,Gretchen Rubin,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG311,Know yourself well enough to choose habits that fit your actual nature.,The Happiness Project,Gretchen Rubin,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG312,Small sources of joy deserve space on a serious calendar.,The Happiness Project,Gretchen Rubin,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG313,Relationships improve when appreciation becomes more visible.,The Happiness Project,Gretchen Rubin,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG314,"Small changes in energy, order, and attention can make a home feel calmer and happier.",The Happiness Project,Gretchen Rubin,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG315,Do not postpone happiness until every larger goal is finished.,The Happiness Project,Gretchen Rubin,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG316,Experiment with your life instead of assuming one formula works for everyone.,The Happiness Project,Gretchen Rubin,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG317,Happiness can support performance instead of waiting until performance is complete.,The Happiness Advantage,Shawn Achor,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG318,Train attention to notice progress and possibility alongside threat.,The Happiness Advantage,Shawn Achor,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG319,Small positive habits can improve resilience when pressure rises.,The Happiness Advantage,Shawn Achor,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG320,"Social connection is an advantage, not a distraction from success.",The Happiness Advantage,Shawn Achor,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG321,Your interpretation of stress can influence how effectively you respond to it.,The Happiness Advantage,Shawn Achor,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG322,Success is easier to sustain when well-being is treated as fuel rather than a prize.,The Happiness Advantage,Shawn Achor,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG323,Positive emotion can broaden the range of solutions your mind is willing to see.,The Happiness Advantage,Shawn Achor,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG324,You do not need a perfect life plan. Try small experiments and let what you learn guide the next step.,Designing Your Life,Bill Burnett & Dave Evans,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG325,There is no single perfect life to discover. More than one path can become meaningful and satisfying.,Designing Your Life,Bill Burnett & Dave Evans,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG326,"When you are unsure, test a small version of the idea before making a major commitment.",Designing Your Life,Bill Burnett & Dave Evans,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG327,Notice which activities give you energy and which drain it. That pattern can help you design a life that fits.,Designing Your Life,Bill Burnett & Dave Evans,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG328,Reframe problems that cannot be solved in their current definition.,Designing Your Life,Bill Burnett & Dave Evans,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG329,Small experiments can answer career questions better than thinking about them forever.,Designing Your Life,Bill Burnett & Dave Evans,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG330,Build forward from what you learn instead of judging every path by whether it was the original plan.,Designing Your Life,Bill Burnett & Dave Evans,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG331,Creativity returns when judgment is not allowed to interrupt every beginning.,The Artist's Way,Julia Cameron,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG332,Write before your inner critic has organized the meeting.,The Artist's Way,Julia Cameron,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG333,Protect time to make things that do not need to impress anyone.,The Artist's Way,Julia Cameron,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG334,"Creative confidence grows through practice, play, and permission.",The Artist's Way,Julia Cameron,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG335,Pay attention to what genuinely delights you. Curiosity can help reopen a blocked creative life.,The Artist's Way,Julia Cameron,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG336,Your work can be imperfect and still be alive.,The Artist's Way,Julia Cameron,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG337,Create regularly enough that inspiration no longer has to arrive on command.,The Artist's Way,Julia Cameron,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG338,Sleep is not wasted time. It prepares your brain and body to function the next day.,Why We Sleep,Matthew Walker,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG339,Protect your bedtime with the seriousness you give important appointments.,Why We Sleep,Matthew Walker,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG340,Performance declines when recovery is treated as optional.,Why We Sleep,Matthew Walker,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG341,"A rested brain learns, regulates emotion, and makes decisions differently.",Why We Sleep,Matthew Walker,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG342,Consistency in sleep can matter as much as ambition in waking hours.,Why We Sleep,Matthew Walker,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG343,Do not repeatedly borrow from sleep and expect your body never to collect.,Why We Sleep,Matthew Walker,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG344,"Recovery is part of productivity, not its opposite.",Why We Sleep,Matthew Walker,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG345,"A meaningful life can be built from useful work, relationships, movement, and simple daily joy.",Ikigai,Héctor García & Francesc Miralles,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG346,Purpose does not always arrive as one dramatic answer. Sometimes it begins with a reason to get up tomorrow.,Ikigai,Héctor García & Francesc Miralles,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG347,Stay connected to people who make life feel shared.,Ikigai,Héctor García & Francesc Miralles,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG348,"Keep doing work that engages your hands, mind, or heart.",Ikigai,Héctor García & Francesc Miralles,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG349,Small pleasures can support a long life when they are noticed and repeated.,Ikigai,Héctor García & Francesc Miralles,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG350,Movement woven into daily living can be more sustainable than occasional intensity.,Ikigai,Héctor García & Francesc Miralles,approved_grounded_paraphrase,data/library/self_growth_part_04.csv
+SG351,"A sense of purpose grows when you stay active, connected, and engaged in things that make life worth living.",Ikigai,Héctor García & Francesc Miralles,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG352,Stop hiding from the evidence of what you are capable of surviving.,Can't Hurt Me,David Goggins,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG353,Deliberately doing hard things can train you to keep going when comfort tells you to stop.,Can't Hurt Me,David Goggins,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG354,Your past can explain you without becoming permission to remain unchanged.,Can't Hurt Me,David Goggins,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG355,Accountability starts when excuses stop receiving special treatment.,Can't Hurt Me,David Goggins,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG356,Keep proof of the hard things you have already done for the days self-doubt returns.,Can't Hurt Me,David Goggins,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG357,The first mental urge to quit may arrive before your real limit. Learn to question it instead of obeying it automatically.,Can't Hurt Me,David Goggins,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG358,Mental toughness grows through repeated evidence that you can do difficult things.,Can't Hurt Me,David Goggins,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG359,Begin with one completed task and let order create momentum.,Make Your Bed,William H. McRaven,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG360,Small disciplines can steady you when the larger day becomes chaotic.,Make Your Bed,William H. McRaven,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG361,Do not judge people before you have seen what they can endure or contribute.,Make Your Bed,William H. McRaven,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG362,Some challenges require help from other people. Strength includes knowing when to rely on a team.,Make Your Bed,William H. McRaven,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG363,Failure can become training when you return with more discipline.,Make Your Bed,William H. McRaven,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG364,Hope sometimes means continuing the work before the outcome is visible.,Make Your Bed,William H. McRaven,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+SG365,Improve the small area you can control and carry that standard into the next one.,Make Your Bed,William H. McRaven,approved_grounded_paraphrase,data/library/self_growth_part_05.csv
+WEMP001,Do not wait to feel perfectly ready before stepping toward the opportunity you already earned.,Lean In,Sheryl Sandberg,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP002,"Beneath other people's expectations, your own voice still matters. Learn to recognize what you truly want.",Untamed,Glennon Doyle,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP003,Your story is still becoming. One difficult chapter does not get to define your whole life.,Becoming,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP004,"Real confidence grows from knowing yourself, not from collecting praise. When you trust who you are, applause matters less.",The Light We Carry,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP005,Do not teach girls to shrink their ambition to make other people comfortable. Let them imagine a full life.,We Should All Be Feminists,Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP006,Raise a girl to know she is a complete person before anyone calls her someone's wife.,"Dear Ijeawele, or A Feminist Manifesto in Fifteen Suggestions",Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP007,Do not shrink your voice to fit an old idea of how women are supposed to sound.,Women & Power,Mary Beard,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP008,A woman should not have to choose between being warm and being seen as a strong leader.,Women and Leadership,Julia Gillard & Ngozi Okonjo-Iweala,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP009,"When women gain power over education, money, health, and choice, entire communities gain possibility.",The Moment of Lift,Melinda French Gates,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP010,A girl's education is powerful precisely because it gives her more choices than others may have planned for her.,I Am Malala,Malala Yousafzai & Christina Lamb,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP011,Learning can give a woman language for realities she was once told not to question.,Educated,Tara Westover,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP012,Your identity is larger than the worst thing another person did to you.,Know My Name,Chanel Miller,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP013,"Feminism that ignores food, housing, safety, healthcare, and poverty leaves too many women outside its promises.",Hood Feminism,Mikki Kendall,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP014,Your body does not need to earn dignity by matching someone else's preferred shape.,The Body Is Not an Apology,Sonya Renee Taylor,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP015,You do not need to overperform forever to prove you deserved entry into the room.,More Than Enough,Elaine Welteroth,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP016,Confidence grows through action more reliably than through waiting to feel certain.,The Confidence Code,Katty Kay & Claire Shipman,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP017,Your strengths can become limits when you rely on them after the role has changed.,How Women Rise,Sally Helgesen & Marshall Goldsmith,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP018,Your inner critic can speak loudly without being qualified to make your decisions.,Playing Big,Tara Mohr,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP019,Professional kindness does not require making yourself easy to overlook.,Nice Girls Don't Get the Corner Office,Lois P. Frankel,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP020,Your difference from the traditional workplace model can become an advantage rather than a flaw.,Own It,Sallie Krawcheck,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP021,"Financial literacy is a form of independence, not a personality trait reserved for people who love spreadsheets.",Financial Feminist,Tori Dunlap,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP022,"Women building wealth changes who has the power to fund ideas, families, communities, and change.",We Should All Be Millionaires,Rachel Rodgers,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP023,"Financial peace grows when every part of your money life has a plan, not just your income.",Get Good with Money,Tiffany Aliche,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP024,High earning often begins when a woman stops treating money as proof of goodness or selfishness.,Secrets of Six-Figure Women,Barbara Huson,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP025,Say yes to the opportunity that scares the version of you who has become too comfortable hiding.,Year of Yes,Shonda Rhimes,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP026,Create before you know whether anyone will applaud.,Big Magic,Elizabeth Gilbert,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP027,Stop negotiating against your own possibility before life has even answered.,You Are a Badass,Jen Sincero,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP028,Move before hesitation turns one useful decision into an hour of avoidance.,The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP029,Let people reveal who they are without exhausting yourself trying to edit them.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP030,Being seen imperfectly can require more courage than appearing flawless.,Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP031,Clear leadership says the difficult thing before confusion becomes culture.,Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP032,Worth is not a reward for becoming perfect. It is the starting point for growth and belonging.,The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP033,True belonging should not require borrowing someone else's beliefs.,Braving the Wilderness,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP034,A boundary is not cruel simply because someone preferred unlimited access to you.,"Set Boundaries, Find Peace",Nedra Glover Tawwab,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP035,A pattern that once protected you may still be hurting you now. Understanding it does not mean keeping it.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP036,Do not wait for someone else to perform the care you keep denying yourself.,Buy Yourself the F*cking Lilies,Tara Schuster,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP037,Another woman’s success does not take anything away from yours. There is room to support each other and rise together.,Wolfpack,Abby Wambach,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP038,Success is too expensive when your body and mind are paying the bill.,Thrive,Arianna Huffington,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP039,You can build a meaningful life even after the version you planned is no longer available.,Option B,Sheryl Sandberg & Adam Grant,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP040,Pay attention to the truths life keeps teaching you in different disguises.,What I Know for Sure,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP041,Purpose becomes easier to see when you notice what consistently makes you feel useful and alive.,The Path Made Clear,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP042,"Healthy love includes care, respect, honesty, responsibility, and trust. Intensity alone is not proof of love.",All About Love,bell hooks,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP043,"Protect the part of you that knows when something feels alive, dangerous, false, or necessary.",Women Who Run With the Wolves,Clarissa Pinkola Estés,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP044,"Creative freedom needs time, privacy, resources, and the right to take your own mind seriously.",A Room of One's Own,Virginia Woolf,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP045,"Educate women as thinking, independent people, not as people trained mainly to win approval.",A Vindication of the Rights of Woman,Mary Wollstonecraft,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP046,"Strong leadership can include listening, sharing information, and building relationships instead of controlling everything from the top.",The Female Advantage,Sally Helgesen,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP047,Care personally enough to be honest. Useful feedback needs both respect and clear truth.,Radical Candor,Kim Scott,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP048,Real understanding grows when you leave familiar circles and listen to people whose lives are different from yours.,My Life on the Road,Gloria Steinem,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP049,"When women are missing from the data, inequality can hide inside decisions that look neutral.",Invisible Women,Caroline Criado Perez,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP050,You do not have to perform ideological perfection before caring about women's freedom.,Bad Feminist,Roxane Gay,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP051,Ambition does not become arrogance simply because a woman owns it out loud.,Lean In,Sheryl Sandberg,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP052,Stop building a life that looks acceptable if it feels unlivable from the inside.,Untamed,Glennon Doyle,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP053,Carry your roots with pride without letting anyone use them to limit your destination.,Becoming,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP054,Keep a few habits and relationships that steady you when life gets loud. They can help you return to yourself.,The Light We Carry,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP055,A woman's success should not require an explanation that a man's success never needs.,We Should All Be Feminists,Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP056,Teach competence before teaching prettiness as a source of value.,"Dear Ijeawele, or A Feminist Manifesto in Fifteen Suggestions",Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP057,Power structures do not become neutral simply because women learn to survive inside them.,Women & Power,Mary Beard,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP058,Bias often hides inside descriptions of style while pretending to evaluate competence.,Women and Leadership,Julia Gillard & Ngozi Okonjo-Iweala,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP059,"Equality changes practical things: who learns, earns, decides, stays healthy, and has choices.",The Moment of Lift,Melinda French Gates,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP060,Your voice does not need to be the loudest to challenge something deeply unjust.,I Am Malala,Malala Yousafzai & Christina Lamb,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP061,You can love where you came from and still decide not to remain confined by it.,Educated,Tara Westover,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP062,"Survival includes reclaiming your name, your language, and your right to define what happened.",Know My Name,Chanel Miller,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP063,Empowerment must reach women whose problems are not fashionable enough for mainstream attention.,Hood Feminism,Mikki Kendall,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP064,Self-respect becomes radical when entire industries profit from teaching women to dislike themselves.,The Body Is Not an Apology,Sonya Renee Taylor,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP065,Being the first in a room can be historic and exhausting. Achievement does not erase your need for rest and humanity.,More Than Enough,Elaine Welteroth,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP066,Women do not need perfect preparation before taking the same risks others take with partial readiness.,The Confidence Code,Katty Kay & Claire Shipman,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP067,Excellent work is not always enough to make your contribution visible. Learn to communicate what you have achieved.,How Women Rise,Sally Helgesen & Marshall Goldsmith,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP068,Do not wait for fear to disappear before answering work that feels meaningful.,Playing Big,Tara Mohr,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP069,Stop softening every statement until your expertise sounds like a suggestion.,Nice Girls Don't Get the Corner Office,Lois P. Frankel,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP070,"Women gain career power when they understand the business, the money, and the value they create.",Own It,Sallie Krawcheck,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP071,"Women need financial knowledge that helps them save, invest, reduce debt, and build real independence.",Financial Feminist,Tori Dunlap,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP072,Do not make your financial goals smaller simply to sound more acceptable.,We Should All Be Millionaires,Rachel Rodgers,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP073,"Debt is a problem to solve, not a character judgment.",Get Good with Money,Tiffany Aliche,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP074,Ask what your work is worth before asking what feels polite to request.,Secrets of Six-Figure Women,Barbara Huson,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP075,Visibility becomes less frightening each time you survive being seen.,Year of Yes,Shonda Rhimes,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP076,Your imagination does not need a business case before it deserves time.,Big Magic,Elizabeth Gilbert,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP077,Your self-talk should not be the loudest person discouraging you.,You Are a Badass,Jen Sincero,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP078,"Confidence is often the reward for action, not the requirement for it.",The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP079,Not every misunderstanding requires a campaign to restore your image.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP080,Vulnerability is not weakness when it is the price of honest connection and brave work.,Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP081,"Trust is built through repeated behaviours, not inspiring slogans.",Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP082,Belonging that requires performance is another form of loneliness.,The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP083,Stand alone when necessary without turning solitude into superiority.,Braving the Wilderness,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP084,Say what you need before resentment becomes the only language left.,"Set Boundaries, Find Peace",Nedra Glover Tawwab,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP085,"Stop calling yourself lazy when fear, grief, or self-protection may be underneath the delay.",The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP086,Small rituals can teach your nervous system that your life deserves tenderness.,Buy Yourself the F*cking Lilies,Tara Schuster,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP087,Women do not have to build alone or compete for limited space. Create circles where more women can succeed together.,Wolfpack,Abby Wambach,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP088,"Sleep, wisdom, connection, and wonder belong inside a serious definition of achievement.",Thrive,Arianna Huffington,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP089,"Resilience is strengthened by support, honesty, and permission to grieve without a timetable.",Option B,Sheryl Sandberg & Adam Grant,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP090,Your life improves when gratitude becomes a practice instead of a reaction to perfect circumstances.,What I Know for Sure,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP091,Your next step does not need to reveal the entire path.,The Path Made Clear,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP092,A woman should not have to accept control in order to call a relationship loving.,All About Love,bell hooks,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP093,A woman's instincts weaken when she is repeatedly taught to distrust them.,Women Who Run With the Wolves,Clarissa Pinkola Estés,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP094,Talent struggles to grow where a woman has no space that belongs to her.,A Room of One's Own,Virginia Woolf,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP095,Equality becomes impossible when girls are praised for obedience more than judgment.,A Vindication of the Rights of Woman,Mary Wollstonecraft,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP096,"Listening, sharing information, and strong relationships are real leadership skills, not softer substitutes for leadership.",The Female Advantage,Sally Helgesen,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP097,Direct feedback can be respectful when dignity and clarity stay in the conversation.,Radical Candor,Kim Scott,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP098,"Movements grow through conversation, travel, organizing, and the willingness to keep learning.",My Life on the Road,Gloria Steinem,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP099,Design for the average human fails when the average is quietly assumed to be male.,Invisible Women,Caroline Criado Perez,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP100,Contradictions do not automatically cancel your commitment to equality.,Bad Feminist,Roxane Gay,approved_grounded_paraphrase,data/library/women_empowerment_part_01.csv
+WEMP101,Speak up in important rooms. Your ideas deserve to be heard.,Lean In,Sheryl Sandberg,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP102,Trust yourself before you ask everyone else for permission.,Untamed,Glennon Doyle,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP103,Confidence grows when you remember how much you have already learned and overcome.,Becoming,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP104,You can feel afraid and still choose where your life goes.,The Light We Carry,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP105,Teach girls that ambition is nothing to be ashamed of.,We Should All Be Feminists,Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP106,"Housework is a life skill for everyone, not a woman’s duty.","Dear Ijeawele, or A Feminist Manifesto in Fifteen Suggestions",Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP107,A woman should not have to act like a man to be taken seriously.,Women & Power,Mary Beard,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP108,"Judge women leaders by their decisions, not by how comfortable they make everyone feel.",Women and Leadership,Julia Gillard & Ngozi Okonjo-Iweala,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP109,"A girl’s future grows when she has a say over her body, education, and marriage.",The Moment of Lift,Melinda French Gates,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP110,Education gives girls choices that fear and control cannot easily take away.,I Am Malala,Malala Yousafzai & Christina Lamb,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP111,Learning can help you see your past in a new and healthier way.,Educated,Tara Westover,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP112,"The shame belongs to the person who caused the harm, not the person who survived it.",Know My Name,Chanel Miller,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP113,Equality is not real if some women are still ignored because of race or class.,Hood Feminism,Mikki Kendall,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP114,Your body does not need public approval to deserve respect.,The Body Is Not an Apology,Sonya Renee Taylor,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP115,Being accepted is not the same as being truly valued.,More Than Enough,Elaine Welteroth,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP116,You can be capable and still doubt yourself. Do not let doubt hide what you can do.,The Confidence Code,Katty Kay & Claire Shipman,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP117,Build real relationships before you need a favor.,How Women Rise,Sally Helgesen & Marshall Goldsmith,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP118,You do not need permission to take your own dreams seriously.,Playing Big,Tara Mohr,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP119,Do not keep doing invisible office work while others get credit for leading.,Nice Girls Don't Get the Corner Office,Lois P. Frankel,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP120,Build your own financial choices even while the system is still unfair.,Own It,Sallie Krawcheck,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP121,Know your money well enough that no one can use it to control you.,Financial Feminist,Tori Dunlap,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP122,Wanting to earn more does not make you greedy. Money can create more choices.,We Should All Be Millionaires,Rachel Rodgers,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP123,Build financial safety before you chase financial status.,Get Good with Money,Tiffany Aliche,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP124,Earning too little can become a habit if you never question it.,Secrets of Six-Figure Women,Barbara Huson,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP125,Do not build a successful life with no time left to enjoy it.,Year of Yes,Shonda Rhimes,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP126,"Fear can come with you, but it does not get to make the decision.",Big Magic,Elizabeth Gilbert,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP127,Make choices your future self will be proud of.,You Are a Badass,Jen Sincero,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP128,Feeling nervous does not mean you should stop. Take the next small step.,The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP129,You find more peace when you stop trying to manage other people’s choices.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP130,"Hiding may feel safe, but shame should not decide how small your life becomes.",Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP131,A strong leader can say “I don’t know yet” and still take responsibility.,Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP132,You do not have to exhaust yourself before you are allowed to rest.,The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP133,Your values matter most when following them makes you stand apart.,Braving the Wilderness,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP134,"Protect your time, energy, body, money, and attention with clear boundaries.","Set Boundaries, Find Peace",Nedra Glover Tawwab,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP135,Familiar pain is still pain. Growth may mean choosing something new.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP136,Care for yourself like your well-being actually matters.,Buy Yourself the F*cking Lilies,Tara Schuster,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP137,A failure can teach you without becoming the story of who you are.,Wolfpack,Abby Wambach,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP138,Burnout is not proof that you care more or work harder.,Thrive,Arianna Huffington,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP139,You can be grateful and still admit that something hurts.,Option B,Sheryl Sandberg & Adam Grant,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP140,Do not let strangers decide how worthy you feel.,What I Know for Sure,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP141,Notice the work that feels meaningful even when no one applauds it.,The Path Made Clear,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP142,Self-love also means refusing to speak to yourself in ways that make you smaller.,All About Love,bell hooks,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP143,Make room for creativity and intuition when daily responsibilities have pulled you away from your inner voice.,Women Who Run With the Wolves,Clarissa Pinkola Estés,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP144,"Financial independence gives women more freedom to think, create, stay, or leave.",A Room of One's Own,Virginia Woolf,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP145,Give women knowledge and responsibility instead of keeping them dependent.,A Vindication of the Rights of Woman,Mary Wollstonecraft,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP146,Your leadership style does not have to copy old rules to be effective.,The Female Advantage,Sally Helgesen,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP147,You can be kind and clear at the same time.,Radical Candor,Kim Scott,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP148,"Women’s stories can give other women courage, ideas, and a sense of possibility.",My Life on the Road,Gloria Steinem,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP149,"Better data about women leads to safer products, policies, medicine, and public spaces.",Invisible Women,Caroline Criado Perez,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP150,You can enjoy parts of culture and still question the parts that are unfair.,Bad Feminist,Roxane Gay,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP151,"Ask for the opportunity, the raise, the support, and the recognition you need.",Lean In,Sheryl Sandberg,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP152,You are allowed to disappoint expectations that require you to betray yourself.,Untamed,Glennon Doyle,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP153,You do not have to make yourself smaller to feel welcome in a new room.,Becoming,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP154,Your confidence does not need someone else to feel less confident.,The Light We Carry,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP155,Being a woman should never limit the size of your life.,We Should All Be Feminists,Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP156,Teach girls to recognize unfairness so they do not mistake it for normal.,"Dear Ijeawele, or A Feminist Manifesto in Fifteen Suggestions",Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP157,The same confidence should not be praised in men and punished in women.,Women & Power,Mary Beard,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP158,Other people’s unfair judgment does not get to decide how capable you are.,Women and Leadership,Julia Gillard & Ngozi Okonjo-Iweala,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP159,"Supporting women means removing unfair barriers, not asking women to work around them forever.",The Moment of Lift,Melinda French Gates,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP160,Sometimes courage is continuing to learn when someone would rather keep you uninformed.,I Am Malala,Malala Yousafzai & Christina Lamb,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP161,Outgrowing an old version of yourself can feel uncomfortable before it feels freeing.,Educated,Tara Westover,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP162,Survivors should not have to be perfect before people believe them.,Know My Name,Chanel Miller,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP163,A movement is not truly inclusive if the women with the least power are always told to wait.,Hood Feminism,Mikki Kendall,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP164,Caring about your health should never require hating your body.,The Body Is Not an Apology,Sonya Renee Taylor,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP165,The parts of you that are different are not flaws you need to hide at work.,More Than Enough,Elaine Welteroth,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP166,One mistake does not mean you don’t belong. It means you’re still learning.,The Confidence Code,Katty Kay & Claire Shipman,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP167,"More knowledge is not always the next step. Sometimes you need to lead, delegate, and be seen.",How Women Rise,Sally Helgesen & Marshall Goldsmith,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP168,"Feedback can help you grow, but not every opinion deserves to guide your life.",Playing Big,Tara Mohr,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP169,Say what you need clearly instead of hoping people will guess.,Nice Girls Don't Get the Corner Office,Lois P. Frankel,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP170,"Career power grows when you build strong relationships, negotiate well, understand money, and create ownership.",Own It,Sallie Krawcheck,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP171,Asking for fair pay is not greedy. Your work has value.,Financial Feminist,Tori Dunlap,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP172,Charging too little is not humility if it makes your work impossible to sustain.,We Should All Be Millionaires,Rachel Rodgers,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP173,Make good money habits automatic so your future is protected even on busy days.,Get Good with Money,Tiffany Aliche,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP174,Wanting to earn more does not make you ungrateful.,Secrets of Six-Figure Women,Barbara Huson,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP175,Courage can start with saying yes to one opportunity you would normally avoid.,Year of Yes,Shonda Rhimes,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP176,Create because you want to. Not everything you make has to prove something.,Big Magic,Elizabeth Gilbert,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP177,Wanting more for your life does not mean you are ungrateful for what you already have.,You Are a Badass,Jen Sincero,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP178,"When fear makes you freeze, take one small physical step forward.",The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP179,People can disapprove. You still get to choose the life that fits you.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP180,Courage is showing up even when you do not know how people will respond.,Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP181,Good feedback can be honest without making someone feel small.,Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP182,"Build a life that feels true to you, not just one that looks good from the outside.",The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP183,Do not give up what you believe just to be accepted for a moment.,Braving the Wilderness,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP184,Someone can dislike your boundary and still be expected to respect it.,"Set Boundaries, Find Peace",Nedra Glover Tawwab,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP185,A trigger can tell you something without telling you what to do.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP186,Self-care can look like finally dealing with the mess you keep avoiding.,Buy Yourself the F*cking Lilies,Tara Schuster,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP187,"Leadership starts when you take responsibility, help others, and act without waiting for a title.",Wolfpack,Abby Wambach,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP188,No job should require you to ruin your health to prove you care.,Thrive,Arianna Huffington,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP189,Finding joy again does not erase or disrespect what you lost.,Option B,Sheryl Sandberg & Adam Grant,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP190,"Pay attention to what gives you energy, peace, and a sense of being fully alive.",What I Know for Sure,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP191,"You find direction by listening to yourself, trying things, and noticing what keeps calling you back.",The Path Made Clear,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP192,Care without respect is not healthy love.,All About Love,bell hooks,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP193,A path can look right to everyone else and still feel wrong for you.,Women Who Run With the Wolves,Clarissa Pinkola Estés,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP194,"Inspiration is not enough. Women also need time, money, space, and freedom to do their work.",A Room of One's Own,Virginia Woolf,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP195,Clear thinking does not belong to one gender.,A Vindication of the Rights of Woman,Mary Wollstonecraft,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP196,"Leadership can be about connecting people, not just giving orders.",The Female Advantage,Sally Helgesen,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP197,"Avoiding hard feedback may feel kind, but it can keep someone from growing.",Radical Candor,Kim Scott,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP198,Good leaders listen long enough to let other people’s experiences change their thinking.,My Life on the Road,Gloria Steinem,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP199,"Before trusting a solution for everyone, ask who was included in the data.",Invisible Women,Caroline Criado Perez,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+WEMP200,You do not have to be perfect before you speak up about something unfair.,Bad Feminist,Roxane Gay,approved_grounded_paraphrase,data/library/women_empowerment_part_02.csv
+YB001,Choose your priorities before peer pressure and distractions choose them for you.,The 7 Habits of Highly Effective Teens,Sean Covey,approved_grounded_paraphrase,data/library/children_books_part_01.csv
+YB002,Not knowing how to do something yet means you still have room to learn.,Mindset,Carol S. Dweck,approved_grounded_paraphrase,data/library/children_books_part_01.csv
+YB003,Choose kindness before you know someone’s whole story. People can be carrying pain you cannot see.,Wonder,R. J. Palacio,approved_grounded_paraphrase,data/library/children_books_part_01.csv
+YB004,"Talent starts the journey, but steady effort keeps you moving when the excitement fades.",Grit,Angela Duckworth,approved_grounded_paraphrase,data/library/children_books_part_01.csv
+YB005,Choose when technology deserves your attention instead of giving every quiet moment to a screen.,Digital Minimalism,Cal Newport,approved_grounded_paraphrase,data/library/children_books_part_01.csv
+YB006,Asking for help is not giving up. Sometimes it is the bravest way to keep going.,"The Boy, the Mole, the Fox and the Horse",Charlie Mackesy,approved_grounded_paraphrase,data/library/children_books_part_01.csv
+YB007,Give a new idea time to grow before fear convinces you to abandon it.,What Do You Do With an Idea?,Kobi Yamada,approved_grounded_paraphrase,data/library/children_books_part_01.csv
+YB008,Start with one small mark. The first step can show you what to try next.,The Dot,Peter H. Reynolds,approved_grounded_paraphrase,data/library/children_books_part_01.csv
+YB009,Learning differently does not make you less intelligent. You may simply need a different way to learn.,Fish in a Tree,Lynda Mullaly Hunt,approved_grounded_paraphrase,data/library/children_books_part_01.csv
+YB010,What matters most is not always visible at first. Care and attention help you see its value.,The Little Prince,Antoine de Saint-Exupéry,approved_grounded_paraphrase,data/library/children_books_part_01.csv
