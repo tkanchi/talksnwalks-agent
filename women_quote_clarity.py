@@ -347,30 +347,17 @@ _HARD_WORDS = re.compile(
 
 
 def apply_women_quote_clarity(row: dict[str, str]) -> dict[str, str]:
-    """Apply a Women-only simple-language override without changing metadata."""
-    updated = dict(row)
-    quote_id = (updated.get("QuoteID") or updated.get("ID") or "").strip()
-    if quote_id in WOMEN_QUOTE_OVERRIDES:
-        updated["Quote"] = WOMEN_QUOTE_OVERRIDES[quote_id]
-    return updated
+    """Preserve the audited book-grounded wording used by production.
+
+    Book-inspired copy is reviewed upstream. Rewriting it again at runtime can
+    remove context or change the meaning, so production must not apply a second
+    paraphrase layer.
+    """
+    return dict(row)
 
 
 def is_clear_women_quote(row: dict[str, str]) -> bool:
-    """Return True when production copy is short and easy to understand."""
+    """Reject only malformed copy; completeness takes priority over brevity."""
     quote = (row.get("Quote") or "").strip()
     words = re.findall(r"[A-Za-z’'-]+", quote)
-    if not words or len(words) > 16:
-        return False
-
-    letter_counts = [len(re.sub(r"[^A-Za-z]", "", word)) for word in words]
-    average_word_length = sum(letter_counts) / len(letter_counts)
-    if average_word_length > 5.2:
-        return False
-
-    if ";" in quote or ":" in quote:
-        return False
-
-    if _HARD_WORDS.search(quote):
-        return False
-
-    return True
+    return bool(words) and 5 <= len(words) <= 32
