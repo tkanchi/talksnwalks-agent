@@ -64,7 +64,7 @@ QUOTE_CORRECTIONS: dict[str, str] = {
     "WEMP203": "You can be a daughter, mother, professional, partner, citizen, and dreamer without being reduced to any one role.",
     "WEMP225": "Your voice gets stronger when you use it before you feel polished.",
     "WEMP290": "Choose relationships that allow your spirit to expand instead of constantly defending itself.",
-    "WEMP324": "Examine your earning ceiling whenever fear, rather than market value, is holding it down.",
+    "WEMP324": "If fear keeps you from asking for what your work is worth, learn to negotiate instead of accepting an artificial earning ceiling.",
     "37": "You are allowed to ask for help, but do not hand off your responsibility.",
     "42": "If someone is being bullied, do not add your silence to the crowd.",
     "52": "Invite people in; you never know who needs that invitation.",
