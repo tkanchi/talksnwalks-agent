@@ -19,7 +19,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from quote_text_quality import polish_quote_text, QUOTE_CORRECTIONS
+from quote_text_quality import polish_quote_text
 
 
 ROOT = Path(__file__).resolve().parent
@@ -211,7 +211,7 @@ def audit() -> tuple[int, int, int, Counter[str]]:
     for row in rows:
         row = {key: _clean(value) for key, value in row.items()}
         quote_id = row.get("QuoteID", "")
-        candidate_quote = polish_quote_text(QUOTE_CORRECTIONS.get(quote_id, row.get("Quote", "")))
+        candidate_quote = polish_quote_text(row.get("Quote", ""))
 
         audit_row = {**row, "Quote": candidate_quote}
         flags = _flags(audit_row, topics)
