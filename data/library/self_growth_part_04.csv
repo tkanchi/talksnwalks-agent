@@ -1,6 +1,6 @@
 QuoteID,Quote,Audience,Topic,Theme,SourceType,InspiredBy,Author,OriginalTheme
 SG251,Success often hides inside ordinary decisions made consistently.,All,Discipline,Discipline & Action,inspired_by,The Compound Effect,Darren Hardy,Consistency & Results
-SG252,Your habits are either quietly paying you or quietly charging you.,All,Discipline,Discipline & Action,inspired_by,The Compound Effect,Darren Hardy,Consistency & Results
+SG252,Your daily habits either move you toward the life you want or quietly pull you away from it.,All,Discipline,Discipline & Action,inspired_by,The Compound Effect,Darren Hardy,Consistency & Results
 SG253,Do not underestimate what a year of repeated small choices can become.,All,Discipline,Discipline & Action,inspired_by,The Compound Effect,Darren Hardy,Consistency & Results
 SG254,The easiest useful choice to skip today may be the one that matters after hundreds of repetitions.,All,Discipline,Discipline & Action,inspired_by,The Slight Edge,Jeff Olson,Daily Choices & Consistency
 SG255,Simple disciplines gain power because time keeps adding to them.,All,Discipline,Discipline & Action,inspired_by,The Slight Edge,Jeff Olson,Daily Choices & Consistency
@@ -27,7 +27,7 @@ SG275,Shorter planning horizons can turn distant goals into immediate commitment
 SG276,Treat each week as valuable enough to measure rather than casually losing it.,All,Execution,Discipline & Action,inspired_by,The 12 Week Year,Brian P. Moran & Michael Lennington,Goals & Execution
 SG277,Execution improves when goals are translated into specific weekly actions.,All,Execution,Discipline & Action,inspired_by,The 12 Week Year,Brian P. Moran & Michael Lennington,Goals & Execution
 SG278,Annual ambition becomes easier to manage when the next twelve weeks have a clear finish line.,All,Execution,Discipline & Action,inspired_by,The 12 Week Year,Brian P. Moran & Michael Lennington,Goals & Execution
-SG279,"Measure lead actions, not only outcomes you cannot fully control.",All,Execution,Discipline & Action,inspired_by,The 12 Week Year,Brian P. Moran & Michael Lennington,Goals & Execution
+SG279,"Track the actions you control, not only final results that depend on more than you.",All,Execution,Discipline & Action,inspired_by,The 12 Week Year,Brian P. Moran & Michael Lennington,Goals & Execution
 SG280,Accountability becomes useful when it points to behaviour rather than shame.,All,Execution,Discipline & Action,inspired_by,The 12 Week Year,Brian P. Moran & Michael Lennington,Goals & Execution
 SG281,Intensity improves when the deadline is close enough to feel real.,All,Execution,Discipline & Action,inspired_by,The 12 Week Year,Brian P. Moran & Michael Lennington,Goals & Execution
 SG282,Automate good financial decisions so discipline is not required every payday.,All,Growth,Discipline & Action,inspired_by,I Will Teach You to Be Rich,Ramit Sethi,Personal Finance & Systems
@@ -56,13 +56,13 @@ SG304,Inner freedom grows when every emotion does not require immediate obedienc
 SG305,Let experiences move through you instead of building a permanent home for them.,All,Peace,Growth,inspired_by,The Untethered Soul,Michael A. Singer,Awareness & Inner Freedom
 SG306,Notice the voice in your head without believing every argument it makes.,All,Peace,Self-Worth,inspired_by,The Untethered Soul,Michael A. Singer,Awareness & Inner Freedom
 SG307,Clinging to comfort can make life smaller than necessary.,All,Peace,Growth,inspired_by,The Untethered Soul,Michael A. Singer,Awareness & Inner Freedom
-SG308,Awareness creates room around difficult feelings.,All,Peace,Growth,inspired_by,The Untethered Soul,Michael A. Singer,Awareness & Inner Freedom
+SG308,Noticing a difficult feeling creates space between the feeling and your next reaction.,All,Peace,Growth,inspired_by,The Untethered Soul,Michael A. Singer,Awareness & Inner Freedom
 SG309,Release becomes easier when you stop demanding that every event match your preferences.,All,Peace,Growth,inspired_by,The Untethered Soul,Michael A. Singer,Awareness & Inner Freedom
 SG310,Happiness often improves through ordinary adjustments rather than dramatic reinvention.,All,Discipline,Discipline & Action,inspired_by,The Happiness Project,Gretchen Rubin,Happiness & Habits
 SG311,Know yourself well enough to choose habits that fit your actual nature.,All,Discipline,Discipline & Action,inspired_by,The Happiness Project,Gretchen Rubin,Happiness & Habits
 SG312,Small sources of joy deserve space on a serious calendar.,All,Discipline,Discipline & Action,inspired_by,The Happiness Project,Gretchen Rubin,Happiness & Habits
 SG313,Relationships improve when appreciation becomes more visible.,All,Discipline,Discipline & Action,inspired_by,The Happiness Project,Gretchen Rubin,Happiness & Habits
-SG314,"Energy, order, and attention can change the emotional texture of a home.",All,Discipline,Discipline & Action,inspired_by,The Happiness Project,Gretchen Rubin,Happiness & Habits
+SG314,"Small changes in energy, order, and attention can make a home feel calmer and happier.",All,Discipline,Discipline & Action,inspired_by,The Happiness Project,Gretchen Rubin,Happiness & Habits
 SG315,Do not postpone happiness until every larger goal is finished.,All,Discipline,Discipline & Action,inspired_by,The Happiness Project,Gretchen Rubin,Happiness & Habits
 SG316,Experiment with your life instead of assuming one formula works for everyone.,All,Discipline,Discipline & Action,inspired_by,The Happiness Project,Gretchen Rubin,Happiness & Habits
 SG317,Happiness can support performance instead of waiting until performance is complete.,All,Execution,Discipline & Action,inspired_by,The Happiness Advantage,Shawn Achor,Positive Psychology & Performance
@@ -72,21 +72,21 @@ SG320,"Social connection is an advantage, not a distraction from success.",All,E
 SG321,Your interpretation of stress can influence how effectively you respond to it.,All,Execution,Discipline & Action,inspired_by,The Happiness Advantage,Shawn Achor,Positive Psychology & Performance
 SG322,Success is easier to sustain when well-being is treated as fuel rather than a prize.,All,Execution,Discipline & Action,inspired_by,The Happiness Advantage,Shawn Achor,Positive Psychology & Performance
 SG323,Positive emotion can broaden the range of solutions your mind is willing to see.,All,Execution,Discipline & Action,inspired_by,The Happiness Advantage,Shawn Achor,Positive Psychology & Performance
-SG324,"You do not need to know exactly how your life will turn out. Try small things, learn what works, and let clarity come from action.",All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
-SG325,There is no single perfect life waiting for you to discover it. More than one path can become a meaningful and happy life.,All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
-SG326,"You do not need a flawless plan before you move. Stay curious, try something, and let what you learn help you choose the next step.",All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
-SG327,Pay attention to what gives you energy and what keeps draining it. Your energy can be useful information about what fits your life.,All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
+SG324,You do not need a perfect life plan. Try small experiments and let what you learn guide the next step.,All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
+SG325,There is no single perfect life to discover. More than one path can become meaningful and satisfying.,All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
+SG326,"When you are unsure, test a small version of the idea before making a major commitment.",All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
+SG327,Notice which activities give you energy and which drain it. That pattern can help you design a life that fits.,All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
 SG328,Reframe problems that cannot be solved in their current definition.,All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
-SG329,Small experiments can answer career questions better than endless speculation.,All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
+SG329,Small experiments can answer career questions better than thinking about them forever.,All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
 SG330,Build forward from what you learn instead of judging every path by whether it was the original plan.,All,Career,Dreams,inspired_by,Designing Your Life,Bill Burnett & Dave Evans,Career & Life Design
 SG331,Creativity returns when judgment is not allowed to interrupt every beginning.,All,Resilience,Resilience,inspired_by,The Artist's Way,Julia Cameron,Creativity & Recovery
 SG332,Write before your inner critic has organized the meeting.,All,Resilience,Resilience,inspired_by,The Artist's Way,Julia Cameron,Creativity & Recovery
 SG333,Protect time to make things that do not need to impress anyone.,All,Resilience,Resilience,inspired_by,The Artist's Way,Julia Cameron,Creativity & Recovery
 SG334,"Creative confidence grows through practice, play, and permission.",All,Resilience,Resilience,inspired_by,The Artist's Way,Julia Cameron,Creativity & Recovery
-SG335,Pay attention to what delights you; curiosity can reopen blocked creative paths.,All,Resilience,Resilience,inspired_by,The Artist's Way,Julia Cameron,Creativity & Recovery
+SG335,Pay attention to what genuinely delights you. Curiosity can help reopen a blocked creative life.,All,Resilience,Resilience,inspired_by,The Artist's Way,Julia Cameron,Creativity & Recovery
 SG336,Your work can be imperfect and still be alive.,All,Resilience,Resilience,inspired_by,The Artist's Way,Julia Cameron,Creativity & Recovery
 SG337,Create regularly enough that inspiration no longer has to arrive on command.,All,Resilience,Resilience,inspired_by,The Artist's Way,Julia Cameron,Creativity & Recovery
-SG338,Sleep is not lost time; it is biological preparation for tomorrow.,All,Rest & Recovery,Peace & Letting Go,inspired_by,Why We Sleep,Matthew Walker,Sleep & Well-being
+SG338,Sleep is not wasted time. It prepares your brain and body to function the next day.,All,Rest & Recovery,Peace & Letting Go,inspired_by,Why We Sleep,Matthew Walker,Sleep & Well-being
 SG339,Protect your bedtime with the seriousness you give important appointments.,All,Rest & Recovery,Peace & Letting Go,inspired_by,Why We Sleep,Matthew Walker,Sleep & Well-being
 SG340,Performance declines when recovery is treated as optional.,All,Rest & Recovery,Discipline & Action,inspired_by,Why We Sleep,Matthew Walker,Sleep & Well-being
 SG341,"A rested brain learns, regulates emotion, and makes decisions differently.",All,Rest & Recovery,Peace & Letting Go,inspired_by,Why We Sleep,Matthew Walker,Sleep & Well-being
@@ -94,7 +94,7 @@ SG342,Consistency in sleep can matter as much as ambition in waking hours.,All,R
 SG343,Do not repeatedly borrow from sleep and expect your body never to collect.,All,Rest & Recovery,Peace & Letting Go,inspired_by,Why We Sleep,Matthew Walker,Sleep & Well-being
 SG344,"Recovery is part of productivity, not its opposite.",All,Rest & Recovery,Discipline & Action,inspired_by,Why We Sleep,Matthew Walker,Sleep & Well-being
 SG345,"A meaningful life can be built from useful work, relationships, movement, and simple daily joy.",All,Purpose & Meaning,Happiness & Gratitude,inspired_by,Ikigai,Héctor García & Francesc Miralles,Purpose & Longevity
-SG346,Purpose does not always arrive as a dramatic revelation; sometimes it is a reason to get up tomorrow.,All,Purpose & Meaning,Dreams,inspired_by,Ikigai,Héctor García & Francesc Miralles,Purpose & Longevity
+SG346,Purpose does not always arrive as one dramatic answer. Sometimes it begins with a reason to get up tomorrow.,All,Purpose & Meaning,Dreams,inspired_by,Ikigai,Héctor García & Francesc Miralles,Purpose & Longevity
 SG347,Stay connected to people who make life feel shared.,All,Purpose & Meaning,Dreams,inspired_by,Ikigai,Héctor García & Francesc Miralles,Purpose & Longevity
 SG348,"Keep doing work that engages your hands, mind, or heart.",All,Purpose & Meaning,Dreams,inspired_by,Ikigai,Héctor García & Francesc Miralles,Purpose & Longevity
 SG349,Small pleasures can support a long life when they are noticed and repeated.,All,Purpose & Meaning,Dreams,inspired_by,Ikigai,Héctor García & Francesc Miralles,Purpose & Longevity
