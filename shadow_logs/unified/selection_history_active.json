@@ -1287,6 +1287,48 @@
         "body confidence"
       ],
       "hashtags": []
+    },
+    {
+      "selection_date": "2026-10-06",
+      "quote_id": "SG110",
+      "audience": "All",
+      "topic_category": "Business",
+      "topic": "Execution",
+      "book": "Deep Work",
+      "author": "Cal Newport",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ021",
+      "illustration": "clock_01.png",
+      "illustration_score": 590,
+      "illustration_tags": [
+        "balance",
+        "clock",
+        "discipline",
+        "focus",
+        "schedule",
+        "time"
+      ],
+      "placement": "bottom_left",
+      "background": "apricot",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-10-06_SG110",
+      "caption_category": "Business",
+      "caption": "Think of this as a note about rest and recovery.\n\nWorth keeping in mind when priorities start competing.\n\nIf you're exploring execution, success, entrepreneurship, leadership, career growth, discipline, decision making, and money mindset, save this reminder and share it with someone who may need it.\n\nInspired by Deep Work by Cal Newport.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "execution",
+        "success",
+        "entrepreneurship",
+        "leadership",
+        "career growth",
+        "discipline",
+        "decision making",
+        "money mindset"
+      ],
+      "hashtags": []
     }
   ]
 }
