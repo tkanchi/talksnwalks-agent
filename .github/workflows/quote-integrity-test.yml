@@ -1,0 +1,142 @@
+name: Test grounded quote integrity
+
+on:
+  pull_request:
+    paths:
+      - 'data/library/*.csv'
+      - 'data/quote_grounding/**'
+      - 'build_master_quotes.py'
+      - 'audit_master_quotes.py'
+      - 'quote_text_quality.py'
+      - 'quote_library.py'
+      - 'women_quote_clarity.py'
+      - 'men_quote_clarity.py'
+      - '.github/workflows/quote-integrity-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quote-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify reviewed source snapshots
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+
+          root = Path('.')
+          manifest = {}
+          for path in sorted((root / 'data' / 'quote_grounding').glob('part_*.csv')):
+              with path.open(newline='', encoding='utf-8') as f:
+                  for row in csv.DictReader(f):
+                      quote_id = (row.get('QuoteID') or '').strip()
+                      if not quote_id:
+                          continue
+                      if quote_id in manifest:
+                          raise SystemExit(f'duplicate grounding row: {quote_id}')
+                      manifest[quote_id] = row
+
+          eligible = {}
+          for path in sorted((root / 'data' / 'library').glob('*.csv')):
+              with path.open(newline='', encoding='utf-8') as f:
+                  for row in csv.DictReader(f):
+                      source_type = (row.get('SourceType') or row.get('Type') or '').strip().lower()
+                      quote_id = (row.get('QuoteID') or '').strip()
+                      book = (row.get('InspiredBy') or '').strip()
+                      author = (row.get('Author') or '').strip()
+                      if source_type != 'inspired_by' or not quote_id or not book or not author:
+                          continue
+                      eligible[quote_id] = {
+                          'Quote': (row.get('Quote') or '').strip(),
+                          'InspiredBy': book,
+                          'Author': author,
+                      }
+
+          missing = sorted(set(eligible) - set(manifest))
+          extra = sorted(set(manifest) - set(eligible))
+          if missing or extra:
+              raise SystemExit(f'grounding manifest mismatch: missing={missing[:10]} extra={extra[:10]}')
+
+          for quote_id, source in eligible.items():
+              review = manifest[quote_id]
+              if (review.get('ReviewStatus') or '').strip() != 'approved_grounded_paraphrase':
+                  raise SystemExit(f'{quote_id}: grounding review is not approved')
+              if (review.get('ApprovedQuote') or '').strip() != source['Quote']:
+                  raise SystemExit(f'{quote_id}: source wording changed without grounding review')
+              if (review.get('InspiredBy') or '').strip() != source['InspiredBy']:
+                  raise SystemExit(f'{quote_id}: book changed without grounding review')
+              if (review.get('Author') or '').strip() != source['Author']:
+                  raise SystemExit(f'{quote_id}: author changed without grounding review')
+
+          print(f'Verified {len(eligible)} grounded book-inspired source rows')
+          PY
+
+      - name: Rebuild unified master
+        run: python build_master_quotes.py
+
+      - name: Audit rebuilt master
+        run: python audit_master_quotes.py
+
+      - name: Verify production does not re-paraphrase
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+
+          from men_quote_clarity import apply_men_quote_clarity, is_clear_men_quote
+          from women_quote_clarity import apply_women_quote_clarity, is_clear_women_quote
+
+          checked = 0
+          for path in sorted(Path('data/library').glob('*.csv')):
+              with path.open(newline='', encoding='utf-8') as f:
+                  for row in csv.DictReader(f):
+                      source_type = (row.get('SourceType') or row.get('Type') or '').strip().lower()
+                      if source_type != 'inspired_by':
+                          continue
+                      if not (row.get('InspiredBy') or '').strip() or not (row.get('Author') or '').strip():
+                          continue
+
+                      original = (row.get('Quote') or '').strip()
+                      if (apply_women_quote_clarity(row).get('Quote') or '').strip() != original:
+                          raise SystemExit(f"{row.get('QuoteID')}: Women runtime changed reviewed wording")
+                      if (apply_men_quote_clarity(row).get('Quote') or '').strip() != original:
+                          raise SystemExit(f"{row.get('QuoteID')}: Men runtime changed reviewed wording")
+                      if not is_clear_women_quote(row):
+                          raise SystemExit(f"{row.get('QuoteID')}: Women completeness gate rejected approved wording")
+                      if not is_clear_men_quote(row):
+                          raise SystemExit(f"{row.get('QuoteID')}: Men completeness gate rejected approved wording")
+                      checked += 1
+
+          print(f'Verified pass-through production wording for {checked} book-inspired rows')
+          PY
+
+      - name: Verify audited output has no grounding failures
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+
+          path = Path('data/quotes_master_review.csv')
+          with path.open(newline='', encoding='utf-8') as f:
+              rows = list(csv.DictReader(f))
+
+          bad = [
+              row.get('QuoteID')
+              for row in rows
+              if 'grounding' in (row.get('ReviewFlags') or '')
+          ]
+          if bad:
+              raise SystemExit(f'grounding audit failures: {bad[:20]}')
+          print(f'Verified {len(rows)} rebuilt master rows with no grounding failures')
+          PY

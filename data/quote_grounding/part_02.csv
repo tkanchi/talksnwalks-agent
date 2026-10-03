@@ -1,0 +1,166 @@
+QuoteID,ApprovedQuote,InspiredBy,Author,ReviewStatus,SourceFile
+WEMP201,A career grows faster when women stop treating every stretch opportunity as evidence they are underqualified.,Lean In,Sheryl Sandberg,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP202,Freedom begins when being a good woman stops meaning being endlessly agreeable.,Untamed,Glennon Doyle,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP203,"You can be a daughter, mother, professional, partner, citizen, and dreamer without being reduced to any one role.",Becoming,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP204,"Strong women still need tools, routines, friendship, and rest to remain steady.",The Light We Carry,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP205,Women do not need to become more like men to deserve equal freedom.,We Should All Be Feminists,Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP206,Do not teach girls to make themselves smaller to protect a boy's confidence.,"Dear Ijeawele, or A Feminist Manifesto in Fifteen Suggestions",Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP207,Public voice is not something women should need exceptional courage to use.,Women & Power,Mary Beard,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP208,Visible women leaders expand the imagination of the girls watching them.,Women and Leadership,Julia Gillard & Ngozi Okonjo-Iweala,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP209,Listen to women closest to the problem before designing solutions for their lives.,The Moment of Lift,Melinda French Gates,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP210,One girl speaking can expose the injustice that thousands were told to accept quietly.,I Am Malala,Malala Yousafzai & Christina Lamb,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP211,"Your family story is important, but it is not the only authority on who you are.",Educated,Tara Westover,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP212,Your pain deserves language even when institutions prefer neatness and silence.,Know My Name,Chanel Miller,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP213,"Women's rights include survival, economic security, bodily safety, and access to basic needs.",Hood Feminism,Mikki Kendall,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP214,Stop speaking about your body in a way you would never speak to a child you love.,The Body Is Not an Apology,Sonya Renee Taylor,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP215,Success becomes freer when you stop chasing acceptance from systems built without you in mind.,More Than Enough,Elaine Welteroth,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP216,Speak before your answer feels polished enough to be immune from criticism.,The Confidence Code,Katty Kay & Claire Shipman,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP217,Let go of habits that made you successful earlier but keep you small now.,How Women Rise,Sally Helgesen & Marshall Goldsmith,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP218,Play bigger by becoming more loyal to purpose than to being liked.,Playing Big,Tara Mohr,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP219,Your career should not depend on being the most agreeable person in every room.,Nice Girls Don't Get the Corner Office,Lois P. Frankel,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP220,Use your strengths strategically instead of spending energy imitating someone else's leadership style.,Own It,Sallie Krawcheck,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP221,Investing belongs in women's conversations about freedom.,Financial Feminist,Tori Dunlap,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP222,"Price your expertise so your business can grow, not simply to make the buyer feel comfortable.",We Should All Be Millionaires,Rachel Rodgers,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP223,"Build credit, savings, insurance, investing, and budgeting as parts of one life—not separate emergencies.",Get Good with Money,Tiffany Aliche,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP224,Learn the negotiation skills that turn expertise into compensation.,Secrets of Six-Figure Women,Barbara Huson,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP225,Your voice gets stronger when you use it before you feel polished.,Year of Yes,Shonda Rhimes,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP226,Curiosity is often a gentler and more reliable guide than pressure to find one grand passion.,Big Magic,Elizabeth Gilbert,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP227,Confidence grows when belief is followed by movement.,You Are a Badass,Jen Sincero,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP228,Courage can begin before your mind has finished writing the excuse.,The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP229,Stop demanding equal effort from people who keep showing you what they are willing to give.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP230,Perfectionism protects an image while often suffocating growth.,Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP231,"Emotional armour may look professional, but it can block the vulnerability and trust strong leadership requires.",Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP232,Self-compassion makes change more sustainable than constant self-attack.,The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP233,Listen across differences without surrendering your own humanity or principles.,Braving the Wilderness,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP234,Stop over-explaining the limits you have already decided are necessary.,"Set Boundaries, Find Peace",Nedra Glover Tawwab,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP235,Self-awareness becomes empowerment only when it changes the next decision.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP236,Create a home and routine that remind you that you matter.,Buy Yourself the F*cking Lilies,Tara Schuster,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP237,Celebrate another woman's success without treating it as evidence that your chance disappeared.,Wolfpack,Abby Wambach,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP238,Make room for silence before constant urgency becomes your personality.,Thrive,Arianna Huffington,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP239,Ask for specific help. People may care deeply and still not know what would actually support you.,Option B,Sheryl Sandberg & Adam Grant,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP240,Your story can become a source of wisdom without remaining a source of shame.,What I Know for Sure,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP241,Do not confuse other people's urgency with your calling.,The Path Made Clear,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP242,Love grows where truth can be spoken without fear.,All About Love,bell hooks,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP243,"Your wildness can mean intuition, imagination, vitality, and truth—not chaos.",Women Who Run With the Wolves,Clarissa Pinkola Estés,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP244,Make room for your ideas before everyone else's needs consume the entire day.,A Room of One's Own,Virginia Woolf,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP245,"Teach girls to build character, competence, and independence rather than decorative helplessness.",A Vindication of the Rights of Woman,Mary Wollstonecraft,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP246,Build networks where information travels and people understand the larger purpose.,The Female Advantage,Sally Helgesen,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP247,Challenge ideas without reducing the human being who offered them.,Radical Candor,Kim Scott,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP248,"Freedom rarely arrives by itself. People create change by speaking, organizing, and acting together.",My Life on the Road,Gloria Steinem,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP249,Women's everyday experiences belong in the evidence used to design public life.,Invisible Women,Caroline Criado Perez,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP250,Women deserve room to be complicated rather than exemplary representatives of an entire gender.,Bad Feminist,Roxane Gay,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP251,"Choose partners, mentors, and workplaces that do not require your success to apologize for itself.",Lean In,Sheryl Sandberg,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP252,Your life becomes more your own when being 'good' no longer means obeying every expectation.,Untamed,Glennon Doyle,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP253,"Achievement matters, but becoming the woman you respect matters more.",Becoming,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP254,"Uncertainty does not mean you should disappear. Return to the habits, values, and people that help steady you.",The Light We Carry,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP255,Challenge traditions that survive only because nobody is allowed to question who benefits from them.,We Should All Be Feminists,Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP256,"Let curiosity, sport, science, leadership, softness, and strength all belong to her.","Dear Ijeawele, or A Feminist Manifesto in Fifteen Suggestions",Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP257,Redefine power so participation does not require women to erase themselves first.,Women & Power,Mary Beard,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP258,Power becomes healthier when women are not treated as unusual guests in leadership.,Women and Leadership,Julia Gillard & Ngozi Okonjo-Iweala,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP259,Unpaid care becomes an equality issue when it quietly consumes one gender's time and opportunity.,The Moment of Lift,Melinda French Gates,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP260,Do not underestimate a young woman's ability to understand what freedom should look like.,I Am Malala,Malala Yousafzai & Christina Lamb,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP261,Knowledge can widen the distance between what you were told and what you now know to be possible.,Educated,Tara Westover,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP262,"Justice begins with treating a woman as a whole human being, not as evidence in someone else's story.",Know My Name,Chanel Miller,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP263,Listen beyond the women who already have microphones.,Hood Feminism,Mikki Kendall,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP264,Beauty standards become less powerful when they stop being treated as moral standards.,The Body Is Not an Apology,Sonya Renee Taylor,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP265,You can be grateful for an opportunity and still demand better from the institution that gave it.,More Than Enough,Elaine Welteroth,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP266,"Confidence is built by doing, adjusting, and doing again.",The Confidence Code,Katty Kay & Claire Shipman,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP267,Credit your team without erasing your own role in the result.,How Women Rise,Sally Helgesen & Marshall Goldsmith,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP268,Your gifts cannot serve anyone while they remain hidden behind endless preparation.,Playing Big,Tara Mohr,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP269,"Learn which behaviours are rewarded, then decide deliberately which ones serve your values.",Nice Girls Don't Get the Corner Office,Lois P. Frankel,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP270,Financial independence changes the quality of every professional choice.,Own It,Sallie Krawcheck,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP271,Your money decisions can reflect your values without requiring financial perfection.,Financial Feminist,Tori Dunlap,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP272,"Economic power gives women more room to choose, leave, invest, create, and support.",We Should All Be Millionaires,Rachel Rodgers,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP273,Money becomes less frightening when you replace avoidance with a sequence of manageable steps.,Get Good with Money,Tiffany Aliche,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP274,Surround yourself with people who normalize women earning well.,Secrets of Six-Figure Women,Barbara Huson,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP275,"Success should expand your life, not turn you into a prisoner of obligation.",Year of Yes,Shonda Rhimes,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP276,Make the thing badly enough to discover how you want to make it better.,Big Magic,Elizabeth Gilbert,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP277,Your excuses deserve less loyalty than your goals.,You Are a Badass,Jen Sincero,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP278,The first move matters because momentum needs somewhere to start.,The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP279,Acceptance of reality gives you more power than constant resistance to someone else's behaviour.,The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP280,Name the fear so it does not get to run the room anonymously.,Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP281,Leadership requires the courage to hear truths that flatter neither you nor the organization.,Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP282,Stop using productivity as proof that you deserve to feel good about yourself.,The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP283,Belong to yourself strongly enough that disagreement does not erase you.,Braving the Wilderness,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP284,Peace often begins when your yes becomes trustworthy because your no is allowed to exist.,"Set Boundaries, Find Peace",Nedra Glover Tawwab,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP285,You may be both the obstacle and the person capable of removing it.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP286,Stop saving kindness for the version of you who finally gets everything right.,Buy Yourself the F*cking Lilies,Tara Schuster,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP287,Use your voice after wins and losses. Leadership includes showing up when the outcome is imperfect.,Wolfpack,Abby Wambach,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP288,Redefine success so it includes the life you are actually awake enough to experience.,Thrive,Arianna Huffington,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP289,Hardship can change you without deciding the rest of your future. Resilience can still be built.,Option B,Sheryl Sandberg & Adam Grant,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP290,Choose relationships that allow your spirit to expand instead of constantly defending itself.,What I Know for Sure,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP291,Your life can change direction without meaning the earlier path was wasted.,The Path Made Clear,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP292,"Do not confuse attachment, possession, or longing with genuine care.",All About Love,bell hooks,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP293,Make room for solitude that lets you hear yourself beneath the roles you perform.,Women Who Run With the Wolves,Clarissa Pinkola Estés,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP294,A woman's voice becomes easier to develop when interruption is not her permanent environment.,A Room of One's Own,Virginia Woolf,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP295,"A woman who can think, support herself, and govern her own choices strengthens society rather than threatening it.",A Vindication of the Rights of Woman,Mary Wollstonecraft,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP296,Leadership becomes stronger when empathy and execution are treated as partners.,The Female Advantage,Sally Helgesen,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP297,Strong management requires both genuine care and honest standards.,Radical Candor,Kim Scott,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP298,Stay curious enough to let real conversations challenge what you thought you already knew.,My Life on the Road,Gloria Steinem,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP299,Bias can survive without bad intentions when the information itself is incomplete.,Invisible Women,Caroline Criado Perez,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP300,Question the stories culture tells about whose pain matters and whose desire is acceptable.,Bad Feminist,Roxane Gay,approved_grounded_paraphrase,data/library/women_empowerment_part_03.csv
+WEMP301,Leadership becomes more equal when women are allowed to be decisive without being punished for the same confidence admired in men.,Lean In,Sheryl Sandberg,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP302,Listen to the discomfort that appears when your outer life and inner truth stop matching.,Untamed,Glennon Doyle,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP303,Let your past explain your strength without making it the ceiling for your future.,Becoming,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP304,"Your private well-being needs care too, not only the responsibilities other people can see.",The Light We Carry,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP305,"Teach boys to respect women as equals, not only to protect the women they personally care about.",We Should All Be Feminists,Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP306,Teach her that marriage can be a choice without becoming the measure of her success.,"Dear Ijeawele, or A Feminist Manifesto in Fifteen Suggestions",Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP307,History explains why women's voices are policed; it does not justify continuing the pattern.,Women & Power,Mary Beard,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP308,Call out double standards before they become invisible rules.,Women and Leadership,Julia Gillard & Ngozi Okonjo-Iweala,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP309,Women's freedom grows when social norms change alongside laws.,The Moment of Lift,Melinda French Gates,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP310,"Access to books and education can give girls knowledge, choices, and a path toward independence.",I Am Malala,Malala Yousafzai & Christina Lamb,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP311,Reinventing yourself may require grieving the belonging that demanded your silence.,Educated,Tara Westover,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP312,Recovery is not measured by how quickly you become convenient to other people again.,Know My Name,Chanel Miller,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP313,Solidarity becomes real when comfort is not the price of acknowledging another woman's reality.,Hood Feminism,Mikki Kendall,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP314,"Your body can change and still deserve the same dignity, respect, and care.",The Body Is Not an Apology,Sonya Renee Taylor,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP315,Your worth is not the sum of how impressively you survive impossible expectations.,More Than Enough,Elaine Welteroth,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP316,Perfectionism can look responsible while quietly preventing boldness.,The Confidence Code,Katty Kay & Claire Shipman,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP317,Career growth sometimes requires releasing the need to please everyone affected by your advancement.,How Women Rise,Sally Helgesen & Marshall Goldsmith,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP318,Fear often grows around the very work that matters most to you.,Playing Big,Tara Mohr,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP319,"Competence alone is not enough at work. Boundaries, visibility, negotiation, and clear communication also matter.",Nice Girls Don't Get the Corner Office,Lois P. Frankel,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP320,Own your ambition before the workplace decides how much ambition looks acceptable on a woman.,Own It,Sallie Krawcheck,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP321,Shame makes money harder to manage; knowledge makes it easier to change.,Financial Feminist,Tori Dunlap,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP322,Build wealth loudly enough in your own mind that scarcity stops being the only respectable story.,We Should All Be Millionaires,Rachel Rodgers,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP323,Financial wholeness is not about looking rich. It is about building systems that make your life more stable.,Get Good with Money,Tiffany Aliche,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP324,"If fear keeps you from asking for what your work is worth, learn to negotiate instead of accepting an artificial earning ceiling.",Secrets of Six-Figure Women,Barbara Huson,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP325,Sometimes transformation begins by saying yes to yourself and no to everyone else's access.,Year of Yes,Shonda Rhimes,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP326,"Your creativity is allowed to be joyful, impractical, ambitious, private, or public.",Big Magic,Elizabeth Gilbert,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP327,Act like your future is worth inconveniencing your current habits for.,You Are a Badass,Jen Sincero,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP328,"Women do not need to feel fearless before they speak, apply, leave, ask, or begin.",The 5 Second Rule,Mel Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP329,"Return your attention to what you can choose, change, build, or leave.",The Let Them Theory,Mel Robbins & Sawyer Robbins,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP330,Women can be strong without becoming emotionally unreachable.,Daring Greatly,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP331,Create teams where people can speak before problems become expensive.,Dare to Lead,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP332,Authenticity is choosing to be known instead of endlessly managed.,The Gifts of Imperfection,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP333,Women can seek community without making conformity the entrance fee.,Braving the Wilderness,Brené Brown,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP334,Boundaries protect relationships from the resentment created by silent overgiving.,"Set Boundaries, Find Peace",Nedra Glover Tawwab,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP335,Healing often looks like responding differently to the same situation.,The Mountain Is You,Brianna Wiest,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP336,Romance your own life enough that loneliness is not confused with lack of worth.,Buy Yourself the F*cking Lilies,Tara Schuster,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP337,Your power multiplies when it helps other women become powerful too.,Wolfpack,Abby Wambach,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP338,Well-being is not the opposite of performance; it can be what keeps performance sustainable.,Thrive,Arianna Huffington,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP339,Hope can return slowly and still be real.,Option B,Sheryl Sandberg & Adam Grant,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP340,Success means less when you are disconnected from yourself.,What I Know for Sure,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP341,"Purpose is often built through contribution, not discovered as one dramatic answer.",The Path Made Clear,Oprah Winfrey,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP342,"Choosing love requires standards, not the abandonment of them.",All About Love,bell hooks,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP343,Women need stories that remind them they belong to themselves.,Women Who Run With the Wolves,Clarissa Pinkola Estés,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP344,"Financial independence and private space give a woman more freedom to think, create, and develop her own voice.",A Room of One's Own,Virginia Woolf,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP345,Respect between women and men requires education that prepares both for freedom.,A Vindication of the Rights of Woman,Mary Wollstonecraft,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP346,Do not confuse a different style of leadership with a lesser one.,The Female Advantage,Sally Helgesen,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP347,Clear expectations prevent resentment from becoming a management system.,Radical Candor,Kim Scott,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP348,"Women's movements become stronger when connection crosses geography, race, class, and generation.",My Life on the Road,Gloria Steinem,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP349,Equality requires counting women clearly enough that their needs cannot remain statistically invisible.,Invisible Women,Caroline Criado Perez,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP350,A movement can improve when its supporters are honest about both their values and their inconsistencies.,Bad Feminist,Roxane Gay,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP351,"Your professional life deserves intentional choices, not automatic surrender to expectations.",Lean In,Sheryl Sandberg,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP352,"Becoming yourself may cost approval, but pretending costs far more over time.",Untamed,Glennon Doyle,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP353,"Keep evolving after the title, the applause, and the milestone.",Becoming,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP354,Hold onto the people and practices that help you remember who you are.,The Light We Carry,Michelle Obama,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP355,"Feminism is strongest when freedom is treated as a human expectation, not a special request.",We Should All Be Feminists,Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP356,Give girls examples of women who chose many different ways to live meaningful lives.,"Dear Ijeawele, or A Feminist Manifesto in Fifteen Suggestions",Chimamanda Ngozi Adichie,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP357,Taking women seriously means changing the image of what authority is allowed to look like.,Women & Power,Mary Beard,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP358,Leadership will not become equal by teaching women to tolerate more bias. Institutions and expectations must change too.,Women and Leadership,Julia Gillard & Ngozi Okonjo-Iweala,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP359,"Support women with education, health, money, and decision-making power, not admiration alone.",The Moment of Lift,Melinda French Gates,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP360,Defend every girl's right to imagine a future larger than the one assigned to her.,I Am Malala,Malala Yousafzai & Christina Lamb,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP361,A woman can build a new life without pretending the old one never shaped her.,Educated,Tara Westover,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP362,"After harm, a woman's voice is part of reclaiming her own story, dignity, and future.",Know My Name,Chanel Miller,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP363,A movement for women is incomplete if it ignores the basic needs of women with the least power.,Hood Feminism,Mikki Kendall,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP364,Make peace with taking up physical space before the world asks you to disappear inside it.,The Body Is Not an Apology,Sonya Renee Taylor,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
+WEMP365,You are already enough. Another achievement should not become the price of believing that.,More Than Enough,Elaine Welteroth,approved_grounded_paraphrase,data/library/women_empowerment_part_04.csv
