@@ -1457,6 +1457,47 @@
         "resilience"
       ],
       "hashtags": []
+    },
+    {
+      "selection_date": "2026-10-10",
+      "quote_id": "SG032",
+      "audience": "All",
+      "topic_category": "Mindset",
+      "topic": "Goals",
+      "book": "Think and Grow Rich",
+      "author": "Napoleon Hill",
+      "event_id": "",
+      "event": "",
+      "event_date": "",
+      "object_id": "OBJ006",
+      "illustration": "open_book_01.png",
+      "illustration_score": 430,
+      "illustration_tags": [
+        "book",
+        "learning",
+        "reading",
+        "wisdom"
+      ],
+      "placement": "bottom_center",
+      "background": "sky",
+      "reason": "evergreen: topic/book variety with unused QuoteID",
+      "mode": "shadow",
+      "published": false,
+      "package_id": "2026-10-10_SG032",
+      "caption_category": "Youth",
+      "caption": "This is one way to make sense of goals.\n\nA simple idea to keep close while learning and growing.\n\nIf you're exploring goals, learning, growth mindset, teen confidence, study motivation, school life, digital wellbeing, life skills, and personal growth, save this reminder and share it with someone who may need it.\n\nInspired by Think and Grow Rich by Napoleon Hill.\n\nFollow @talksnwalks101 for book inspiration, daily wisdom and practical ideas for personal growth.",
+      "keywords": [
+        "goals",
+        "learning",
+        "growth mindset",
+        "teen confidence",
+        "study motivation",
+        "school life",
+        "digital wellbeing",
+        "life skills",
+        "personal growth"
+      ],
+      "hashtags": []
     }
   ]
 }
