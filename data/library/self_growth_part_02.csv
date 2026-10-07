@@ -1,41 +1,41 @@
 QuoteID,Quote,Audience,Topic,Theme,SourceType,InspiredBy,Author,OriginalTheme
 SG051,"A difficult life can still contain responsibility, love, and purpose.",All,Resilience,Resilience,inspired_by,Man's Search for Meaning,Viktor E. Frankl,Meaning & Resilience
-SG052,"Ask what this season is asking you to become, not only when it will end.",All,Resilience,Resilience,inspired_by,Man's Search for Meaning,Viktor E. Frankl,Meaning & Resilience
+SG052,"When you cannot change the situation, ask how you can change the way you meet it.",All,Resilience,Resilience,inspired_by,Man's Search for Meaning,Viktor E. Frankl,Meaning & Resilience
 SG053,Hope becomes stronger when it is connected to someone or something beyond immediate suffering.,All,Resilience,Resilience,inspired_by,Man's Search for Meaning,Viktor E. Frankl,Meaning & Resilience
 SG054,"Pain should never be romanticized, but it can still be met with dignity.",All,Resilience,Resilience,inspired_by,Man's Search for Meaning,Viktor E. Frankl,Meaning & Resilience
 SG055,A reason to continue can change how a person carries what cannot immediately be changed.,All,Resilience,Resilience,inspired_by,Man's Search for Meaning,Viktor E. Frankl,Meaning & Resilience
 SG056,Your freedom is most visible in the way you choose to meet what you did not choose.,All,Resilience,Resilience,inspired_by,Man's Search for Meaning,Viktor E. Frankl,Meaning & Resilience
-SG057,"What you can do today is only your starting point. With effort, practice, and learning, your abilities can grow far beyond where they began.",All,Growth,Growth,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
-SG058,Trying to look talented can stop you from learning. It is better to be a beginner who keeps growing than an expert who is afraid to struggle.,All,Growth,Growth,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
-SG059,"Feedback is information, not a definition of who you are. Take what helps you learn without turning someone’s opinion into your identity.",All,Growth,Becoming,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
-SG060,Struggling with something does not prove you are failing. Difficulty can be a sign that your brain is being challenged to learn and grow.,All,Growth,Growth,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
+SG057,"Your current ability is a starting point. Effort, strategy, and learning can expand what you are able to do.",All,Growth,Growth,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
+SG058,Trying to look naturally talented can stop you from learning. Choose growth over protecting an image.,All,Growth,Growth,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
+SG059,"Feedback is information, not your identity. Use what helps you improve and leave the rest.",All,Growth,Becoming,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
+SG060,Struggle does not automatically mean failure. Difficult work can be part of learning a new skill.,All,Growth,Growth,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
 SG061,Do not turn one poor performance into a permanent description of yourself.,All,Growth,Discipline & Action,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
 SG062,Effort becomes more intelligent when you study what is and is not working.,All,Growth,Growth,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
-SG063,People improve faster when mistakes become material for learning rather than reasons for shame.,All,Growth,Growth,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
-SG064,Your current level describes today; it does not have authority over your future.,All,Growth,Growth,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
-SG065,"You cannot solve every problem, but you can choose which ones deserve your energy. Put your effort where your actions can make a difference.",All,Integrity & Character,Growth,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
-SG066,"A good life is not a life with no problems. It is a life filled with problems that are worth your time, effort, and care.",All,Integrity & Character,Growth,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
-SG067,Choose values that still matter when nobody is watching and nobody is impressed. What guides you privately says more than what earns applause.,All,Integrity & Character,Growth,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
-SG068,"You cannot give your full care to everything. Choose carefully what deserves your attention, because your time and energy are limited.",All,Integrity & Character,Growth,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
+SG063,Mistakes help you improve when you study them instead of treating them as proof you are not capable.,All,Growth,Growth,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
+SG064,What you can do today does not decide what you may learn to do tomorrow.,All,Growth,Growth,inspired_by,Mindset,Carol S. Dweck,Growth Mindset
+SG065,You cannot care deeply about everything. Choose the problems that are worth your limited time and energy.,All,Integrity & Character,Growth,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
+SG066,A good life still has problems. The difference is choosing problems that are worth solving.,All,Integrity & Character,Growth,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
+SG067,Choose values you respect even when nobody is watching or applauding.,All,Integrity & Character,Growth,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
+SG068,"Your time and energy are limited, so choose carefully what deserves your attention.",All,Integrity & Character,Growth,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
 SG069,"Responsibility begins when you decide what you will do with what happened, even if you did not cause it.",All,Integrity & Character,Growth,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
 SG070,Comfort is a poor compass for every important decision.,All,Integrity & Character,Growth,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
 SG071,Saying no to trivial battles creates room for meaningful ones.,All,Integrity & Character,Dreams,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
 SG072,Better questions often improve life faster than louder positive thinking.,All,Integrity & Character,Growth,inspired_by,The Subtle Art of Not Giving a F*ck,Mark Manson,Values & Responsibility
-SG073,Your mind notices more of what you keep looking for. Do not train it only on problems; teach it to notice possibilities too.,All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
-SG074,Imagining a better future is only the beginning. A dream becomes meaningful when it changes what you are willing to do today.,All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
-SG075,Gratitude does not require an extraordinary life. Learning to notice what is already good can make an ordinary day feel much richer.,All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
-SG076,"What you expect can affect what you notice. If you only expect failure, you may overlook opportunities that were there all along.",All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
-SG077,Hope is most powerful when it becomes behaviour.,All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
+SG073,What you focus on shapes what you notice. Train your attention to see possibilities as well as problems.,All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
+SG074,Picture the future you want clearly enough that your attention has a direction.,All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
+SG075,"Gratitude begins by noticing what is already good, even on an ordinary day.",All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
+SG076,"Expectations can shape what you notice. If you expect only failure, you may miss possible opportunities.",All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
+SG077,Keep your attention on the outcome you want instead of feeding only the outcome you fear.,All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
 SG078,Focus can turn scattered desire into a clearer direction.,All,Happiness,Discipline & Action,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
-SG079,Act like your future matters enough to prepare for it today.,All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
-SG080,"Positive expectation should support reality-based action, not replace it.",All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
+SG079,Keep your desired future present in your mind instead of rehearsing only what could go wrong.,All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
+SG080,Positive expectation can change what you notice and how you approach the day.,All,Happiness,Hope,inspired_by,The Secret,Rhonda Byrne,Optimism & Intention
 SG081,Change becomes more painful when you keep negotiating with a reality that has already changed.,All,Growth,Growth,inspired_by,Who Moved My Cheese?,Spencer Johnson,Change & Adaptability
 SG082,Notice small shifts early so adaptation does not have to begin in panic.,All,Growth,Growth,inspired_by,Who Moved My Cheese?,Spencer Johnson,Change & Adaptability
 SG083,Yesterday's solution can become tomorrow's obstacle if you refuse to update it.,All,Growth,Growth,inspired_by,Who Moved My Cheese?,Spencer Johnson,Change & Adaptability
 SG084,Move toward what is next before resentment makes the old situation your identity.,All,Growth,Becoming,inspired_by,Who Moved My Cheese?,Spencer Johnson,Change & Adaptability
 SG085,Fear becomes smaller when you start exploring instead of only imagining.,All,Growth,Growth,inspired_by,Who Moved My Cheese?,Spencer Johnson,Change & Adaptability
 SG086,Adaptability is often more valuable than being right about how things used to work.,All,Growth,Growth,inspired_by,Who Moved My Cheese?,Spencer Johnson,Change & Adaptability
-SG087,Do not confuse familiarity with safety.,All,Growth,Growth,inspired_by,Who Moved My Cheese?,Spencer Johnson,Change & Adaptability
+SG087,What feels familiar is not always what is safest or best for you.,All,Growth,Growth,inspired_by,Who Moved My Cheese?,Spencer Johnson,Change & Adaptability
 SG088,Learning to move again is part of surviving every changing season.,All,Growth,Growth,inspired_by,Who Moved My Cheese?,Spencer Johnson,Change & Adaptability
 SG089,"Income matters, but ownership changes the long-term game.",All,Money Mindset,Dreams,inspired_by,Rich Dad Poor Dad,Robert T. Kiyosaki,Money & Assets
 SG090,Learn the difference between something that looks valuable and something that actually produces value.,All,Money Mindset,Dreams,inspired_by,Rich Dad Poor Dad,Robert T. Kiyosaki,Money & Assets
@@ -53,27 +53,27 @@ SG101,Compounding rewards patience more reliably than excitement.,All,Money Mind
 SG102,"Your financial plan should fit your temperament, not someone else's personality.",All,Money Mindset,Dreams,inspired_by,The Psychology of Money,Morgan Housel,Money Psychology
 SG103,Being reasonable and consistent can beat being brilliant and unstable.,All,Money Mindset,Dreams,inspired_by,The Psychology of Money,Morgan Housel,Money Psychology
 SG104,The best financial freedom is the ability to control more of your time.,All,Money Mindset,Peace & Letting Go,inspired_by,The Psychology of Money,Morgan Housel,Money Psychology
-SG105,"In a world full of distractions, the ability to focus deeply becomes a real advantage. Protect your attention instead of letting noise become normal.",All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
-SG106,"If you give your best attention to every small request, little may remain for important work. Protect focused time before the day fills it.",All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
-SG107,"Your mind needs uninterrupted time to do its best work. Constant switching may keep you busy, but it rarely gives deep thinking a chance.",All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
-SG108,A full schedule can look productive while important work remains undone. Progress comes from making room for work that truly matters.,All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
+SG105,Focused work is an advantage in a distracted world. Protect time when your full attention can stay on one important task.,All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
+SG106,"If every small request gets your best attention, important work gets what is left. Protect focused time first.",All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
+SG107,Your best work needs uninterrupted time for your mind to stay with one difficult problem.,All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
+SG108,A packed schedule can look productive while important work stays unfinished. Make room for work that creates real value.,All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
 SG109,Train focus like a skill instead of waiting for perfect concentration.,All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
 SG110,Every unnecessary interruption has a recovery cost.,All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
 SG111,Depth creates value that constant responsiveness rarely matches.,All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
-SG112,A focused hour can outperform several fragmented ones.,All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
+SG112,One uninterrupted hour of focused work can accomplish more than several hours broken by constant switching.,All,Execution,Discipline & Action,inspired_by,Deep Work,Cal Newport,Focus & Productivity
 SG113,Every yes spends a piece of your finite life.,All,Execution,Discipline & Action,inspired_by,Essentialism,Greg McKeown,Priorities & Simplicity
 SG114,Do fewer things deliberately instead of many things resentfully.,All,Execution,Discipline & Action,inspired_by,Essentialism,Greg McKeown,Priorities & Simplicity
 SG115,"If a commitment is not important enough, make room by declining it.",All,Execution,Discipline & Action,inspired_by,Essentialism,Greg McKeown,Priorities & Simplicity
-SG116,Clarity appears when you separate what matters from what merely makes noise.,All,Execution,Discipline & Action,inspired_by,Essentialism,Greg McKeown,Priorities & Simplicity
-SG117,Protect the vital few from the convenient many.,All,Execution,Discipline & Action,inspired_by,Essentialism,Greg McKeown,Priorities & Simplicity
-SG118,Space in your schedule is not waste; it is capacity for what matters.,All,Execution,Discipline & Action,inspired_by,Essentialism,Greg McKeown,Priorities & Simplicity
+SG116,Clarity comes from separating what truly matters from what only feels urgent or noisy.,All,Execution,Discipline & Action,inspired_by,Essentialism,Greg McKeown,Priorities & Simplicity
+SG117,Protect the few priorities that matter most from the many tasks competing for your attention.,All,Execution,Discipline & Action,inspired_by,Essentialism,Greg McKeown,Priorities & Simplicity
+SG118,Open space in your schedule is not wasted time. It gives important things room to breathe.,All,Execution,Discipline & Action,inspired_by,Essentialism,Greg McKeown,Priorities & Simplicity
 SG119,A disciplined no can preserve a more meaningful yes.,All,Execution,Discipline & Action,inspired_by,Essentialism,Greg McKeown,Priorities & Simplicity
 SG120,Simplicity becomes powerful when it is guided by purpose.,All,Execution,Discipline & Action,inspired_by,Essentialism,Greg McKeown,Priorities & Simplicity
 SG121,Progress accelerates when one important action receives your best attention first.,All,Execution,Discipline & Action,inspired_by,The ONE Thing,Gary Keller & Jay Papasan,Focus & Prioritization
 SG122,Ask which task would make the rest easier instead of treating every task equally.,All,Execution,Discipline & Action,inspired_by,The ONE Thing,Gary Keller & Jay Papasan,Focus & Prioritization
 SG123,Big results are often built through a sequence of well-chosen priorities.,All,Execution,Discipline & Action,inspired_by,The ONE Thing,Gary Keller & Jay Papasan,Focus & Prioritization
 SG124,Multitasking can create motion without meaningful advancement.,All,Execution,Discipline & Action,inspired_by,The ONE Thing,Gary Keller & Jay Papasan,Focus & Prioritization
-SG125,Protect the work that creates leverage before checking the work that creates noise.,All,Execution,Discipline & Action,inspired_by,The ONE Thing,Gary Keller & Jay Papasan,Focus & Prioritization
+SG125,Do your highest-impact work before low-value tasks fill your attention.,All,Execution,Discipline & Action,inspired_by,The ONE Thing,Gary Keller & Jay Papasan,Focus & Prioritization
 SG126,Focus becomes easier when your calendar reflects your stated priority.,All,Execution,Discipline & Action,inspired_by,The ONE Thing,Gary Keller & Jay Papasan,Focus & Prioritization
 SG127,One finished priority is worth more than several impressive beginnings.,All,Execution,Discipline & Action,inspired_by,The ONE Thing,Gary Keller & Jay Papasan,Focus & Prioritization
 SG128,Your mind is better at creating ideas than storing every reminder.,All,Execution,Discipline & Action,inspired_by,Getting Things Done,David Allen,Organization & Execution
@@ -87,13 +87,13 @@ SG135,Long-term effort can matter more than early brilliance.,All,Resilience,Res
 SG136,Passion becomes powerful when it survives boredom and repetition.,All,Resilience,Resilience,inspired_by,Grit,Angela Duckworth,Perseverance & Skill
 SG137,Practice improves when it targets weaknesses instead of only repeating strengths.,All,Resilience,Resilience,inspired_by,Grit,Angela Duckworth,Perseverance & Skill
 SG138,Persistence is easier when the goal connects to something larger than ego.,All,Resilience,Resilience,inspired_by,Grit,Angela Duckworth,Perseverance & Skill
-SG139,Talent opens a door; sustained effort determines how far you walk.,All,Resilience,Resilience,inspired_by,Grit,Angela Duckworth,Perseverance & Skill
-SG140,Do not confuse a difficult season with a wrong purpose.,All,Resilience,Resilience,inspired_by,Grit,Angela Duckworth,Perseverance & Skill
+SG139,"Talent may open the door, but sustained effort determines how far you develop that talent.",All,Resilience,Resilience,inspired_by,Grit,Angela Duckworth,Perseverance & Skill
+SG140,A hard stretch does not automatically mean the goal is wrong. Grit includes staying with worthwhile work through difficulty.,All,Resilience,Resilience,inspired_by,Grit,Angela Duckworth,Perseverance & Skill
 SG141,Consistency over years can create advantages that intensity over weeks cannot.,All,Resilience,Discipline & Action,inspired_by,Grit,Angela Duckworth,Perseverance & Skill
-SG142,Courage can look awkward at first. Being willing to risk embarrassment is often how you stop fear from keeping you stuck.,All,Courage,Courage,inspired_by,Daring Greatly,Brené Brown,Vulnerability & Courage
-SG143,Being open about what you feel does not make you weak. Sometimes vulnerability requires more courage than pretending nothing can hurt you.,All,Courage,Courage,inspired_by,Daring Greatly,Brené Brown,Vulnerability & Courage
-SG144,Real connection becomes difficult when every conversation is a performance. Let people meet the real you instead of constantly managing how you appear.,All,Courage,Discipline & Action,inspired_by,Daring Greatly,Brené Brown,Vulnerability & Courage
-SG145,Shame grows stronger when it stays hidden. Talking honestly with someone safe can make it smaller and remind you that you are not alone.,All,Courage,Courage,inspired_by,Daring Greatly,Brené Brown,Vulnerability & Courage
+SG142,Courage often looks awkward at first because being seen always carries some risk.,All,Courage,Courage,inspired_by,Daring Greatly,Brené Brown,Vulnerability & Courage
+SG143,Being honest about what you feel is not weakness. Vulnerability can require real courage.,All,Courage,Courage,inspired_by,Daring Greatly,Brené Brown,Vulnerability & Courage
+SG144,"Real connection is harder when every conversation is a performance. Let people meet the imperfect, honest version of you.",All,Courage,Discipline & Action,inspired_by,Daring Greatly,Brené Brown,Vulnerability & Courage
+SG145,Shame grows in secrecy. Telling the truth to someone safe can remind you that you are not alone.,All,Courage,Courage,inspired_by,Daring Greatly,Brené Brown,Vulnerability & Courage
 SG146,Do not wait to feel invulnerable before doing something brave.,All,Courage,Courage,inspired_by,Daring Greatly,Brené Brown,Vulnerability & Courage
 SG147,"Being seen honestly is riskier than being impressive, but often far more meaningful.",All,Courage,Courage,inspired_by,Daring Greatly,Brené Brown,Vulnerability & Courage
 SG148,Wholehearted living requires the courage to be imperfect in public.,All,Courage,Courage,inspired_by,Daring Greatly,Brené Brown,Vulnerability & Courage

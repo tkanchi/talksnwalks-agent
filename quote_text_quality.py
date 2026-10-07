@@ -1,8 +1,8 @@
 """Copy-edit production quote text without changing source attribution metadata.
 
-The source CSVs are our reference libraries. This module applies small,
-high-confidence copy edits by QuoteID and a conservative punctuation/spacing
-normalizer before quotes enter a runtime publishing pool.
+The source CSVs are our reference libraries. Book-inspired wording is audited
+in those source files and must remain authoritative. This module keeps legacy
+non-book copy edits plus a conservative punctuation/spacing normalizer.
 """
 
 from __future__ import annotations
@@ -41,30 +41,7 @@ QUOTE_CORRECTIONS: dict[str, str] = {
     "MEN343": "A childhood nickname can make forty-year-old men feel ten years old again.",
     "MEN360": "Guard your mornings, your money, your words, and your attention; much of life follows.",
     "MEN363": "Your first cricket team had no contracts or sponsors, but it may have had the strongest loyalty you will ever know.",
-    "SG019": "Remembering names, details, and personal moments tells people they are important enough to remember.",
-    "SG023": "Let another person keep their dignity even when correction is necessary.",
-    "SG033": "Much of our anxiety lives in a future we have not actually entered.",
-    "SG050": "Meaning can carry a person through pain that comfort alone cannot ease.",
-    "SG052": "Ask not only when this season will end, but what it is asking you to become.",
-    "SG107": "Your best work needs enough uninterrupted time for your mind to stop switching contexts.",
-    "SG213": "Your state affects performance, so learn how your body, focus, and language influence it.",
-    "SG264": "Break a large task into a next step small enough to begin immediately.",
-    "SG298": "Separate what is your responsibility from what belongs to someone else.",
-    "SG317": "Let happiness support performance instead of waiting until the work is complete to feel it.",
-    "SG354": "Your past can explain you without giving you permission to remain unchanged.",
-    "SG356": "Keep proof of the hard things you have already done for the days when self-doubt returns.",
     "UC079": "Keep some ownership of your happiness instead of placing it entirely in someone else's hands.",
-    "WEMP001": "Do not wait to feel perfectly ready before stepping toward the opportunity you have already earned.",
-    "WEMP024": "Earning more often begins when a woman stops treating money as proof of goodness or selfishness.",
-    "WEMP077": "Your self-talk should not be the loudest voice discouraging you.",
-    "WEMP116": "Competence matters, but self-doubt can keep your competence hidden when opportunities arise.",
-    "WEMP176": "Women create more freely when they stop demanding that every creative act justify its existence.",
-    "WEMP178": "Use a small physical action to interrupt the habit of backing away.",
-    "WEMP187": "Lead from the position you occupy instead of waiting for someone to name you a leader.",
-    "WEMP203": "Your identity can hold many roles—daughter, mother, professional, partner, citizen, and dreamer—without reducing you to any one of them.",
-    "WEMP225": "Your voice gets stronger when you use it before you feel polished.",
-    "WEMP290": "Choose relationships that allow your spirit to expand instead of constantly defending itself.",
-    "WEMP324": "Examine your earning ceiling whenever fear, rather than market value, is holding it down.",
     "37": "You are allowed to ask for help, but do not hand off your responsibility.",
     "42": "If someone is being bullied, do not add your silence to the crowd.",
     "52": "Invite people in; you never know who needs that invitation.",
@@ -104,9 +81,13 @@ def polish_quote_text(text: str) -> str:
 
 
 def polish_quote_row(row: dict[str, str]) -> dict[str, str]:
-    """Return a copied row with its production quote copy-edited."""
+    """Normalize quote text without rewording audited book-inspired material."""
     polished = dict(row)
     quote_id = (polished.get("QuoteID") or polished.get("ID") or "").strip()
-    source_text = QUOTE_CORRECTIONS.get(quote_id, polished.get("Quote", ""))
+    source_type = (polished.get("SourceType") or polished.get("Type") or "").strip().lower()
+    if source_type == "inspired_by":
+        source_text = polished.get("Quote", "")
+    else:
+        source_text = QUOTE_CORRECTIONS.get(quote_id, polished.get("Quote", ""))
     polished["Quote"] = polish_quote_text(source_text)
     return polished

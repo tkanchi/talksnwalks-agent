@@ -5,11 +5,11 @@ Produces additive outputs and does not alter live production inputs:
 - data/quotes_master_review.csv: every master row with deterministic quality flags.
 - data/quotes_master_attention.csv: only rows excluded or still needing review.
 
-High-confidence copy edits come from quote_text_quality.py. Human-reviewed false
-positives are explicitly approved only for book-inspired rows; non-book sources
-are not eligible for manual approval or publishing. SupportingText completeness,
-length, editorial-naturalness, and corpus-level voice diversity are hard
-publishing requirements.
+Book-inspired wording is authoritative in the source libraries and is locked by
+the quote-grounding manifest after human review. Any wording, book, or author
+change must be re-reviewed before it can pass this audit. SupportingText
+completeness, editorial-naturalness, and corpus-level voice diversity remain
+hard publishing requirements.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from quote_text_quality import polish_quote_text, QUOTE_CORRECTIONS
+from quote_text_quality import polish_quote_text
 
 
 ROOT = Path(__file__).resolve().parent
@@ -28,6 +28,7 @@ TOPICS_FILE = ROOT / "data" / "topics.csv"
 CLEAN_FILE = ROOT / "data" / "quotes_master_clean.csv"
 REVIEW_FILE = ROOT / "data" / "quotes_master_review.csv"
 ATTENTION_FILE = ROOT / "data" / "quotes_master_attention.csv"
+GROUNDING_DIR = ROOT / "data" / "quote_grounding"
 
 HARD_FLAGS = {
     "duplicate",
@@ -40,6 +41,8 @@ HARD_FLAGS = {
     "missing_supporting_text",
     "invalid_supporting_text_length",
     "robotic_supporting_text",
+    "unreviewed_grounding",
+    "grounding_mismatch",
 }
 SEMANTIC_REVIEW_FLAGS = {
     "aggressive_tone",
@@ -94,6 +97,27 @@ def _load_topics() -> dict[str, str]:
         }
 
 
+def _load_grounding() -> dict[str, dict[str, str]]:
+    files = sorted(GROUNDING_DIR.glob("part_*.csv"))
+    if not files:
+        raise RuntimeError("Quote grounding manifest is missing")
+
+    grounding: dict[str, dict[str, str]] = {}
+    for path in files:
+        with path.open(newline="", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                quote_id = _clean(row.get("QuoteID"))
+                if not quote_id:
+                    continue
+                if quote_id in grounding:
+                    raise RuntimeError(f"Duplicate grounding record for {quote_id}")
+                grounding[quote_id] = {key: _clean(value) for key, value in row.items()}
+
+    if not grounding:
+        raise RuntimeError("Quote grounding manifest is empty")
+    return grounding
+
+
 def _word_count(text: str) -> int:
     return len(re.findall(r"\b[\w’'-]+\b", text))
 
@@ -103,7 +127,11 @@ def _support_lead(text: str) -> str:
     return " ".join(words[:SUPPORT_LEAD_WORDS])
 
 
-def _flags(row: dict[str, str], topics: dict[str, str]) -> list[str]:
+def _flags(
+    row: dict[str, str],
+    topics: dict[str, str],
+    grounding: dict[str, dict[str, str]],
+) -> list[str]:
     flags: list[str] = []
     quote = _clean(row.get("Quote"))
     quote_id = _clean(row.get("QuoteID"))
@@ -137,6 +165,16 @@ def _flags(row: dict[str, str], topics: dict[str, str]) -> list[str]:
         flags.append("non_book_source")
     if source_type == "inspired_by" and (not book or not author):
         flags.append("missing_book_attribution")
+    elif source_type == "inspired_by":
+        review = grounding.get(quote_id)
+        if not review or _clean(review.get("ReviewStatus")) != "approved_grounded_paraphrase":
+            flags.append("unreviewed_grounding")
+        else:
+            approved_quote = polish_quote_text(_clean(review.get("ApprovedQuote")))
+            approved_book = _clean(review.get("InspiredBy"))
+            approved_author = _clean(review.get("Author"))
+            if approved_quote != polish_quote_text(quote) or approved_book != book or approved_author != author:
+                flags.append("grounding_mismatch")
     if not source_type:
         flags.append("missing_source_type")
     if source_type == "legacy_original" and not _clean(row.get("AttributionNote")):
@@ -145,7 +183,7 @@ def _flags(row: dict[str, str], topics: dict[str, str]) -> list[str]:
     words = _word_count(quote)
     if quote and words < 5:
         flags.append("very_short")
-    if words > 24 or len(quote) > 155:
+    if words > 32 or len(quote) > 220:
         flags.append("very_long")
 
     if topic not in GENDER_CONTEXT_TOPICS and GENDER_TERMS.search(quote):
@@ -170,6 +208,7 @@ def _status(quote_id: str, flags: list[str]) -> str:
 
 def audit() -> tuple[int, int, int, Counter[str]]:
     topics = _load_topics()
+    grounding = _load_grounding()
     with MASTER_FILE.open(newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
     if not rows:
@@ -211,10 +250,10 @@ def audit() -> tuple[int, int, int, Counter[str]]:
     for row in rows:
         row = {key: _clean(value) for key, value in row.items()}
         quote_id = row.get("QuoteID", "")
-        candidate_quote = polish_quote_text(QUOTE_CORRECTIONS.get(quote_id, row.get("Quote", "")))
+        candidate_quote = polish_quote_text(row.get("Quote", ""))
 
         audit_row = {**row, "Quote": candidate_quote}
-        flags = _flags(audit_row, topics)
+        flags = _flags(audit_row, topics, grounding)
         status = _status(quote_id, flags)
         statuses[status] += 1
         flag_counts.update(flags)
@@ -249,6 +288,7 @@ def audit() -> tuple[int, int, int, Counter[str]]:
         writer.writerows(clean_rows)
 
     print(f"Audited {len(rows)} master rows")
+    print(f"Grounding manifest rows: {len(grounding)}")
     print(f"Approved clean rows: {statuses['approved']}")
     print(f"Review-required rows: {statuses['review']}")
     print(f"Excluded rows: {statuses['exclude']}")

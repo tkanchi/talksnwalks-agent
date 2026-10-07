@@ -7,6 +7,7 @@ on:
       - 'audit_master_quotes.py'
       - 'quote_text_quality.py'
       - 'data/quotes_master.csv'
+      - 'data/quote_grounding/**'
       - 'data/topics.csv'
   workflow_dispatch:
 
