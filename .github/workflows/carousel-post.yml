@@ -1,17 +1,7 @@
 name: Carousel Post
 
 on:
-  push:
-    paths:
-      - "build_carousel.py"
-      - "carousel_landscape.py"
-      - "publish_instagram_carousel.py"
-      - "data/carousels/**"
-      - ".github/workflows/carousel-post.yml"
-  schedule:
-    # Wednesday + Saturday at 13:07 IST (07:37 UTC).
-    # Scheduled runs are build-only until live carousel publishing is approved.
-    - cron: "37 7 * * 3,6"
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
     inputs:
       carousel_id:
