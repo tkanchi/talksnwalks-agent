@@ -1,13 +1,7 @@
 name: Audit master quote library
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'audit_master_quotes.py'
-      - 'quote_text_quality.py'
-      - 'data/quotes_master.csv'
-      - 'data/topics.csv'
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
 
 permissions:
