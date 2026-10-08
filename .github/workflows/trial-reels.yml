@@ -1,8 +1,7 @@
 name: Trial Reels - Daily
 
 on:
-  schedule:
-    - cron: "7 10 * * *" # 15:37 IST - one trial Reel daily
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
     inputs:
       stream:
