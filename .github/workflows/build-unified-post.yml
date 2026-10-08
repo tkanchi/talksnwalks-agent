@@ -1,6 +1,7 @@
 name: Build unified post previews
 
 on:
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
     inputs:
       audience:
@@ -15,12 +16,6 @@ on:
         description: "1-based start index within the filtered plan"
         required: false
         default: "1"
-  push:
-    branches:
-      - main
-    paths:
-      - 'build_unified_post.py'
-      - '.github/workflows/build-unified-post.yml'
 
 permissions:
   contents: read
