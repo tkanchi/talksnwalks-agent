@@ -1,18 +1,7 @@
 name: Rebuild master quote library
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'build_master_quotes.py'
-      - 'supporting_text.py'
-      - 'audit_master_quotes.py'
-      - 'quote_text_quality.py'
-      - 'data/supporting_text_month_01.csv'
-      - 'data/library/*.csv'
-      - 'data/topics.csv'
-      - 'data/theme_mappings.csv'
-      - '.github/workflows/rebuild-master-quotes.yml'
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
 
 permissions:
