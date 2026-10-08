@@ -1,11 +1,7 @@
 name: Stress test unified selector
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'stress_test_unified_selector.py'
-      - '.github/workflows/stress-test-unified-selector.yml'
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
 
 permissions:
