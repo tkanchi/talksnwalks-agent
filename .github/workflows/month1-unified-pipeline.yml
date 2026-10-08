@@ -1,6 +1,7 @@
 name: Month 1 Unified Pipeline
 
 on:
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
     inputs:
       post_number:
@@ -13,14 +14,6 @@ on:
         required: true
         default: false
         type: boolean
-  push:
-    paths:
-      - 'build_month1_pipeline.py'
-      - 'build_feed_preview.py'
-      - 'background_generator.py'
-      - 'data/content_plan_month_01.csv'
-      - 'illustrations/objects/core/**'
-      - '.github/workflows/month1-unified-pipeline.yml'
 
 permissions:
   contents: write
