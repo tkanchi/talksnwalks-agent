@@ -1,6 +1,7 @@
 name: Simulate unified next-post selector
 
 on:
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
     inputs:
       start_date:
@@ -11,14 +12,6 @@ on:
         description: "Number of consecutive post selections to simulate"
         required: false
         default: "10"
-  push:
-    paths:
-      - 'select_next_post.py'
-      - 'simulate_unified_selector.py'
-      - 'data/quotes_master_clean.csv'
-      - 'data/illustration_objects.csv'
-      - 'data/events.csv'
-      - '.github/workflows/simulate-unified-selector.yml'
 
 permissions:
   contents: read
