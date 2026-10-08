@@ -1,15 +1,8 @@
 name: Build month-one content plan
 
 on:
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
-  push:
-    paths:
-      - 'build_month1_content_plan.py'
-      - 'apply_supporting_text_month1.py'
-      - 'data/quotes_master_clean.csv'
-      - 'data/illustration_objects.csv'
-      - 'data/supporting_text_month_01.csv'
-      - '.github/workflows/build-month1-content-plan.yml'
 
 permissions:
   contents: write
