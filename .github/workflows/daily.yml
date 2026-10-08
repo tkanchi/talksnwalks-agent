@@ -1,9 +1,7 @@
 name: Women Instagram Reel
 
 on:
-  schedule:
-    - cron: "43 13 * * 3" # Wednesday 19:13 IST
-    - cron: "47 10 * * 4" # Thursday 16:17 IST
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
     inputs:
       day:
