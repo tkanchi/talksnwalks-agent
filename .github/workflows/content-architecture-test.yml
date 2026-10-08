@@ -1,14 +1,8 @@
 name: Test Content Architecture
 
 on:
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
-  pull_request:
-    paths:
-      - "data/**"
-      - "scripts/build_content_master.py"
-      - "scripts/select_content.py"
-      - "scripts/validate_content_architecture.py"
-      - ".github/workflows/content-architecture-test.yml"
 
 permissions:
   contents: read
