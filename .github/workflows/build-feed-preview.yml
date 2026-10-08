@@ -1,13 +1,8 @@
 name: Build 4x5 feed previews
 
 on:
+  # Paused: manual runs only. No schedule/push/pull_request triggers.
   workflow_dispatch:
-  push:
-    paths:
-      - 'build_feed_preview.py'
-      - 'data/content_plan_month_01.csv'
-      - 'illustrations/objects/core/**'
-      - '.github/workflows/build-feed-preview.yml'
 
 permissions:
   contents: read
