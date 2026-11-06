@@ -1,7 +1,8 @@
 name: Men Instagram Reel
 
 on:
-  # Paused: manual runs only. No schedule/push/pull_request triggers.
+  schedule:
+    - cron: "30 1 * * 0" # Sunday 07:00 IST
   workflow_dispatch:
     inputs:
       day:
