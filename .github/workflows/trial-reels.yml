@@ -1,7 +1,8 @@
-name: Trial Reels - Daily
+name: Trial Reels - Weekly
 
 on:
-  # Paused: manual runs only. No schedule/push/pull_request triggers.
+  schedule:
+    - cron: "7 10 * * 6" # Saturday 15:37 IST - one Trial Reel weekly
   workflow_dispatch:
     inputs:
       stream:
@@ -59,7 +60,7 @@ jobs:
 
           if [ "${{ github.event_name }}" = "schedule" ]; then
             # Alternate Women and Men so exactly one Trial Reel is scheduled
-            # each day while keeping both streams represented over time.
+            # each week while keeping both streams represented over time.
             DAY_INDEX=$(( $(date -u +%s) / 86400 ))
             if [ $((DAY_INDEX % 2)) -eq 0 ]; then
               STREAM="women"
